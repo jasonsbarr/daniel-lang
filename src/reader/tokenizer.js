@@ -43,3 +43,39 @@ const token = (type, name, text, line, col, pos) =>
  * @returns {Object}
  */
 const rule = (name, regex) => ({ name, regex });
+
+/**
+ * Manages the state of the input stream as the lexer processes it
+ */
+class InputStream {
+  /**
+   * Sets the InputStream initial state
+   * @param {String} buffer
+   */
+  constructor(buffer) {
+    this.buffer = buffer;
+    this.pos = 0;
+    this.line = 1;
+    this.col = 1;
+    this.length = buffer.length;
+  }
+
+  advance(pos) {
+    this.pos = pos;
+
+    if (/\r?\n/g.exec(this.buffer[pos])) {
+      this.line += 1;
+      this.col = 0;
+    } else {
+      this.col += 1;
+    }
+  }
+
+  eof() {
+    return this.pos >= this.length;
+  }
+
+  toString() {
+    return `[object InputStream length=${this.length}]`;
+  }
+}
