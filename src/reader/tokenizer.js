@@ -79,3 +79,98 @@ class InputStream {
     return `[object InputStream length=${this.length}]`;
   }
 }
+
+class Lexer {
+  constructor(rules) {
+    this.rules = rules;
+    this.groups = {};
+    this.regex = this.compile();
+  }
+
+  /**
+   * Concatenates the provided rules into a single regular expression
+   * @returns {RegExp}
+   */
+  compile() {
+    let reFrags = [];
+    let i = 1;
+
+    for (let { type, name, regex } of this.rules) {
+      let groupName = `${name}${i++}`;
+      reFrags.push(`(?<${groupName}>` + regex + `)`);
+      this.groups[groupName] = { type, name };
+    }
+
+    return new RegExp(reFrags.join("|"), "u");
+  }
+
+  /**
+   * Takes the lexer input as a string and converts it to an InputStream
+   * @param {String} inputStr
+   * @returns {Lexer}
+   */
+  input(inputStr) {
+    this.inputStr = new InputStream(inputStr);
+
+    return this;
+  }
+
+  /**
+   * Matches a rule with the current position of the input stream and creates a Token
+   * @returns {Token}
+   */
+  token() {
+    let { buffer, pos, line, col } = this.inputStr;
+
+    if (this.inputStr.eof()) {
+      return null;
+    }
+
+    let m = this.regex.exec(buffer.slice(pos));
+
+    if (m) {
+      let groupName;
+
+      for (let [k, v] of Object.entries(m.groups)) {
+        if (v !== undefined) {
+          groupName = k;
+          break;
+        }
+      }
+
+      let { type, name } = this.groups[groupName];
+      let value = m[0];
+      let tok = token(type, name, value, line, col, pos);
+
+      this.inputStr.advance(pos + value.length);
+
+      return tok;
+    }
+
+    // if it gets here, nothing matched
+    throw new LexerError(buffer[pos], line, col);
+  }
+
+  /**
+   * Returns an array of the tokens found in the input buffer
+   * @returns {Token[]}
+   */
+  tokenize() {
+    let tokens = [];
+    while (!this.inputStr.eof()) {
+      let tok = this.token();
+
+      if (tok !== null) {
+        tokens.push(tok);
+      }
+    }
+
+    let { line, col, pos } = this.inputStr;
+
+    tokens.push(
+      token("EndOfInput", "ENDOFINPUT", "EndOfInput", line, col, pos)
+    );
+
+    return tokens;
+  }
+}
