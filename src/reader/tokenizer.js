@@ -24,3 +24,5 @@ class Token {
 
 const token = (type, name, text, line, col, pos) =>
   new Token(type, name, text, line, col, pos);
+
+const rule = (type, regex) => ({ type, regex });
