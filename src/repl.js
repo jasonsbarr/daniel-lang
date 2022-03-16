@@ -5,7 +5,11 @@ import { evalInput } from "./eval.js";
 const REP = (input) => print(evalInput(read(input), {}));
 
 while (true) {
-  let line = input("daniel> ");
-  if (line === "") break;
-  if (line) REP(line);
+  try {
+    let line = input("daniel> ");
+    if (line === "") break;
+    if (line) REP(line);
+  } catch (e) {
+    console.log(e);
+  }
 }
