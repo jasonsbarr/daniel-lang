@@ -90,6 +90,8 @@ const readForm = (reader) => {
   const token = reader.peek();
 
   if (token.match("Comment") || token.match("WS")) {
+    // skip
+    reader.next();
     return null;
   }
 
