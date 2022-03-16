@@ -167,10 +167,6 @@ class Lexer {
 
     let { line, col, pos } = this.inputStr;
 
-    tokens.push(
-      token("EndOfInput", "ENDOFINPUT", "EndOfInput", line, col, pos)
-    );
-
     return tokens;
   }
 }
