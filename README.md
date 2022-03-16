@@ -19,6 +19,8 @@ And, of course, if a computer science student at a university DID find this repo
 
 When I say "educational purposes," I mean the language is for learning about language design and implementation, not primarily for production use in web or offline applications. That means the implementation should favor clarity and ease of reading the code over things like efficiency, though hopefully it will be _reasonably_ efficient as well&ndash;it's hard to learn about a language if it takes 30 seconds to run even small programs, after all!
 
+However, when I say "educational purposes" I most certainly do _not_ mean that Daniel is somehow not a "real" programming language. When the core language functionalities are completed you will be able to use Daniel just like you would a production language, with the caveat that things aren't going to be nearly as battle-tested and the standard library will probably be relatively lacking. Use Daniel in a "real" project at your own risk!
+
 ## The structure of this repo
 
 Starting out, I will create different branches for different stages of the implementation. I will release videos and possibly also articles to go with each of these branches to aid in understanding what I'm doing and why I'm doing it. For example, there will be branches on lexical analysis, parsing, building the interpreter, and other relevant topics. Later on, as I get into more difficult topics, I may have to pursue a different strategy with branching because I'll be doing a fair bit of trial and error and hacking things together as the language gets beyond my current level of understanding.
