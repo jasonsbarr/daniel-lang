@@ -174,3 +174,43 @@ class Lexer {
     return tokens;
   }
 }
+
+/**
+ * Rules for creating tokens
+ */
+const NIL = rule("Nil", String.raw`nil`);
+const BOOL = rule("Boolean", String.raw`true|false`);
+const STRING = rule("String", String.raw`"(?:\\.|[^\\"])*"?`);
+const NUMBER = rule("Number", String.raw`[-\+]?[0-9]*\.?[0-9]+`);
+const COMMENT = rule("Comment", String.raw`;.*`);
+const WS = rule("WS", String.raw`\s+`);
+const LPAREN = rule("LParen", String.raw`\(`);
+const RPAREN = rule("RParen", String.raw`\)`);
+const LBRACK = rule("LBrack", String.raw`\[`);
+const RBRACK = rule("RBrack", String.raw`\]`);
+const LBRACE = rule("LBrace", String.raw`\{`);
+const RBRACE = rule("RBrace", String.raw`\}`);
+const SYMBOL = rule(
+  "Symbol",
+  String.raw`[\*\p{L}_$!\+-^/\\\?\|<>%:=@~][\*\p{L}\p{N}_$!\+-^/\\\?\|<>%:=@~]*`
+);
+
+const rules = [
+  NIL,
+  BOOL,
+  STRING,
+  NUMBER,
+  COMMENT,
+  WS,
+  LPAREN,
+  RPAREN,
+  LBRACK,
+  RBRACK,
+  LBRACE,
+  RBRACE,
+  SYMBOL,
+];
+
+const lexer = new Lexer(rules);
+
+export const tokenize = (input) => lexer.input(input).tokenize();
