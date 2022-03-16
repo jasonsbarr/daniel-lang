@@ -40,26 +40,26 @@ const replaceEscapeChars = (str) => {
   const eC = /\\[\\'"bfnrtv]/g;
   const replaceUnicodeEscape = (m) =>
     String.fromCodePoint(parseInt(m.slice(2), 16));
-  const replaceEscape = (c) =>
-    c === "\\\\"
+  const replaceEscape = (m) =>
+    m === "\\\\"
       ? "\\"
-      : c === "\\'"
+      : m === "\\'"
       ? "'"
-      : c === '\\"'
+      : m === '\\"'
       ? '"'
-      : c === "\\n"
+      : m === "\\n"
       ? "\n"
-      : c === "\\b"
+      : m === "\\b"
       ? "\b"
-      : c === "\\f"
+      : m === "\\f"
       ? "\f"
-      : c === "\\r"
+      : m === "\\r"
       ? "\r"
-      : c === "\\t"
+      : m === "\\t"
       ? "\t"
-      : c === "\\v"
+      : m === "\\v"
       ? "\v"
-      : c;
+      : m;
   str = str.replace(uE, replaceUnicodeEscape);
   str = str.replace(eC, replaceEscape);
   return str;
