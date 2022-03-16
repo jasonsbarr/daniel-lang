@@ -12,15 +12,13 @@ class Token {
    * A token contains all the information necessary for evaluating it
    *
    * @param {String} type
-   * @param {String} name
    * @param {String} text
    * @param {Number} line
    * @param {Number} col
    * @param {Number} pos
    */
-  constructor(type, name, text, line, col, pos) {
+  constructor(type, text, line, col, pos) {
     this.type = type;
-    this.name = name;
     this.text = text;
     this.line = line;
     this.col = col;
@@ -32,8 +30,8 @@ class Token {
   }
 }
 
-const token = (type, name, text, line, col, pos) =>
-  new Token(type, name, text, line, col, pos);
+const token = (type, text, line, col, pos) =>
+  new Token(type, text, line, col, pos);
 
 /**
  * Creates a rule for token creation
@@ -42,7 +40,7 @@ const token = (type, name, text, line, col, pos) =>
  * @param {String} regex
  * @returns {Object}
  */
-const rule = (name, regex) => ({ name, regex });
+const rule = (type, regex) => ({ type, regex });
 
 /**
  * Manages the state of the input stream as the lexer processes it
@@ -95,10 +93,10 @@ class Lexer {
     let reFrags = [];
     let i = 1;
 
-    for (let { type, name, regex } of this.rules) {
-      let groupName = `${name}${i++}`;
+    for (let { type, regex } of this.rules) {
+      let groupName = `${type}${i++}`;
       reFrags.push(`(?<${groupName}>` + regex + `)`);
-      this.groups[groupName] = { type, name };
+      this.groups[groupName] = type;
     }
 
     return new RegExp(reFrags.join("|"), "u");
@@ -138,9 +136,9 @@ class Lexer {
         }
       }
 
-      let { type, name } = this.groups[groupName];
+      let type = this.groups[groupName];
       let value = m[0];
-      let tok = token(type, name, value, line, col, pos);
+      let tok = token(type, value, line, col, pos);
 
       this.inputStr.advance(pos + value.length);
 
@@ -164,8 +162,6 @@ class Lexer {
         tokens.push(tok);
       }
     }
-
-    let { line, col, pos } = this.inputStr;
 
     return tokens;
   }
