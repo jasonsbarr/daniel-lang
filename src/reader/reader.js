@@ -27,7 +27,7 @@ class Reader {
  * @param {String} str
  */
 const replaceEscapeChars = (str) => {
-  const uE = /\\u\p{Hex_Digit}{6}/gu;
+  const uE = /\\u\p{Hex_Digit}{1,6}/gu;
   const eC = /\\[\\'"bfnrtv]/g;
   const replaceUnicodeEscape = (m) =>
     String.fromCodePoint(parseInt(m.slice(2), 16));
