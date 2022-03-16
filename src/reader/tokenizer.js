@@ -180,7 +180,6 @@ const STRING = rule("String", String.raw`"(?:\\.|[^\\"])*"?`);
 const NUMBER = rule("Number", String.raw`[-\+]?[0-9]*\.?[0-9]+`);
 const COMMENT = rule("Comment", String.raw`;.*`);
 const WS = rule("WS", String.raw`\s+`);
-const DOT = rule("Dot", String.raw`\.`);
 const LPAREN = rule("LParen", String.raw`\(`);
 const RPAREN = rule("RParen", String.raw`\)`);
 const LBRACK = rule("LBrack", String.raw`\[`);
@@ -199,7 +198,6 @@ const rules = [
   NUMBER,
   COMMENT,
   WS,
-  DOT,
   LPAREN,
   RPAREN,
   LBRACK,
