@@ -1,5 +1,26 @@
 {
   "devDependencies": {
     "prettier": "^2.5.1"
-  }
+  },
+  "name": "daniel-lang",
+  "description": "A Lisp-like programming language for learning about programming languages, implemented in JavaScript",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jasonsbarr/daniel-lang.git"
+  },
+  "keywords": [
+    "lisp",
+    "programming-language"
+  ],
+  "author": "Jason Barr <jason@jasonsbarr.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/jasonsbarr/daniel-lang/issues"
+  },
+  "homepage": "https://github.com/jasonsbarr/daniel-lang#readme"
 }
