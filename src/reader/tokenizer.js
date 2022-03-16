@@ -36,7 +36,7 @@ const token = (type, text, line, col, pos) =>
 /**
  * Creates a rule for token creation
  *
- * @param {String} name
+ * @param {String} type
  * @param {String} regex
  * @returns {Object}
  */
