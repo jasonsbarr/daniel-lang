@@ -188,7 +188,7 @@ const LBRACE = rule("LBrace", String.raw`\{`);
 const RBRACE = rule("RBrace", String.raw`\}`);
 const SYMBOL = rule(
   "Symbol",
-  String.raw`[:=<>%:\|\?\\\/\*\p{L}_\$!\+-][:=@~<>%:\|\?\\\/\^\*\p{L}\p{N}_\$!\+-]*`
+  String.raw`[:=<>%:\|\?\\\/\*\.\p{L}_\$!\+-][:=@~<>%:\|\?\\\/\^\*\.\p{L}\p{N}_\$!\+-]*`
 );
 
 const rules = [
