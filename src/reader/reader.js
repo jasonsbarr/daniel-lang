@@ -100,7 +100,7 @@ const readAtom = (reader) => {
  * @param {Reader} reader
  * @returns {Object[]}
  */
-const readList = (reader, start = "(", end = ")") => {};
+const readList = (reader, start = "LParen", end = "RParen") => {};
 
 /**
  * Dispatcher function for token stream reader
