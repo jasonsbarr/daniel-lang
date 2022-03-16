@@ -29,10 +29,6 @@ class Reader {
 const readAtom = (reader) => {
   const token = reader.next();
 
-  if (token.match("Comment") || token.match("WS")) {
-    return null;
-  }
-
   if (token.match("Number")) {
     return { ...token, value: Number(token.text) };
   }
@@ -44,6 +40,10 @@ const readAtom = (reader) => {
  */
 const readForm = (reader) => {
   const token = reader.peek();
+
+  if (token.match("Comment") || token.match("WS")) {
+    return null;
+  }
 
   switch (token.type) {
     default:
