@@ -25,6 +25,10 @@ class Token {
     this.pos = pos;
   }
 
+  match(type) {
+    return this.type === type;
+  }
+
   toString() {
     return `Token(type=${this.type}, value=${this.text})`;
   }
