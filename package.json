@@ -23,5 +23,8 @@
   "homepage": "https://github.com/jasonsbarr/daniel-lang#readme",
   "devDependencies": {
     "prettier": "^2.5.1"
+  },
+  "dependencies": {
+    "readline-sync": "^1.4.10"
   }
 }
