@@ -23,6 +23,40 @@ class Reader {
 }
 
 /**
+ * Replace raw escape sequences with the actual escape characters
+ * @param {String} str
+ */
+const replaceEscapeChars = (str) => {
+  const uE = /\\u\p{Hex_Digit}{4}/gu;
+  const eC = /\\[\\'"bfnrtv]/g;
+  const replaceUnicodeEscape = (m) =>
+    String.fromCodePoint(parseInt(m.slice(2), 16));
+  const replaceEscape = (c) =>
+    c === "\\\\"
+      ? "\\"
+      : c === "\\'"
+      ? "'"
+      : c === '\\"'
+      ? '"'
+      : c === "\\n"
+      ? "\n"
+      : c === "\\b"
+      ? "\b"
+      : c === "\\f"
+      ? "\f"
+      : c === "\\r"
+      ? "\r"
+      : c === "\\t"
+      ? "\t"
+      : c === "\\v"
+      ? "\v"
+      : c;
+  str = str.replace(uE, replaceUnicodeEscape);
+  str = str.replace(eC, replaceEscape);
+  return str;
+};
+
+/**
  * Reads atomic types into syntax objects
  * @param {Reader} reader
  */
@@ -32,6 +66,20 @@ const readAtom = (reader) => {
   if (token.match("Number")) {
     return { ...token, value: Number(token.text) };
   }
+
+  if (token.match("Nil")) {
+    return { ...token, value: null };
+  }
+
+  if (token.match("Boolean")) {
+    return { ...token, value: token.text === "true" };
+  }
+
+  if (token.match("String")) {
+    return { ...token, value: replaceEscapeChars(token.text.slice(1, -1)) };
+  }
+
+  return { ...token, value: Symbol.for(token.text) };
 };
 
 /**
