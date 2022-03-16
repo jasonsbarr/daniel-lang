@@ -1,6 +1,15 @@
 import { tokenize } from "./tokenizer.js";
 
 /**
+ * Parsing error class
+ */
+class ReadError extends Error {
+  constructor(text, line, col) {
+    super(`Unknown token ${text} at ${line}:${col}`);
+  }
+}
+
+/**
  * Manages the state of the token stream
  */
 class Reader {
@@ -79,7 +88,11 @@ const readAtom = (reader) => {
     return { ...token, value: replaceEscapeChars(token.text.slice(1, -1)) };
   }
 
-  return { ...token, value: Symbol.for(token.text) };
+  if (token.match("Symbol")) {
+    return { ...token, value: Symbol.for(token.text) };
+  }
+
+  throw new ReadError(token.text, token.line, token.col);
 };
 
 /**
