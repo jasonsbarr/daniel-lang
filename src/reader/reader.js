@@ -96,6 +96,13 @@ const readAtom = (reader) => {
 };
 
 /**
+ * Read a list demarcated by (), [], or {}
+ * @param {Reader} reader
+ * @returns {Object[]}
+ */
+const readList = (reader, start = "(", end = ")") => {};
+
+/**
  * Dispatcher function for token stream reader
  * @param {Reader} reader
  */
