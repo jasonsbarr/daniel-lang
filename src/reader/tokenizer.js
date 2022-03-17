@@ -7,7 +7,7 @@ class LexerError extends Error {
 /**
  * A Token represents a single lexeme
  */
-class Token {
+export class Token {
   /**
    * A token contains all the information necessary for evaluating it
    *
@@ -34,7 +34,7 @@ class Token {
   }
 }
 
-const token = (type, text, line, col, pos) =>
+export const token = (type, text, line, col, pos) =>
   new Token(type, text, line, col, pos);
 
 /**

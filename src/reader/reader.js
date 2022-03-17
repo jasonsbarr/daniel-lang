@@ -1,4 +1,4 @@
-import { tokenize } from "./tokenizer.js";
+import { Token, token, tokenize } from "./tokenizer.js";
 
 /**
  * Parsing error class
@@ -128,6 +128,18 @@ const readList = (reader, start = "LParen", end = "RParen") => {
 };
 
 /**
+ * Reads a list literal demarcated with []
+ * @param {Reader} reader
+ */
+const readListLiteral = (reader) => {
+  const { line, col, pos } = reader.peek();
+  return [
+    { ...token("Symbol", "list", line, col, pos), value: Symbol.for("list") },
+    ...readList(reader, "LBrack", "RBrack"),
+  ];
+};
+
+/**
  * Dispatcher function for token stream reader
  * @param {Reader} reader
  */
@@ -147,6 +159,8 @@ const readForm = (reader) => {
       throw new ReadError(token.text, token.line, token.col);
     case "LParen":
       return readList(reader, "LParen", "RParen");
+    case "LBrack":
+      return readListLiteral(reader);
     default:
       return readAtom(reader);
   }
