@@ -11,13 +11,15 @@ const __dirname = dirname(import.meta.url);
  * @param {Function} func
  * @param {String} name
  * @param {Number} arity
+ * @param {Boolean} varargs
+ * @param {String} module
  */
 export const makeFunction = (
   func,
   name,
   arity,
-  varargs = false,
-  module = "<main>"
+  module = "<main>",
+  varargs = false
 ) => {
   name = name ?? (func.name || "<lambda>");
   arity = arity ?? func.length;
