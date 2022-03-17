@@ -5,7 +5,7 @@ import { tokenize } from "./tokenizer.js";
  */
 class ReadError extends Error {
   constructor(text, line, col) {
-    super(`Unknown token ${text} at ${line}:${col}`);
+    super(`Invalid token ${text} at ${line}:${col}`);
   }
 }
 
@@ -100,7 +100,32 @@ const readAtom = (reader) => {
  * @param {Reader} reader
  * @returns {Object[]}
  */
-const readList = (reader, start = "LParen", end = "RParen") => {};
+const readList = (reader, start = "LParen", end = "RParen") => {
+  let ast = [];
+  let token = reader.next();
+
+  if (!token.match(start)) {
+    throw new ReadError(token.text, token.line, token.col);
+  }
+
+  while (!token.match(end)) {
+    const expr = readForm(reader);
+
+    if (expr) {
+      ast.push(expr);
+    }
+
+    token = reader.peek();
+
+    if (!token) {
+      throw new ReadError("EOF", token.line, token.col);
+    }
+  }
+
+  // skip end token
+  reader.next();
+  return ast;
+};
 
 /**
  * Dispatcher function for token stream reader
@@ -116,6 +141,12 @@ const readForm = (reader) => {
   }
 
   switch (token.type) {
+    case "RParen":
+    case "RBrack":
+    case "RBrace":
+      throw new ReadError(token.text, token.line, token.col);
+    case "LParen":
+      return readList(reader, "LParen", "RParen");
     default:
       return readAtom(reader);
   }
