@@ -188,8 +188,8 @@ const readForm = (reader) => {
   }
 };
 
-export const read = (input) => {
-  const reader = new Reader(tokenize(input));
+export const read = (input, file) => {
+  const reader = new Reader(tokenize(input, file));
   let prog = [];
 
   while (reader.pos < reader.length) {
