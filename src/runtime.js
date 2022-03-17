@@ -1,5 +1,5 @@
 import path from "path";
-import { curry } from "@jasonsbarr/functional-core";
+import { curryN } from "@jasonsbarr/functional-core";
 import { dirname } from "./utils.js";
 
 const __dirname = dirname(import.meta.url);
@@ -12,13 +12,20 @@ const __dirname = dirname(import.meta.url);
  * @param {String} name
  * @param {Number} arity
  */
-export const makeFunction = (func, name, arity, module = "<main>") => {
+export const makeFunction = (
+  func,
+  name,
+  arity,
+  varargs = false,
+  module = "<main>"
+) => {
   name = name ?? (func.name || "<lambda>");
   arity = arity ?? func.length;
-  func = curry(func);
+  func = curryN(arity, func);
   func.name = name;
   func.arity = arity;
   func.module = module;
+  func.varargs = varargs;
 
   Object.defineProperty(func, "toString", {
     enumerable: false,
@@ -88,26 +95,20 @@ class Module {
 export const makeModule = (
   name,
   provides,
-  deps,
   { requires = [], nativeRequires = [] } = {}
 ) => {
-  let vals = Object.create(null);
   let reqs = [];
   let nReqs = [];
 
-  for (let [k, v] of provides) {
-    if (typeof v === "function") {
-      v = makeFunction(v, v.name, v.length, name);
-    }
-
-    vals[k] = v;
+  for (let r of requires) {
+    reqs.push(resolveRequire(r));
   }
 
   for (let nr of nativeRequires) {
     nReqs.push(resolveNativeRequire(nr));
   }
 
-  return new Module(name, vals, {
+  return new Module(name, provides, {
     requires: reqs,
     nativeRequires: nReqs,
   });
