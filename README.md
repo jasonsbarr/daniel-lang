@@ -50,6 +50,7 @@ These are the language forms I intend to implement that form the core of the lan
 - class
 - fail (with try/catch)
 - macro
+- async
 
 ## Goals
 
