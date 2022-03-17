@@ -140,6 +140,18 @@ const readListLiteral = (reader) => {
 };
 
 /**
+ * Reads a hash literal demarcated with []
+ * @param {Reader} reader
+ */
+const readHashLiteral = (reader) => {
+  const { line, col, pos } = reader.peek();
+  return [
+    { ...token("Symbol", "hash", line, col, pos), value: Symbol.for("list") },
+    ...readList(reader, "LBrace", "RBrace"),
+  ];
+};
+
+/**
  * Dispatcher function for token stream reader
  * @param {Reader} reader
  */
@@ -161,6 +173,8 @@ const readForm = (reader) => {
       return readList(reader, "LParen", "RParen");
     case "LBrack":
       return readListLiteral(reader);
+    case "LBrace":
+      return readHashLiteral(reader);
     default:
       return readAtom(reader);
   }
