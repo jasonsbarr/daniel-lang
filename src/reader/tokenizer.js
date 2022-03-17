@@ -17,12 +17,13 @@ export class Token {
    * @param {Number} col
    * @param {Number} pos
    */
-  constructor(type, text, line, col, pos) {
+  constructor(type, text, line, col, pos, file) {
     this.type = type;
     this.text = text;
     this.line = line;
     this.col = col;
     this.pos = pos;
+    this.file = file;
   }
 
   match(type) {
@@ -34,8 +35,8 @@ export class Token {
   }
 }
 
-export const token = (type, text, line, col, pos) =>
-  new Token(type, text, line, col, pos);
+export const token = (type, text, line, col, pos, file) =>
+  new Token(type, text, line, col, pos, file);
 
 /**
  * Creates a rule for token creation
@@ -121,7 +122,7 @@ class Lexer {
    * Matches a rule with the current position of the input stream and creates a Token
    * @returns {Token}
    */
-  token() {
+  token(file) {
     let { buffer, pos, line, col } = this.inputStr;
 
     if (this.inputStr.eof()) {
@@ -142,7 +143,7 @@ class Lexer {
 
       let type = this.groups[groupName];
       let value = m[0];
-      let tok = token(type, value, line, col, pos);
+      let tok = token(type, value, line, col, pos, file);
 
       this.inputStr.advance(pos + value.length);
 
@@ -157,10 +158,10 @@ class Lexer {
    * Returns an array of the tokens found in the input buffer
    * @returns {Token[]}
    */
-  tokenize() {
+  tokenize(file) {
     let tokens = [];
     while (!this.inputStr.eof()) {
-      let tok = this.token();
+      let tok = this.token(file);
 
       if (tok !== null) {
         tokens.push(tok);
@@ -209,4 +210,5 @@ const rules = [
 
 const lexer = new Lexer(rules);
 
-export const tokenize = (input) => lexer.input(input).tokenize();
+export const tokenize = (input, file = "<stdin>") =>
+  lexer.input(input).tokenize(file);
