@@ -39,8 +39,9 @@ export const makeFunction = (
 };
 
 /**
- *
+ * Resolves a Daniel-lang module to an absolute path from a require string
  * @param {String} rq
+ * @returns {String}
  */
 export const resolveRequire = (rq) => {};
 
@@ -49,6 +50,7 @@ export const resolveRequire = (rq) => {};
  *
  * Currently only works for builtin modules (but this will change)
  * @param {String} rq
+ * @returns {String}
  */
 export const resolveNativeRequire = (rq) => {
   if (rq.startsWith("builtin:")) {
@@ -75,7 +77,6 @@ class Module {
   constructor(name, provides, { requires = [], nativeRequires = [] } = {}) {
     this.name = name;
     this.provides = provides;
-    this.deps = deps;
     this.requires = requires;
     this.nativeRequires = nativeRequires;
   }
