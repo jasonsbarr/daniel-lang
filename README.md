@@ -35,9 +35,8 @@ Starting out, I will create different branches for different stages of the imple
 These are the language forms I intend to implement that form the core of the language:
 
 - begin
-- module
 - provide
-- require
+- require/from/open
 - lambda
 - let
 - if
@@ -46,8 +45,9 @@ These are the language forms I intend to implement that form the core of the lan
 - quasiquote
 - unquote
 - unquote-splicing
-- for (yes, I know, iteration in a Lisp)
+- for
 - struct
+- class
 - fail (with try/catch)
 - macro
 
