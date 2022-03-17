@@ -22,10 +22,18 @@ class Reader {
     this.length = tokens.length;
   }
 
+  /**
+   * Get the current token and advance the stream
+   * @returns {Token}
+   */
   next() {
     return this.tokens[this.pos++];
   }
 
+  /**
+   * Get the current token without advancing the stream
+   * @returns {Token}
+   */
   peek() {
     return this.tokens[this.pos];
   }
