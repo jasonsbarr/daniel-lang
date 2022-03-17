@@ -18,8 +18,7 @@ export const makeFunction = (
   func,
   name,
   arity,
-  module = "<main>",
-  varargs = false
+  { module = "<main>", varargs = false } = {}
 ) => {
   name = name ?? (func.name || "<lambda>");
   arity = arity ?? func.length;
