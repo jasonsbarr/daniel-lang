@@ -43,6 +43,8 @@ class Module {
     this.provides = provides;
     this.url = url;
     this.deps = deps;
+    this.requires = requires;
+    this.nativeRequires = nativeRequires;
   }
 
   toString() {
