@@ -1,8 +1,8 @@
-import { input, print } from "../lib/js/io.js";
+import { input, println } from "../lib/js/io.js";
 import { read } from "./reader/reader.js";
 import { evalInput } from "./eval.js";
 
-const REP = (input) => print(evalInput(read(input, "<stdin>"), {}));
+const REP = (input) => println(evalInput(read(input, "<stdin>"), {}));
 
 while (true) {
   try {
