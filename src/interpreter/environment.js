@@ -1,13 +1,4 @@
-const { RuntimeError } = require("../../lib/js/error");
-
-class ReferenceError extends RuntimeError {
-  /**
-   * Error for when name is accessed without being initialized in the current scope
-   * @param {Symbol} name
-   * @param {String} msg
-   */
-  constructor(name, msg) {}
-}
+const { ReferenceError } = require("../../lib/js/error");
 
 class Environment {
   constructor(parent, module, name) {
