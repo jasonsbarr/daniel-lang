@@ -16,6 +16,7 @@ export class Token {
    * @param {Number} line
    * @param {Number} col
    * @param {Number} pos
+   * @param {String} file
    */
   constructor(type, text, line, col, pos, file) {
     this.type = type;

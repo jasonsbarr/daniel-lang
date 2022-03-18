@@ -190,7 +190,32 @@ const readForm = (reader) => {
 
 export const read = (input, file) => {
   const reader = new Reader(tokenize(input, file));
-  let prog = [];
+  const first = reader.tokens[0];
+  let begin;
+
+  if (first) {
+    begin = {
+      type: "Symbol",
+      text: "begin",
+      line: first.line,
+      col: first.col,
+      pos: first.pos,
+      file: first.file,
+      value: Symbol.for("begin"),
+    };
+  } else {
+    begin = {
+      type: "Symbol",
+      text: "begin",
+      line: 0,
+      col: 0,
+      pos: 0,
+      file: "",
+      value: Symbol.for("begin"),
+    };
+  }
+
+  let prog = [begin];
 
   while (reader.pos < reader.length) {
     let expr = readForm(reader);
