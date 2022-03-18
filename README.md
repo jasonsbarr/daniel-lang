@@ -23,6 +23,12 @@ When I say "educational purposes," I mean the language is for learning about lan
 
 Starting out, I will create different branches for different stages of the implementation. I will release videos and possibly also articles to go with each of these branches to aid in understanding what I'm doing and why I'm doing it. For example, there will be branches on lexical analysis, parsing, building the interpreter, and other relevant topics. Later on, as I get into more difficult topics, I may have to pursue a different strategy with branching because I'll be doing a fair bit of trial and error and hacking things together as the language gets beyond my current level of understanding.
 
+## Branches that show the stages of development
+
+- [01 - Tokenizer](https://github.com/jasonsbarr/daniel-lang/tree/01-tokenizer)
+- [02 - Reader](https://github.com/jasonsbarr/daniel-lang/tree/02-reader)
+- [03 - Eval](https://github.com/jasonsbarr/daniel-lang/tree/03-eval)
+
 ## Goals
 
 Here are some features I have planned on the roadmap:
