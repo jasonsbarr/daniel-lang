@@ -30,7 +30,7 @@ export const makeFunction = (
     enumerable: false,
     writable: false,
     configurable: false,
-    value: () => `Function(${func.module}-${func.name})`,
+    value: () => `Function(${func.module}.${func.name})`,
   });
 
   return func;
