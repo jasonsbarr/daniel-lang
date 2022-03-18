@@ -68,11 +68,15 @@ class Module {
    * @param {String} name
    * @param {String} url
    * @param {Object} provides
+   * @param {String[]} requires
+   * @param {String[]} nativeRequires
    */
-  constructor(name, provides) {
+  constructor(name, url, provides, requires, nativeRequires) {
     this.name = Symbol(name);
     this.url = url;
     this.provides = provides;
+    this.requires = requires;
+    this.nativeRequires = nativeRequires;
   }
 
   toString() {
@@ -85,16 +89,18 @@ class Module {
  * @param {String} name The module name
  * @param {String} url The module URL
  * @param {Object} provides The bindings it provides
+ * @param {String[]} requires Daniel language module dependencies
+ * @param {String[]} nativeRequires native (JS) module dependencies
  * @returns {Module}
  */
-const makeModule = (name, url, provides) => {
+const makeModule = (name, url, provides, requires, nativeRequires) => {
   let vals = Object.create(null);
 
   for (let [k, v] of Object.entries(provides)) {
     vals[Symbol.for(k)] = v;
   }
 
-  return new Module(name, url, vals);
+  return new Module(name, url, vals, requires, nativeRequires);
 };
 
 module.exports = {
