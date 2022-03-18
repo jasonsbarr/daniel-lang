@@ -1,14 +1,21 @@
-import { dirname as dn } from "path";
-import { pathToFileURL, fileURLToPath } from "url";
+const { dirname: dn } = require("path");
+const { pathToFileURL, fileURLToPath } = require("url");
 
-export const getFileURL = (path) => pathToFileURL(path).href;
+const getFileURL = (path) => pathToFileURL(path).href;
 
-export const dirname = (url) => dn(fileURLToPath(url));
+const dirname = (url) => dn(fileURLToPath(url));
 
-export const defer = (fn) =>
+const defer = (fn) =>
   typeof "setImmediate" !== "undefined" ? setImmediate(fn) : setTimeout(fn, 0);
 
-export const all =
+const all =
   (fn, init) =>
   (...list) =>
     list.reduce(fn, init);
+
+module.exports = {
+  getFileURL,
+  dirname,
+  defer,
+  all,
+};
