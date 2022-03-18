@@ -29,6 +29,7 @@ Starting out, I will create different branches for different stages of the imple
 
 - [01 - Tokenizer](https://github.com/jasonsbarr/daniel-lang/tree/01-tokenizer)
 - [02 - Reader](https://github.com/jasonsbarr/daniel-lang/tree/02-reader)
+- [03 - Eval](https://github.com/jasonsbarr/daniel-lang/tree/03-eval)
 
 ## Core language forms
 
