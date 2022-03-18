@@ -87,7 +87,7 @@ class Module {
  * @returns {Module}
  */
 const makeModule = (name, url, provides) => {
-  let vals = {};
+  let vals = Object.create(null);
 
   for (let [k, v] of Object.entries(provides)) {
     vals[Symbol.for(k)] = v;
