@@ -82,7 +82,7 @@ class Module {
   }
 
   toString() {
-    return `Module(${this.name})`;
+    return `<${this.name}>`;
   }
 }
 
