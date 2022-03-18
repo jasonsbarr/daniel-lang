@@ -15,9 +15,15 @@ if (typeof require === "function") {
   requireJs = (url) => require(fileURLToPath(url));
 }
 
+/**
+ * If not a browser, we'll assume the JS runtime is Node
+ */
+const isBrowser = () => typeof window !== "undefined";
+
 module.exports = {
   getFileURL,
   defer,
   all,
   requireJs,
+  isBrowser,
 };

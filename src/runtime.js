@@ -1,11 +1,6 @@
 const path = require("path");
 const { curryN } = require("ramda");
-const { getFileURL } = require("./utils");
-
-/**
- * If not a browser, we'll assume the JS runtime is Node
- */
-const isBrowser = () => typeof window !== "undefined";
+const { getFileURL, isBrowser } = require("./utils");
 
 let STDOUT, STDIN, STDERR;
 
