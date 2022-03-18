@@ -22,4 +22,12 @@ const evalList = (ast, env) => {
   }
 };
 
-const evalBegin = (ast, env) => {};
+const evalBegin = (ast, env) => {
+  let value;
+
+  for (let exp of ast) {
+    value = evaluate(exp, env);
+  }
+
+  return value;
+};
