@@ -1,4 +1,4 @@
-const { ReferenceError } = require("../../lib/js/error");
+const { RefError } = require("../../lib/js/error");
 
 class Environment {
   constructor(parent, module, name) {
