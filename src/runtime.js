@@ -1,5 +1,6 @@
 const path = require("path");
 const { curryN } = require("ramda");
+const { getFileURL } = require("./utils");
 
 /**
  * Convert a JS function into a Daniel function object
@@ -49,12 +50,7 @@ const resolveRequire = (rq) => {};
  * @returns {String}
  */
 const resolveNativeRequire = (rq) => {
-  if (rq.startsWith("builtin:")) {
-    const mod = rq.split(":")[1];
-    return path.join(__dirname, "../lib/js", `${mod}.js`);
-  }
-
-  throw new Error(`Could not resolve native module ${rq}`);
+  return getFileURL(path.join(__dirname, "../lib/js", `${rq}.js`));
 };
 
 /**
