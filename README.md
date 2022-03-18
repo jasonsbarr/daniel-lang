@@ -25,11 +25,6 @@ However, when I say "educational purposes" I most certainly do _not_ mean that D
 
 Starting out, I will create different branches for different stages of the implementation. I will release videos and possibly also articles to go with each of these branches to aid in understanding what I'm doing and why I'm doing it. For example, there will be branches on lexical analysis, parsing, building the interpreter, and other relevant topics. Later on, as I get into more difficult topics, I may have to pursue a different strategy with branching because I'll be doing a fair bit of trial and error and hacking things together as the language gets beyond my current level of understanding.
 
-## Branches that show the stages of development
-
-- [01 - Tokenizer](https://github.com/jasonsbarr/daniel-lang/tree/01-tokenizer)
-- [02 - Reader](https://github.com/jasonsbarr/daniel-lang/tree/02-reader)
-
 ## Core language forms
 
 These are the language forms I intend to implement that form the core of the language:
@@ -51,6 +46,11 @@ These are the language forms I intend to implement that form the core of the lan
 - fail (with try/catch)
 - macro
 - async
+
+## Branches that show the stages of development
+
+- [01 - Tokenizer](https://github.com/jasonsbarr/daniel-lang/tree/01-tokenizer)
+- [02 - Reader](https://github.com/jasonsbarr/daniel-lang/tree/02-reader)
 
 ## Goals
 
