@@ -2,7 +2,6 @@
   "name": "daniel-lang",
   "description": "A Lisp-like programming language for learning about programming languages, implemented in JavaScript",
   "version": "1.0.0",
-  "type": "module",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
