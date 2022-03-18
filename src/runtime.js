@@ -19,11 +19,20 @@ const makeFunction = (
 ) => {
   name = name ?? (func.name || "<lambda>");
   arity = arity ?? func.length;
-  func = curryN(arity, func);
+  func = (...args) => {
+    const f = curryN(arity, func);
+    const val = f(...args);
+
+    if (typeof val === "function" && !val.daniel) {
+      return makeFunction(val, module, { varargs });
+    }
+    return val;
+  };
   func.name = name;
   func.arity = arity;
   func.module = module;
   func.varargs = varargs;
+  func.daniel = true;
 
   Object.defineProperty(func, "toString", {
     enumerable: false,
@@ -99,9 +108,42 @@ const makeModule = (name, url, provides, requires, nativeRequires) => {
   return new Module(name, url, vals, requires, nativeRequires);
 };
 
+/**
+ * If not a browser, we'll assume the JS runtime is Node
+ */
+const isBrowser = () => typeof window !== "undefined";
+
+/**
+ * Checks if a function is a native (JS) or Daniel function
+ * @param {Function} func
+ * @returns {Boolean}
+ */
+const isDanielFunction = (func) => typeof func === "function" && func.daniel;
+
+/**
+ * Returns a Daniel runtime object based on the current platform
+ * @param {Object} stdin
+ * @param {Object} stdout
+ * @returns {Object}
+ */
+const createRuntime = ({
+  stdin = process.stdin,
+  stdout = process.stdout,
+  stderr = process.stderr,
+} = {}) => {
+  return {
+    stdin,
+    stdout,
+    stderr,
+    isBrowser,
+    isDanielFunction,
+  };
+};
+
 module.exports = {
   makeFunction,
   resolveRequire,
   resolveNativeRequire,
   makeModule,
+  createRuntime,
 };
