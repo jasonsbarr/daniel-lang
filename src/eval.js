@@ -1,1 +1,3 @@
-export const evalInput = (input, env = {}) => input;
+const evalInput = (input, env = {}) => input;
+
+module.exports = evalInput;

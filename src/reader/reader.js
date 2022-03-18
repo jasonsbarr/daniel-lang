@@ -1,4 +1,4 @@
-import { Token, token, tokenize } from "./tokenizer.js";
+const { Token, token, tokenize } = require("./tokenizer.js");
 
 /**
  * Parsing error class
@@ -188,7 +188,7 @@ const readForm = (reader) => {
   }
 };
 
-export const read = (input) => {
+const read = (input) => {
   const reader = new Reader(tokenize(input));
   let prog = [];
 
@@ -202,3 +202,5 @@ export const read = (input) => {
 
   return prog;
 };
+
+module.exports = read;
