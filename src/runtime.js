@@ -66,10 +66,12 @@ const resolveNativeRequire = (rq) => {
 class Module {
   /**
    * @param {String} name
+   * @param {String} url
    * @param {Object} provides
    */
   constructor(name, provides) {
     this.name = name;
+    this.url = url;
     this.provides = provides;
   }
 
@@ -84,14 +86,14 @@ class Module {
  * @param {Object} provides The bindings it provides
  * @returns {Module}
  */
-const makeModule = (name, provides) => {
+const makeModule = (name, url, provides) => {
   let vals = {};
 
   for (let [k, v] of Object.entries(provides)) {
     vals[Symbol.for(k)] = v;
   }
 
-  return new Module(name, vals);
+  return new Module(name, url, vals);
 };
 
 module.exports = {
