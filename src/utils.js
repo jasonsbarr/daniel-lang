@@ -10,15 +10,17 @@ const all =
   (...list) =>
     list.reduce(fn, init);
 
-let requireJs;
-if (typeof require === "function") {
-  requireJs = (url) => require(fileURLToPath(url));
-}
-
 /**
  * If not a browser, we'll assume the JS runtime is Node
  */
 const isBrowser = () => typeof window !== "undefined";
+
+let requireJs;
+if (!isBrowser()) {
+  requireJs = (path) => require(path);
+} else {
+  requireJs = async (mod) => await import(mod);
+}
 
 module.exports = {
   getFileURL,
