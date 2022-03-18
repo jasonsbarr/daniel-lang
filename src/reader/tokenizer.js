@@ -209,4 +209,6 @@ const rules = [
 
 const lexer = new Lexer(rules);
 
-export const tokenize = (input) => lexer.input(input).tokenize();
+const tokenize = (input) => lexer.input(input).tokenize();
+
+module.exports = tokenize;
