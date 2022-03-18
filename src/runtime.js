@@ -16,7 +16,8 @@ const __dirname = dirname(import.meta.url);
  */
 const makeFunction = (
   func,
-  { name, arity, module = "<main>", varargs = false } = {}
+  module = "<main>",
+  { name, arity, varargs = false } = {}
 ) => {
   name = name ?? (func.name || "<lambda>");
   arity = arity ?? func.length;
