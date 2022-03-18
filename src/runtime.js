@@ -2,6 +2,11 @@ const path = require("path");
 const { curryN } = require("ramda");
 const { getFileURL } = require("./utils");
 
+/**
+ * If not a browser, we'll assume the JS runtime is Node
+ */
+const isBrowser = () => typeof window !== "undefined";
+
 let STDOUT, STDIN, STDERR;
 
 if (!isBrowser()) {
@@ -116,11 +121,6 @@ const makeModule = (name, url, provides, requires, nativeRequires) => {
 
   return new Module(name, url, vals, requires, nativeRequires);
 };
-
-/**
- * If not a browser, we'll assume the JS runtime is Node
- */
-const isBrowser = () => typeof window !== "undefined";
 
 /**
  * Checks if a function is a native (JS) or Daniel function
