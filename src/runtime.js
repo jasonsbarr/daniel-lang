@@ -1,5 +1,5 @@
 const path = require("path");
-// const { curryN } from "@jasonsbarr/functional-core";
+const { curryN } = require("ramda");
 
 /**
  * Convert a JS function into a Daniel function object
