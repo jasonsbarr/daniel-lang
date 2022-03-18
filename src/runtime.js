@@ -2,6 +2,14 @@ const path = require("path");
 const { curryN } = require("ramda");
 const { getFileURL } = require("./utils");
 
+let STDOUT, STDIN, STDERR;
+
+if (!isBrowser()) {
+  STDOUT = process.stdout;
+  STDIN = process.stdin;
+  STDERR = process.stderr;
+}
+
 /**
  * Convert a JS function into a Daniel function object
  *
@@ -128,9 +136,9 @@ const isDanielFunction = (func) => typeof func === "function" && func.daniel;
  * @returns {Object}
  */
 const createRuntime = ({
-  stdin = process.stdin,
-  stdout = process.stdout,
-  stderr = process.stderr,
+  stdin = STDIN,
+  stdout = STDOUT,
+  stderr = STDERR,
 } = {}) => {
   return {
     stdin,
@@ -142,6 +150,9 @@ const createRuntime = ({
 };
 
 module.exports = {
+  STDOUT,
+  STDIN,
+  STDERR,
   makeFunction,
   resolveRequire,
   resolveNativeRequire,
