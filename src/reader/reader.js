@@ -1,3 +1,5 @@
-import { tokenize } from "./tokenizer.js";
+const tokenize = require("./tokenizer.js");
 
-export const read = (input) => tokenize(input);
+const read = (input) => tokenize(input);
+
+module.exports = read;
