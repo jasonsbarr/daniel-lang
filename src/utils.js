@@ -1,4 +1,3 @@
-const { dirname: dn } = require("path");
 const { pathToFileURL } = require("url");
 
 const getFileURL = (path) => pathToFileURL(path).href;
