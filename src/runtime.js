@@ -113,5 +113,5 @@ export const makeModule = (
     nReqs.push(resolveNativeRequire(nr));
   }
 
-  return new Module(name, vals, url, reqs, nReqs);
+  return new Module(name, vals, reqs, nReqs);
 };
