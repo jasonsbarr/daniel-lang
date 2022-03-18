@@ -24,7 +24,7 @@
     "prettier": "^2.5.1"
   },
   "dependencies": {
-    "@jasonsbarr/functional-core": "^0.9.2",
+    "ramda": "^0.28.0",
     "readline-sync": "^1.4.10"
   }
 }
