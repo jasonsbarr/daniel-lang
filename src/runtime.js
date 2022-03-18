@@ -69,14 +69,12 @@ class Module {
   /**
    * @param {String} name
    * @param {Object} provides
-   * @param {String} url
    * @param {String[]} requires
    * @param {String[]} nativeRequires
    */
   constructor(name, provides, requires = [], nativeRequires = []) {
     this.name = name;
     this.provides = provides;
-    this.url = url;
     this.requires = requires;
     this.nativeRequires = nativeRequires;
   }
@@ -90,7 +88,6 @@ class Module {
  * Make a Daniel module from a collection of provided JavaScript objects
  * @param {String} name The module name
  * @param {Object} provides The bindings it provides
- * @param {String} url The file URL of the module
  * @param {String[]} requires A list of in-language required modules required
  * @param {String[]} nativeRequires A list of native (JS) modules required
  * @returns {Module}
@@ -98,7 +95,6 @@ class Module {
 export const makeModule = (
   name,
   provides,
-  url,
   { requires = [], nativeRequires = [] } = {}
 ) => {
   let vals = {};
