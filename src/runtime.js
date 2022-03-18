@@ -101,8 +101,13 @@ export const makeModule = (
   url,
   { requires = [], nativeRequires = [] } = {}
 ) => {
+  let vals = {};
   let reqs = [];
   let nReqs = [];
+
+  for (let [k, v] of Object.entries(provides)) {
+    vals[Symbol.for(k)] = v;
+  }
 
   for (let r of requires) {
     reqs.push(resolveRequire(r));
@@ -112,5 +117,5 @@ export const makeModule = (
     nReqs.push(resolveNativeRequire(nr));
   }
 
-  return new Module(name, provides, url, reqs, nReqs);
+  return new Module(name, vals, url, reqs, nReqs);
 };
