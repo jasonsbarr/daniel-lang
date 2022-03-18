@@ -46,6 +46,12 @@ These are the language forms I intend to implement that form the core of the lan
 - fail (with try/catch)
 - macro
 
+## Branches that show the stages of development
+
+- [01 - Tokenizer](https://github.com/jasonsbarr/daniel-lang/tree/01-tokenizer)
+- [02 - Reader](https://github.com/jasonsbarr/daniel-lang/tree/02-reader)
+- [03 - Eval](https://github.com/jasonsbarr/daniel-lang/tree/03-eval)
+
 ## Goals
 
 Here are some features I have planned on the roadmap:
