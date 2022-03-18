@@ -70,7 +70,7 @@ class Module {
    * @param {Object} provides
    */
   constructor(name, provides) {
-    this.name = name;
+    this.name = Symbol(name);
     this.url = url;
     this.provides = provides;
   }
@@ -83,6 +83,7 @@ class Module {
 /**
  * Make a Daniel module from a collection of provided JavaScript objects
  * @param {String} name The module name
+ * @param {String} url The module URL
  * @param {Object} provides The bindings it provides
  * @returns {Module}
  */
