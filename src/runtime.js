@@ -1,6 +1,6 @@
-import path from "path";
-import { curryN } from "@jasonsbarr/functional-core";
-import { dirname } from "./utils.js";
+const path = require("path");
+// const { curryN } from "@jasonsbarr/functional-core";
+const { dirname } = require("./utils.js");
 
 const __dirname = dirname(import.meta.url);
 
@@ -14,7 +14,7 @@ const __dirname = dirname(import.meta.url);
  * @param {Boolean} varargs
  * @param {String} module
  */
-export const makeFunction = (
+const makeFunction = (
   func,
   { name, arity, module = "<main>", varargs = false } = {}
 ) => {
@@ -41,7 +41,7 @@ export const makeFunction = (
  * @param {String} rq
  * @returns {String}
  */
-export const resolveRequire = (rq) => {};
+const resolveRequire = (rq) => {};
 
 /**
  * Resolves a native (JS) module to an absolute path from a require string
@@ -50,7 +50,7 @@ export const resolveRequire = (rq) => {};
  * @param {String} rq
  * @returns {String}
  */
-export const resolveNativeRequire = (rq) => {
+const resolveNativeRequire = (rq) => {
   if (rq.startsWith("builtin:")) {
     const mod = rq.split(":")[1];
     return path.join(__dirname, "../lib/js", `${mod}.js`);
@@ -92,7 +92,7 @@ class Module {
  * @param {String[]} nativeRequires A list of native (JS) modules required
  * @returns {Module}
  */
-export const makeModule = (
+const makeModule = (
   name,
   provides,
   { requires = [], nativeRequires = [] } = {}
@@ -114,4 +114,11 @@ export const makeModule = (
   }
 
   return new Module(name, vals, reqs, nReqs);
+};
+
+module.exports = {
+  makeFunction,
+  resolveRequire,
+  resolveNativeRequire,
+  makeModule,
 };
