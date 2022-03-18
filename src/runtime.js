@@ -16,9 +16,7 @@ const __dirname = dirname(import.meta.url);
  */
 export const makeFunction = (
   func,
-  name,
-  arity,
-  { module = "<main>", varargs = false } = {}
+  { name, arity, module = "<main>", varargs = false } = {}
 ) => {
   name = name ?? (func.name || "<lambda>");
   arity = arity ?? func.length;
@@ -64,19 +62,21 @@ export const resolveNativeRequire = (rq) => {
 /**
  * A Daniel module created from a native (JS) object
  *
- * The file containing a native module should provide a named
- * export called module that is an object of this class
+ * The file containing a native module should provide a named export called
+ * module that is a function that returns an object of this class
  */
 class Module {
   /**
    * @param {String} name
    * @param {Object} provides
+   * @param {String} url
    * @param {String[]} requires
    * @param {String[]} nativeRequires
    */
-  constructor(name, provides, { requires = [], nativeRequires = [] } = {}) {
+  constructor(name, provides, requires = [], nativeRequires = []) {
     this.name = name;
     this.provides = provides;
+    this.url = url;
     this.requires = requires;
     this.nativeRequires = nativeRequires;
   }
@@ -90,6 +90,7 @@ class Module {
  * Make a Daniel module from a collection of provided JavaScript objects
  * @param {String} name The module name
  * @param {Object} provides The bindings it provides
+ * @param {String} url The file URL of the module
  * @param {String[]} requires A list of in-language required modules required
  * @param {String[]} nativeRequires A list of native (JS) modules required
  * @returns {Module}
@@ -97,6 +98,7 @@ class Module {
 export const makeModule = (
   name,
   provides,
+  url,
   { requires = [], nativeRequires = [] } = {}
 ) => {
   let reqs = [];
@@ -110,8 +112,5 @@ export const makeModule = (
     nReqs.push(resolveNativeRequire(nr));
   }
 
-  return new Module(name, provides, {
-    requires: reqs,
-    nativeRequires: nReqs,
-  });
+  return new Module(name, provides, url, reqs, nReqs);
 };
