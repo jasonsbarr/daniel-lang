@@ -11,6 +11,7 @@ const { getFileURL } = require("./utils");
  * @param {Number} arity
  * @param {Boolean} varargs
  * @param {String} module
+ * @returns {Function}
  */
 const makeFunction = (
   func,
