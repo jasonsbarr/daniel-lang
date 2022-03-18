@@ -15,12 +15,12 @@ const all =
  */
 const isBrowser = () => typeof window !== "undefined";
 
-let requireJs;
-if (!isBrowser()) {
-  requireJs = (path) => require(path);
-} else {
-  requireJs = async (mod) => await import(mod);
-}
+/**
+ * Shim for require since I don't want to rewrite everything using Node require
+ * @param {String} mod Path or URL to module
+ * @returns {Promise}
+ */
+export const require = async (mod) => import(mod);
 
 module.exports = {
   getFileURL,
