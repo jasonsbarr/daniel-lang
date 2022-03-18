@@ -1,9 +1,7 @@
 const { dirname: dn } = require("path");
-const { pathToFileURL, fileURLToPath } = require("url");
+const { pathToFileURL } = require("url");
 
 const getFileURL = (path) => pathToFileURL(path).href;
-
-const dirname = (url) => dn(fileURLToPath(url));
 
 const defer = (fn) =>
   typeof "setImmediate" !== "undefined" ? setImmediate(fn) : setTimeout(fn, 0);
@@ -15,7 +13,6 @@ const all =
 
 module.exports = {
   getFileURL,
-  dirname,
   defer,
   all,
 };

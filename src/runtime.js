@@ -1,8 +1,5 @@
 const path = require("path");
 // const { curryN } from "@jasonsbarr/functional-core";
-const { dirname } = require("./utils.js");
-
-const __dirname = dirname(import.meta.url);
 
 /**
  * Convert a JS function into a Daniel function object
