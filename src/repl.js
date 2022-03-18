@@ -1,6 +1,6 @@
-import { input, println } from "../lib/js/io.js";
-import { read } from "./reader/reader.js";
-import { evaluate } from "./interpreter/evaluate.js";
+const { input, println } = require("../lib/js/io.js");
+const read = require("./reader/reader.js");
+const evaluate = require("./interpreter/evaluate.js");
 
 const REP = (input) => println(evaluate(read(input, "<stdin>"), {}));
 

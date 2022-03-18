@@ -1,4 +1,4 @@
-export const evaluate = (ast, env = {}) => {
+const evaluate = (ast, env = {}) => {
   if (Array.isArray(ast)) {
     return evalList(ast, env);
   }
@@ -31,3 +31,5 @@ const evalBegin = (ast, env) => {
 
   return value;
 };
+
+module.exports = evaluate;
