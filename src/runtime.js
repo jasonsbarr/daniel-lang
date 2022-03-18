@@ -69,14 +69,10 @@ class Module {
   /**
    * @param {String} name
    * @param {Object} provides
-   * @param {String[]} requires
-   * @param {String[]} nativeRequires
    */
-  constructor(name, provides, requires = [], nativeRequires = []) {
+  constructor(name, provides) {
     this.name = name;
     this.provides = provides;
-    this.requires = requires;
-    this.nativeRequires = nativeRequires;
   }
 
   toString() {
@@ -88,32 +84,16 @@ class Module {
  * Make a Daniel module from a collection of provided JavaScript objects
  * @param {String} name The module name
  * @param {Object} provides The bindings it provides
- * @param {String[]} requires A list of in-language required modules required
- * @param {String[]} nativeRequires A list of native (JS) modules required
  * @returns {Module}
  */
-const makeModule = (
-  name,
-  provides,
-  { requires = [], nativeRequires = [] } = {}
-) => {
+const makeModule = (name, provides) => {
   let vals = {};
-  let reqs = [];
-  let nReqs = [];
 
   for (let [k, v] of Object.entries(provides)) {
     vals[Symbol.for(k)] = v;
   }
 
-  for (let r of requires) {
-    reqs.push(resolveRequire(r));
-  }
-
-  for (let nr of nativeRequires) {
-    nReqs.push(resolveNativeRequire(nr));
-  }
-
-  return new Module(name, vals, reqs, nReqs);
+  return new Module(name, vals);
 };
 
 module.exports = {
