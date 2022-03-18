@@ -9,6 +9,6 @@ export const defer = (fn) =>
   typeof "setImmediate" !== "undefined" ? setImmediate(fn) : setTimeout(fn, 0);
 
 export const all =
-  (fn) =>
+  (fn, init) =>
   (...list) =>
-    list.reduce(fn);
+    list.reduce(fn, init);
