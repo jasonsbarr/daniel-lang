@@ -85,10 +85,7 @@ export const resolveNativeRequire = (rq) => {
 class Module {
   /**
    * @param {String} name
-   * @param {String} url
    * @param {Object} provides
-   * @param {String[]} requires
-   * @param {String[]} nativeRequires
    */
   constructor(name, provides) {
     this.__name__ = name;
@@ -106,10 +103,7 @@ class Module {
 /**
  * Make a Daniel module from a collection of provided JavaScript objects
  * @param {String} name The module name
- * @param {String} url The module URL
  * @param {Object} provides The bindings it provides
- * @param {String[]} requires Daniel language module dependencies
- * @param {String[]} nativeRequires native (JS) module dependencies
  * @returns {Module}
  */
 export const makeModule = (name, provides) => {
