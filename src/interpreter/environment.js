@@ -18,7 +18,7 @@ export class Environment {
 
   /**
    * Get the value for {name} from the current env or one of its parents
-   * @param {Symbol} name Binding name to look up
+   * @param {String} name Binding name to look up
    * @returns {Any}
    */
   get(name) {
@@ -28,7 +28,7 @@ export class Environment {
 
   /**
    * Check if {name} exists in the current env or one of its parents
-   * @param {Symbol} name
+   * @param {String} name
    */
   lookup(name) {
     let scope = this;
@@ -46,7 +46,7 @@ export class Environment {
 
   /**
    * Bind a value to a name in the current environment
-   * @param {Symbol} name
+   * @param {String} name
    * @param {Any} value
    */
   set(name, value) {

@@ -33,26 +33,27 @@ export const makeFunction = (
 ) => {
   name = name ?? (func.name || "<lambda>");
   arity = arity ?? func.length;
-  func = (...args) => {
-    const f = curryN(arity, func);
-    const val = f(...args);
+  let f = (...args) => {
+    func = curryN(arity, func);
+    const val = func(...args);
 
     if (typeof val === "function" && !val.daniel) {
+      console.log("making function");
       return makeFunction(val, module, { varargs });
     }
     return val;
   };
-  func.__name__ = name;
-  func.arity = arity;
-  func.module = module;
-  func.varargs = varargs;
-  func.daniel = true;
+  f.__name__ = name;
+  f.arity = arity;
+  f.module = module;
+  f.varargs = varargs;
+  f.daniel = true;
 
-  Object.defineProperty(func, "toString", {
+  Object.defineProperty(f, "toString", {
     enumerable: false,
     writable: false,
     configurable: false,
-    value: () => `Function(${func.module}.${func.name})`,
+    value: () => `Function(${f.module}.${f.__name__})`,
   });
 
   return func;

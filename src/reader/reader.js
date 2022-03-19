@@ -97,7 +97,7 @@ const readAtom = (reader) => {
   }
 
   if (token.match("Symbol")) {
-    return { ...token, value: Symbol.for(token.text) };
+    return { ...token, value: token.text };
   }
 
   throw new ReadError(token.text, token.line, token.col);
@@ -118,6 +118,7 @@ const readList = (reader, start = "LParen", end = "RParen") => {
 
   while (!token.match(end)) {
     const expr = readForm(reader);
+    let t = token;
 
     if (expr) {
       ast.push(expr);
@@ -126,7 +127,7 @@ const readList = (reader, start = "LParen", end = "RParen") => {
     token = reader.peek();
 
     if (!token) {
-      throw new ReadError("EOF", token.line, token.col);
+      throw new ReadError("EOF", t.line, t.col);
     }
   }
 
@@ -207,7 +208,7 @@ export const read = (input, file) => {
       col: first.col,
       pos: first.pos,
       file: first.file,
-      value: Symbol.for("begin"),
+      value: "begin",
     };
   } else {
     begin = {
@@ -217,7 +218,7 @@ export const read = (input, file) => {
       col: 0,
       pos: 0,
       file: "",
-      value: Symbol.for("begin"),
+      value: "begin",
     };
   }
 
