@@ -36,6 +36,10 @@ Starting out, I will create different branches for different stages of the imple
 - 09 - Modules and imports
 - 10 - Lists
 - 11 - Maps and structs
+- 12 - Classes and objects
+- 13 - Quote, quasiquote, and unquote
+- 14 - Syntactic extensions (macros)
+- 15 - Exceptions and error handling
 
 ## Goals
 
