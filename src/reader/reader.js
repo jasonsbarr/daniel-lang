@@ -118,12 +118,13 @@ const readList = (reader, start = "LParen", end = "RParen") => {
 
   while (!token.match(end)) {
     const expr = readForm(reader);
-    let t = token;
 
     if (expr) {
       ast.push(expr);
     }
 
+    // get previous token in case of EOF
+    let t = reader.tokens[reader.pos - 1];
     token = reader.peek();
 
     if (!token) {
