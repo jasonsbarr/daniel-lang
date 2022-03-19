@@ -97,7 +97,7 @@ const readAtom = (reader) => {
   }
 
   if (token.match("Symbol")) {
-    return { ...token, value: Symbol.for(token.text) };
+    return { ...token, value: token.text };
   }
 
   throw new ReadError(token.text, token.line, token.col);
