@@ -1,14 +1,9 @@
-import {
-  STDIN,
-  STDOUT,
-  STDERR,
-  resolveRequire,
-  resolveNativeRequire,
-} from "./runtime";
+import { resolveRequire, resolveNativeRequire, createRuntime } from "./runtime";
 
 let moduleTable = {};
 let nameMap = {};
 let modules = {};
+const rt = createRuntime();
 
 const getModuleURLs = (requires, nativeRequires) => {
   let urls = [];
@@ -100,8 +95,22 @@ const define = (name, url, deps, module) => {
     url,
     deps,
     module,
-    resolved: false,
   };
+};
+
+const evaluateModules = (depsOrder) => {
+  for (let dep of depsOrder) {
+    let deps = moduleTable[dep].deps;
+    let mods = [];
+    for (let d of deps) {
+      // depsOrder starts with the root module and traverses the array
+      // built up from the dependency graph, so each module is
+      // guaranteed to have its dependencies already resolved
+      mods.push(modules[d]);
+    }
+    // resolve the module
+    modules[dep] = moduleTable[dep].module(rt, ...mods);
+  }
 };
 
 /**
@@ -112,6 +121,7 @@ const define = (name, url, deps, module) => {
  */
 export const loadModules = async ({ name = "", native = true } = {}) => {
   let moduleURL = native ? resolveNativeRequire(name) : resolveRequire(name);
+  const { url } = await import(moduleURL);
 
   // populate moduleTable with dependency tree
   const defineModule = (moduleURL) => {
@@ -128,5 +138,8 @@ export const loadModules = async ({ name = "", native = true } = {}) => {
   };
 
   defineModule(moduleURL);
+  const loadOrder = getLoadOrder([url]);
+  evaluateModules(loadOrder);
+
   return modules;
 };
