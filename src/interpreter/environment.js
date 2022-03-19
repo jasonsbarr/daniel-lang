@@ -6,6 +6,7 @@ export class Environment {
     this.module = module;
     this.name = name;
     this.namespace = Object.create(null);
+    this.children = [];
   }
 
   /**
@@ -13,7 +14,9 @@ export class Environment {
    * @param {String} name Name for the new env
    */
   extend(name) {
-    return createEnv(this, { module: this.module, name });
+    const env = createEnv(this, { module: this.module, name });
+    this.children.push(env);
+    return env;
   }
 
   /**
