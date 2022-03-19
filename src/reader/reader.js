@@ -123,10 +123,12 @@ const readList = (reader, start = "LParen", end = "RParen") => {
       ast.push(expr);
     }
 
+    // get previous token in case of EOF
+    let t = reader.tokens[reader.pos - 1];
     token = reader.peek();
 
     if (!token) {
-      throw new ReadError("EOF", token.line, token.col);
+      throw new ReadError("EOF", t.line, t.col);
     }
   }
 
