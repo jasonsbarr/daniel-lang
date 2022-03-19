@@ -1,3 +1,1 @@
-const evalInput = (input, env = {}) => input;
-
-module.exports = evalInput;
+export const evalInput = (input, env = {}) => input;
