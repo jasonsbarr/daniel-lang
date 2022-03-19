@@ -29,6 +29,13 @@ Starting out, I will create different branches for different stages of the imple
 - [02 - Reader](https://github.com/jasonsbarr/daniel-lang/tree/02-reader)
 - [03 - Eval](https://github.com/jasonsbarr/daniel-lang/tree/03-eval)
 - [04 - Environments, global modules, and call expressions](https://github.com/jasonsbarr/daniel-lang/tree/04-env-call)
+- 05 - If and for
+- 06 - Define and let
+- 07 - Fun, fun, functions
+- 08 - Making a CLI tool
+- 09 - Modules and imports
+- 10 - Lists
+- 11 - Maps and structs
 
 ## Goals
 
