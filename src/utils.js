@@ -1,4 +1,5 @@
-import { pathToFileURL } from "url";
+import { pathToFileURL, fileURLToPath } from "url";
+import { dirname as dn } from "path";
 
 export const getFileURL = (path) => pathToFileURL(path).href;
 
@@ -14,3 +15,5 @@ export const all =
  * If not a browser, we'll assume the JS runtime is Node
  */
 export const isBrowser = () => typeof window !== "undefined";
+
+export const dirname = (url) => dn(fileURLToPath(url));

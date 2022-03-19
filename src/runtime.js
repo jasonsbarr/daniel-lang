@@ -1,13 +1,18 @@
 import path from "path";
 import { curryN } from "ramda";
-import { getFileURL, isBrowser } from "./utils";
+import { getFileURL, isBrowser, dirname } from "./utils";
 
+const __dirname = dirname(import.meta.url);
 let STDOUT, STDIN, STDERR;
 
 if (!isBrowser()) {
   STDOUT = process.stdout;
   STDIN = process.stdin;
   STDERR = process.stderr;
+} else {
+  STDOUT = { write: console.log };
+  STDIN = {};
+  STDERR = { write: console.error };
 }
 
 /**
@@ -142,17 +147,6 @@ export const createRuntime = ({
     isBrowser,
     isDanielFunction,
   };
-};
-
-module.exports = {
-  STDOUT,
-  STDIN,
-  STDERR,
-  makeFunction,
-  resolveRequire,
-  resolveNativeRequire,
-  makeModule,
-  createRuntime,
 };
 
 export { STDOUT, STDIN, STDERR };
