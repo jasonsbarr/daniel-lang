@@ -19,4 +19,4 @@ export const createGlobalEnv = () => {
   return globalEnv;
 };
 
-console.log(createGlobalEnv());
+export const globals = createGlobalEnv();
