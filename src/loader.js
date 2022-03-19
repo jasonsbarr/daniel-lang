@@ -1,4 +1,8 @@
-import { resolveRequire, resolveNativeRequire, createRuntime } from "./runtime";
+import {
+  resolveRequire,
+  resolveNativeRequire,
+  createRuntime,
+} from "./runtime.js";
 
 let moduleTable = {};
 let nameMap = {};
@@ -109,7 +113,7 @@ const evaluateModules = (depsOrder) => {
       mods.push(modules[d]);
     }
     // resolve the module
-    modules[dep] = moduleTable[dep].module(rt, ...mods);
+    modules[dep] = moduleTable[dep].module(rt, ...mods).provides;
   }
 };
 
@@ -119,26 +123,27 @@ const evaluateModules = (depsOrder) => {
  * @param {Boolean} native
  * @returns
  */
-export const loadModules = async ({ name = "", native = true } = {}) => {
+export const loadModules = async ({ name = "", native = false } = {}) => {
   let moduleURL = native ? resolveNativeRequire(name) : resolveRequire(name);
-  const { url } = await import(moduleURL);
+  nameMap[moduleURL] = name;
 
   // populate moduleTable with dependency tree
-  const defineModule = (moduleURL) => {
-    let { name, url, requires, nativeRequires, module } = await import(
-      moduleURL
-    );
+  const defineModule = async (moduleURL) => {
+    let { name, requires, nativeRequires, module } = await import(moduleURL);
     const rootDeps = getModuleURLs(requires, nativeRequires);
-    define(name, url, rootDeps, module);
 
-    for (let dep of rootDeps) {
+    if (!(moduleURL in moduleTable)) {
+      define(name, moduleURL, rootDeps, module);
+    }
+
+    for await (let dep of rootDeps) {
       let url = dep;
-      defineModule(url);
+      await defineModule(url);
     }
   };
 
-  defineModule(moduleURL);
-  const loadOrder = getLoadOrder([url]);
+  await defineModule(moduleURL);
+  const loadOrder = getLoadOrder([moduleURL]);
   evaluateModules(loadOrder);
 
   return modules;

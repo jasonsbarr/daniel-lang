@@ -1,4 +1,4 @@
-import { RefError } from "../../lib/js/error";
+import { RefError } from "../../lib/js/error.js";
 
 export class Environment {
   constructor(parent, module, name) {
