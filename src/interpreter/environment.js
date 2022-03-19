@@ -54,7 +54,7 @@ export class Environment {
   }
 
   toString() {
-    return `Environment(module=${this.module}.${this.name})`;
+    return `Environment(module=${this.module}-${this.name})`;
   }
 }
 
