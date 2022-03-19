@@ -1,4 +1,4 @@
-const { Token, token, tokenize } = require("./tokenizer.js");
+import { Token, token, tokenize } from "./tokenizer.js";
 
 /**
  * Parsing error class
@@ -141,10 +141,13 @@ const readList = (reader, start = "LParen", end = "RParen") => {
  */
 const readListLiteral = (reader) => {
   const { line, col, pos } = reader.peek();
-  return [
-    { ...token("Symbol", "list", line, col, pos), value: Symbol.for("list") },
-    ...readList(reader, "LBrack", "RBrack"),
-  ];
+  return {
+    type: "ListPattern",
+    line,
+    col,
+    pos,
+    value: readList(reader, "LBrack", "RBrack"),
+  };
 };
 
 /**
@@ -153,10 +156,13 @@ const readListLiteral = (reader) => {
  */
 const readHashLiteral = (reader) => {
   const { line, col, pos } = reader.peek();
-  return [
-    { ...token("Symbol", "hash", line, col, pos), value: Symbol.for("list") },
-    ...readList(reader, "LBrace", "RBrace"),
-  ];
+  return {
+    type: "HashPattern",
+    line,
+    col,
+    pos,
+    value: readList(reader, "LBrace", "RBrace"),
+  };
 };
 
 /**
@@ -188,7 +194,7 @@ const readForm = (reader) => {
   }
 };
 
-const read = (input, file) => {
+export const read = (input, file) => {
   const reader = new Reader(tokenize(input, file));
   const first = reader.tokens[0];
   let begin;
@@ -227,5 +233,3 @@ const read = (input, file) => {
 
   return prog;
 };
-
-module.exports = read;

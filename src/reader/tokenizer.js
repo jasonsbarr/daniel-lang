@@ -7,7 +7,7 @@ class LexerError extends Error {
 /**
  * A Token represents a single lexeme
  */
-class Token {
+export class Token {
   /**
    * A token contains all the information necessary for evaluating it
    *
@@ -36,7 +36,7 @@ class Token {
   }
 }
 
-const token = (type, text, line, col, pos, file) =>
+export const token = (type, text, line, col, pos, file) =>
   new Token(type, text, line, col, pos, file);
 
 /**
@@ -211,10 +211,5 @@ const rules = [
 
 const lexer = new Lexer(rules);
 
-const tokenize = (input, file = "<stdin>") => lexer.input(input).tokenize(file);
-
-module.exports = {
-  token,
-  Token,
-  tokenize,
-};
+export const tokenize = (input, file = "<stdin>") =>
+  lexer.input(input).tokenize(file);
