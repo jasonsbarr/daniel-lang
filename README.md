@@ -28,6 +28,7 @@ Starting out, I will create different branches for different stages of the imple
 - [01 - Tokenizer](https://github.com/jasonsbarr/daniel-lang/tree/01-tokenizer)
 - [02 - Reader](https://github.com/jasonsbarr/daniel-lang/tree/02-reader)
 - [03 - Eval](https://github.com/jasonsbarr/daniel-lang/tree/03-eval)
+- [04 - Environments, global modules, and call expressions](https://github.com/jasonsbarr/daniel-lang/tree/04-env-call)
 
 ## Goals
 
