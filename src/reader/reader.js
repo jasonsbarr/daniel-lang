@@ -1,4 +1,4 @@
-import { Token, token, tokenize } from "./tokenizer.js";
+import { Token, tokenize } from "./tokenizer.js";
 
 /**
  * Parsing error class
