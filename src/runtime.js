@@ -38,7 +38,6 @@ export const makeFunction = (
     const val = func(...args);
 
     if (typeof val === "function" && !val.daniel) {
-      console.log("making function");
       return makeFunction(val, module, { varargs });
     }
     return val;
@@ -56,7 +55,7 @@ export const makeFunction = (
     value: () => `Function(${f.module}.${f.__name__})`,
   });
 
-  return func;
+  return f;
 };
 
 /**
