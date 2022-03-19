@@ -1,6 +1,6 @@
-const { RefError } = require("../../lib/js/error");
+import { RefError } from "../../lib/js/error";
 
-class Environment {
+export class Environment {
   constructor(parent, module, name) {
     this.parent = parent;
     this.module = module;
@@ -58,12 +58,7 @@ class Environment {
   }
 }
 
-const createEnv = (
+export const createEnv = (
   parent = null,
   { module = "<main>", name = "global" } = {}
 ) => new Environment(parent, module, name);
-
-module.exports = {
-  Environment,
-  createEnv,
-};

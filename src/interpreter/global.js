@@ -1,5 +1,3 @@
-const { createEnv } = require("./environment");
+import { createEnv } from "./environment";
 
-const createGlobalEnv = () => {};
-
-module.exports = createGlobalEnv;
+export const createGlobalEnv = () => {};

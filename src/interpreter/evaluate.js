@@ -1,4 +1,4 @@
-const evaluate = (ast, env = {}) => {
+export const evaluate = (ast, env = {}) => {
   if (Array.isArray(ast)) {
     return evalList(ast, env);
   }
@@ -15,14 +15,14 @@ const evalList = (ast, env) => {
 
   switch (fst.value) {
     case Symbol.for("begin"):
-      return evalBegin(ast.slice(1), env);
+      return evalBlock(ast.slice(1), env);
 
     default:
       return null;
   }
 };
 
-const evalBegin = (ast, env) => {
+const evalBlock = (ast, env) => {
   let value;
 
   for (let exp of ast) {
@@ -31,5 +31,3 @@ const evalBegin = (ast, env) => {
 
   return value;
 };
-
-module.exports = evaluate;

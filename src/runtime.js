@@ -1,6 +1,6 @@
-const path = require("path");
-const { curryN } = require("ramda");
-const { getFileURL, isBrowser } = require("./utils");
+import path from "path";
+import { curryN } from "ramda";
+import { getFileURL, isBrowser } from "./utils";
 
 let STDOUT, STDIN, STDERR;
 
@@ -21,7 +21,7 @@ if (!isBrowser()) {
  * @param {String} module
  * @returns {Function}
  */
-const makeFunction = (
+export const makeFunction = (
   func,
   module = "<main>",
   { name, arity, varargs = false } = {}
@@ -58,7 +58,7 @@ const makeFunction = (
  * @param {String} rq
  * @returns {String}
  */
-const resolveRequire = (rq) => {};
+export const resolveRequire = (rq) => {};
 
 /**
  * Resolves a native (JS) module to an absolute path from a require string
@@ -67,7 +67,7 @@ const resolveRequire = (rq) => {};
  * @param {String} rq
  * @returns {String}
  */
-const resolveNativeRequire = (rq) => {
+export const resolveNativeRequire = (rq) => {
   return getFileURL(path.join(__dirname, "../lib/js", `${rq}.js`));
 };
 
@@ -107,7 +107,7 @@ class Module {
  * @param {String[]} nativeRequires native (JS) module dependencies
  * @returns {Module}
  */
-const makeModule = (name, url, provides, requires, nativeRequires) => {
+export const makeModule = (name, url, provides, requires, nativeRequires) => {
   let vals = Object.create(null);
 
   for (let [k, v] of Object.entries(provides)) {
@@ -130,7 +130,7 @@ const isDanielFunction = (func) => typeof func === "function" && func.daniel;
  * @param {Object} stdout
  * @returns {Object}
  */
-const createRuntime = ({
+export const createRuntime = ({
   stdin = STDIN,
   stdout = STDOUT,
   stderr = STDERR,
@@ -154,3 +154,5 @@ module.exports = {
   makeModule,
   createRuntime,
 };
+
+export { STDOUT, STDIN, STDERR };
