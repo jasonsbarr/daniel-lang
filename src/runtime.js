@@ -90,16 +90,16 @@ class Module {
    * @param {String[]} requires
    * @param {String[]} nativeRequires
    */
-  constructor(name, url, provides, requires, nativeRequires) {
-    this.name = Symbol(name);
-    this.url = url;
-    this.provides = provides;
-    this.requires = requires;
-    this.nativeRequires = nativeRequires;
+  constructor(name, provides) {
+    this.__name__ = name;
+
+    for (let key of getAllOwnKeys(provides)) {
+      this[key] = provides[key];
+    }
   }
 
   toString() {
-    return `<${this.name}>`;
+    return `<${this.__name__}>`;
   }
 }
 
@@ -112,7 +112,7 @@ class Module {
  * @param {String[]} nativeRequires native (JS) module dependencies
  * @returns {Module}
  */
-export const makeModule = (name, url, provides, requires, nativeRequires) => {
+export const makeModule = (name, provides) => {
   let vals = Object.create(null);
   let keys = getAllOwnKeys(provides);
 
@@ -120,7 +120,7 @@ export const makeModule = (name, url, provides, requires, nativeRequires) => {
     vals[key] = provides[key];
   }
 
-  return new Module(name, url, vals, requires, nativeRequires);
+  return new Module(name, vals);
 };
 
 /**

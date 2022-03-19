@@ -113,7 +113,7 @@ const evaluateModules = (depsOrder) => {
       mods.push(modules[d]);
     }
     // resolve the module
-    modules[dep] = moduleTable[dep].module(rt, ...mods).provides;
+    modules[dep] = moduleTable[dep].module(rt, ...mods);
   }
 };
 
