@@ -1,6 +1,6 @@
-const { input, print } = require("../lib/js/io.js");
-const read = require("./reader/reader.js");
-const evalInput = require("./eval.js");
+import { input, print } from "../lib/js/io.js";
+import { read } from "./reader/reader.js";
+import { evalInput } from "./eval.js";
 
 const REP = (input) => print(evalInput(read(input), {}));
 
