@@ -1,6 +1,6 @@
 import path from "path";
 import { curryN } from "ramda";
-import { getFileURL, isBrowser, dirname } from "./utils.js";
+import { getFileURL, isBrowser, dirname, getAllOwnKeys } from "./utils.js";
 
 const __dirname = dirname(import.meta.url);
 let STDOUT, STDIN, STDERR;
@@ -114,9 +114,7 @@ class Module {
  */
 export const makeModule = (name, url, provides, requires, nativeRequires) => {
   let vals = Object.create(null);
-  let keys = Object.keys(provides).concat(
-    Object.getOwnPropertySymbols(provides)
-  );
+  let keys = getAllOwnKeys(provides);
 
   for (let key of keys) {
     vals[key] = provides[key];

@@ -17,3 +17,6 @@ export const all =
 export const isBrowser = () => typeof window !== "undefined";
 
 export const dirname = (url) => dn(fileURLToPath(url));
+
+export const getAllOwnKeys = (obj) =>
+  Object.keys(obj).concat(Object.getOwnPropertySymbols(obj));

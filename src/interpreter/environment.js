@@ -60,5 +60,5 @@ export class Environment {
 
 export const createEnv = (
   parent = null,
-  { module = "<main>", name = "global" } = {}
+  { module = "<global>", name = "global" } = {}
 ) => new Environment(parent, module, name);
