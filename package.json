@@ -3,6 +3,7 @@
   "description": "A Lisp-like programming language for learning about programming languages, implemented in JavaScript",
   "version": "1.0.0",
   "main": "index.js",
+  "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
