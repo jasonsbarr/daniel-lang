@@ -91,7 +91,7 @@ const define = (name, url, deps, module) => {
     throw new Error("Module must be a function type");
   }
 
-  if (name in moduleTable) {
+  if (url in moduleTable) {
     throw new Error(`Module ${name} already queued`);
   }
 
