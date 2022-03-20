@@ -129,13 +129,13 @@ const evalFor = (ast, env) => {
   }
 
   // clause = [id sequence]
-  const clauses = ast[1];
+  const clause = ast[1];
   const body = ast[2];
   let value;
 
   // for now, we'll just do iteration over a single sequence
   // later we may allow multiple clauses
-  let [id, seq] = clauses[0];
+  let [id, seq] = clause;
   id = id.value;
   seq = evaluate(seq, env);
 
