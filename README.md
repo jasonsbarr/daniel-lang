@@ -25,6 +25,10 @@ However, when I say "educational purposes" I most certainly do _not_ mean that D
 
 Starting out, I will create different branches for different stages of the implementation. I will release videos and possibly also articles to go with each of these branches to aid in understanding what I'm doing and why I'm doing it. For example, there will be branches on lexical analysis, parsing, building the interpreter, and other relevant topics. Later on, as I get into more difficult topics, I may have to pursue a different strategy with branching because I'll be doing a fair bit of trial and error and hacking things together as the language gets beyond my current level of understanding.
 
+## Why JavaScript?
+
+I'm implementing this language in JavaScript for two reasons: first, it's probably my strongest language, so I don't have to think too much about how to use the tools at my disposal and can focus on implementing the language. Second, JavaScript is pretty easy to learn and read and a lot of people out there know it, and I wanted the code to be as accessible as possible. OCaml and F# are great languages for writing interpreters and compilers, but if I used OCaml it would greatly reduce the number of people who could understand my code.
+
 ## Core language forms
 
 These are the language forms I intend to implement that form the core of the language:
