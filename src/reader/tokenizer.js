@@ -188,6 +188,7 @@ const LBRACK = rule("LBrack", String.raw`\[`);
 const RBRACK = rule("RBrack", String.raw`\]`);
 const LBRACE = rule("LBrace", String.raw`\{`);
 const RBRACE = rule("RBrace", String.raw`\}`);
+const AMP = rule("Amp", String.raw`&`);
 const SYMBOL = rule(
   "Symbol",
   String.raw`[:=<>%:\|\?\\\/\*\.\p{L}_\$!\+-][:=@~<>%:&\|\?\\\/\^\*\.&#'\p{L}\p{N}_\$!\+-]*`
@@ -206,6 +207,7 @@ const rules = [
   RBRACK,
   LBRACE,
   RBRACE,
+  AMP,
   SYMBOL,
 ];
 

@@ -168,6 +168,21 @@ const readHashLiteral = (reader) => {
 };
 
 /**
+ * Read a varargs operator
+ * @param {Reader} reader
+ */
+const readAmp = (reader) => {
+  const { line, col, pos } = reader.next();
+  return {
+    type: "Varargs",
+    line,
+    col,
+    pos,
+    value: "&",
+  };
+};
+
+/**
  * Dispatcher function for token stream reader
  * @param {Reader} reader
  */
@@ -191,6 +206,8 @@ const readForm = (reader) => {
       return readListLiteral(reader);
     case "LBrace":
       return readHashLiteral(reader);
+    case "Amp":
+      return readAmp(reader);
     default:
       return readAtom(reader);
   }
