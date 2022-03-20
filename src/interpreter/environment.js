@@ -30,6 +30,17 @@ export class Environment {
   }
 
   /**
+   * See if a name is already bound in the current Environment
+   * @param {String} name
+   * @returns {Boolean}
+   */
+  inCurrent(name) {
+    // doing this instead of name in this.namespace so I can use it
+    // later to check for lexical scope violations
+    return this.namespace[name] !== undefined;
+  }
+
+  /**
    * Check if {name} exists in the current env or one of its parents
    * @param {String} name
    */
