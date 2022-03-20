@@ -1,4 +1,4 @@
-import { TyError } from "../../lib/js/error.js";
+import { RuntimeError, TyError, OutOfRangeError } from "../../lib/js/error.js";
 import { getType } from "../../lib/js/base.js";
 
 const checkNumeric = (obj) => {
@@ -21,6 +21,21 @@ export class Range {
     this.end = end;
     this.step = step;
     this.type = "range";
+    this.length = Math.abs(end - start);
+  }
+
+  get(i) {
+    if (this.start < this.end) {
+      if (this.step * i + this.start < this.end) {
+        return this.step * i + this.start;
+      }
+    } else if (this.end < this.start) {
+      if (this.start - this.step * i > this.end) {
+        return this.start - this.step * i;
+      }
+    }
+
+    throw new OutOfRangeError(i);
   }
 
   [Symbol.iterator]() {
@@ -35,15 +50,14 @@ export class Range {
         let value;
 
         if (ascending && i < end) {
-          val = i;
-          i++;
+          value = i;
         } else if (!ascending && i > end) {
-          val = i;
-          i--;
+          value = i;
         } else {
           return { done: true };
         }
 
+        i += step;
         return { value, done: false };
       },
     };

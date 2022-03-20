@@ -1,6 +1,9 @@
-import { RuntimeError } from "../../lib/js/error.js";
+import { getType } from "../../lib/js/base.js";
+import { RuntimeError, TyError } from "../../lib/js/error.js";
 import { Environment } from "./environment.js";
 import { isTruthy, isIterable } from "./utils.js";
+
+let ID = 0;
 
 /**
  *
@@ -112,11 +115,39 @@ const evalIf = (ast, env) => {
   return evaluate(els, env);
 };
 
+/**
+ * Evaluate a for-expression (iteration)
+ *
+ * syntax: for -> (for (clause) (body))
+ * clause -> id sequence
+ * @param {Array} ast
+ * @param {Environment} env
+ */
 const evalFor = (ast, env) => {
   if (ast.length !== 3) {
     throw new RuntimeError("For expression must have exactly 2 subexpressions");
   }
 
-  const idSeq = ast[1];
+  // clause = [id sequence]
+  const clauses = ast[1];
   const body = ast[2];
+  let value;
+
+  // for now, we'll just do iteration over a single sequence
+  // later we may allow multiple clauses
+  let [id, seq] = clauses[0];
+  seq = evaluate(seq, env);
+
+  if (isIterable(seq)) {
+    for (let item of seq) {
+      let newEnv = env.extend(`forExpr${ID++}`);
+
+      newEnv.set(id, item);
+      value = evaluate(body, newEnv);
+    }
+  } else {
+    throw new TyError("iterable", getType(seq));
+  }
+
+  return value;
 };
