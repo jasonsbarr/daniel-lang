@@ -55,6 +55,9 @@ const evalList = (ast, env) => {
     case "let":
       return evalLet(ast, env);
 
+    case "lambda":
+      return evalLambda(ast, env);
+
     default:
       return evalCall(ast, env);
   }
@@ -218,3 +221,5 @@ const evalLet = (ast, env) => {
 
   return evaluate(body, newEnv);
 };
+
+const evalLambda = (ast, env) => {};
