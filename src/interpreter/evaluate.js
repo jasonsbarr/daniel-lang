@@ -46,6 +46,9 @@ const evalList = (ast, env) => {
     case "for":
       return evalFor(ast, env);
 
+    case "define":
+      return evalDefine(ast, env);
+
     default:
       return evalCall(ast, env);
   }
@@ -148,4 +151,21 @@ const evalFor = (ast, env) => {
   }
 
   return value;
+};
+
+/**
+ * Define a new binding in the current environment
+ * @param {Array} ast
+ * @param {Environment} env
+ */
+const evalDefine = (ast, env) => {
+  if (ast.length !== 3) {
+    throw new RuntimeError("Define must have exactly 2 subexpressions");
+  }
+
+  const id = ast[1];
+  const expr = ast[2];
+  const name = id.value;
+
+  env.set(name, evaluate(expr, env));
 };
