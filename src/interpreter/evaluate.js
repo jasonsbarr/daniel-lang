@@ -46,9 +46,6 @@ const evalList = (ast, env) => {
     case "for":
       return evalFor(ast, env);
 
-    case "for/list":
-      return evalForList(ast, env);
-
     default:
       return evalCall(ast, env);
   }
