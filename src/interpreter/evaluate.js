@@ -17,11 +17,21 @@ export const evaluate = (ast, env) => {
     return evalList(ast, env);
   }
 
-  if (ast.type === "Symbol") {
-    return evalSymbol(ast, env);
-  }
+  switch (ast.type) {
+    case "Symbol":
+      return evalSymbol(ast, env);
 
-  return ast.value;
+    case "Number":
+    case "String":
+    case "Boolean":
+    case "Nil":
+      return ast.value;
+
+    default:
+      throw new RuntimeError(
+        `Unknown expression type ${ast.type} at ${ast.file} ${ast.line}:${ast.col}`
+      );
+  }
 };
 
 /**
