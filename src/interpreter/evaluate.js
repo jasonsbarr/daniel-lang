@@ -136,6 +136,7 @@ const evalFor = (ast, env) => {
   // for now, we'll just do iteration over a single sequence
   // later we may allow multiple clauses
   let [id, seq] = clauses[0];
+  id = id.value;
   seq = evaluate(seq, env);
 
   if (isIterable(seq)) {
