@@ -30,7 +30,7 @@ Starting out, I will create different branches for different stages of the imple
 - [03 - Eval and call expressions](https://github.com/jasonsbarr/daniel-lang/tree/03-eval)
 - [04 - Modules and the module loader](https://github.com/jasonsbarr/daniel-lang/tree/04-module-loader)
 - 05 - Conditionals, iteration, and lists
-- 06 - Define and let
+- 06 - Define, set, and let
 - 07 - Fun, fun, functions
 - 08 - Making a CLI tool
 - 09 - Modules and imports
