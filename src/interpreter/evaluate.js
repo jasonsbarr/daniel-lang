@@ -175,6 +175,14 @@ const evalDefine = (ast, env) => {
 
   const id = ast[1];
   const expr = ast[2];
+
+  if (Array.isArray(id)) {
+    // is function definition
+    const name = id[0].value;
+    const args = id.slice(1);
+    return env.set(name, makeLambda(name, [args, expr], env));
+  }
+
   const name = id.value;
 
   if (env.inCurrent(name)) {
