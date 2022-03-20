@@ -2,6 +2,7 @@ import { getType } from "../../lib/js/base.js";
 import { RuntimeError, TyError, ValError } from "../../lib/js/error.js";
 import { Environment } from "./environment.js";
 import { isTruthy, isIterable } from "./utils.js";
+import { makeFunction } from "../runtime.js";
 
 let ID = 0;
 
@@ -222,4 +223,46 @@ const evalLet = (ast, env) => {
   return evaluate(body, newEnv);
 };
 
-const evalLambda = (ast, env) => {};
+/**
+ * Evaluate a lambda expression to create a function
+ * @param {Array} ast
+ * @param {Environment} env
+ * @returns {Function}
+ */
+const evalLambda = (ast, env) => {
+  if (ast.length !== 3) {
+    throw new RuntimeError(
+      "Lambda expression must have exactly 2 subexpressions"
+    );
+  }
+
+  const name = `lambda${ID++}`;
+  return makeLambda(name, ast.slice(1), env);
+};
+
+/**
+ *
+ * @param {String} name
+ * @param {Array} ast
+ * @param {Environment} env
+ * @returns {Function}
+ */
+const makeLambda = (name, ast, env) => {
+  const params = ast[0].map((t) => t.value);
+  const body = ast[1];
+  const lambda = (...args) => {
+    const scope = env.extend(name);
+
+    if (params && params.length) {
+      let i = 0;
+      for (let param of params) {
+        scope.set(param, args[i]);
+        i++;
+      }
+    }
+
+    return evaluate(body, scope);
+  };
+
+  return makeFunction(lambda, "<main>", { name });
+};
