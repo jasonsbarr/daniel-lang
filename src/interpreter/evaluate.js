@@ -1,6 +1,6 @@
 import { RuntimeError } from "../../lib/js/error.js";
 import { Environment } from "./environment.js";
-import { isTruthy } from "./utils.js";
+import { isTruthy, isIterable } from "./utils.js";
 
 /**
  *
@@ -39,6 +39,12 @@ const evalList = (ast, env) => {
 
     case "if":
       return evalIf(ast, env);
+
+    case "for":
+      return evalFor(ast, env);
+
+    case "for/list":
+      return evalForList(ast, env);
 
     default:
       return evalCall(ast, env);
@@ -105,3 +111,11 @@ const evalIf = (ast, env) => {
 
   return evaluate(els, env);
 };
+
+const evalFor = (ast, env) => {
+  if (ast.length !== 3) {
+    throw new RuntimeError("For expression must have exactly 2 subexpressions");
+  }
+};
+
+const evalForList = (ast, env) => {};
