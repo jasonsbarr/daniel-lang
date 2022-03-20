@@ -199,7 +199,9 @@ const evalDefine = (ast, env) => {
     throw new ValError(`Name ${name} has already been defined in this scope`);
   }
 
-  env.set(name, evaluate(expr, env));
+  const value = evaluate(expr, env);
+  env.set(name, value);
+  return value;
 };
 
 /**
@@ -215,8 +217,10 @@ const evalSet = (ast, env) => {
   const id = ast[1];
   const expr = ast[2];
   const name = id.value;
+  const value = evaluate(expr, env);
 
-  env.set(name, evaluate(expr, env));
+  env.set(name, value);
+  return value;
 };
 
 /**
