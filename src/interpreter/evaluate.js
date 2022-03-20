@@ -116,6 +116,7 @@ const evalFor = (ast, env) => {
   if (ast.length !== 3) {
     throw new RuntimeError("For expression must have exactly 2 subexpressions");
   }
-};
 
-const evalForList = (ast, env) => {};
+  const idSeq = ast[1];
+  const body = ast[2];
+};
