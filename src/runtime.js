@@ -128,6 +128,7 @@ const isDanielFunction = (func) => typeof func === "function" && func.daniel;
  * Returns a Daniel runtime object based on the current platform
  * @param {Object} stdin
  * @param {Object} stdout
+ * @param {Object} stderr
  * @returns {Object}
  */
 export const createRuntime = ({
