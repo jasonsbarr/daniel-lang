@@ -34,7 +34,7 @@ Starting out, I will create different branches for different stages of the imple
 - 07 - Fun, fun, functions
 - 08 - Making a CLI tool
 - 09 - Modules and imports
-- 10 - Lists
+- 10 - Adding keywords
 - 11 - Maps and structs
 - 12 - Classes and objects
 - 13 - Quote, quasiquote, and unquote
