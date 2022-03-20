@@ -20,3 +20,5 @@ export const dirname = (url) => dn(fileURLToPath(url));
 
 export const getAllOwnKeys = (obj) =>
   Object.keys(obj).concat(Object.getOwnPropertySymbols(obj));
+
+export const isNil = (obj) => obj === null || obj === undefined;
