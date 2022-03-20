@@ -171,7 +171,32 @@ const evalFor = (ast, env) => {
  * @param {Array} ast
  * @param {Environment} env
  */
-const evalForList = (ast, env) => {};
+const evalForList = (ast, env) => {
+  if (ast.length !== 3) {
+    throw new RuntimeError(
+      "List comprehension must have exactly 2 subexpressions"
+    );
+  }
+
+  const clause = ast[1];
+  const body = ast[2];
+  let list = [];
+  let [id, seq] = clause;
+  id = id.value;
+  seq = evaluate(seq, env);
+
+  if (isIterable(seq)) {
+    for (let item of seq) {
+      let newEnv = env.extend(`for/listExpr${ID++}`);
+      newEnv.set(id, item);
+      list.push(evaluate(body, newEnv));
+    }
+  } else {
+    throw new TyError("iterable", getType(seq));
+  }
+
+  return list;
+};
 
 /**
  * Define a new binding in the current environment
