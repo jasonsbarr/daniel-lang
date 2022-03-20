@@ -52,6 +52,9 @@ const evalList = (ast, env) => {
     case "set!":
       return evalSet(ast, env);
 
+    case "let":
+      return evalLet(ast, env);
+
     default:
       return evalCall(ast, env);
   }
@@ -170,6 +173,10 @@ const evalDefine = (ast, env) => {
   const expr = ast[2];
   const name = id.value;
 
+  if (env.inCurrent(name)) {
+    throw new ValError(`Name ${name} has already been defined in this scope`);
+  }
+
   env.set(name, evaluate(expr, env));
 };
 
@@ -188,4 +195,26 @@ const evalSet = (ast, env) => {
   const name = id.value;
 
   env.set(name, evaluate(expr, env));
+};
+
+/**
+ * Evaluate a let expression
+ * @param {Array} ast
+ * @param {Environment} env
+ */
+const evalLet = (ast, env) => {
+  if (ast.length !== 3) {
+    throw new RuntimeError("Let must have exactly 2 subexpressions");
+  }
+
+  const defns = ast[1];
+  const body = ast[2];
+  const newEnv = env.extend(`letExpr${ID++}`);
+
+  for (let [id, expr] of defns) {
+    let name = id.value;
+    newEnv.set(name, evaluate(expr, env));
+  }
+
+  return evaluate(body, newEnv);
 };
