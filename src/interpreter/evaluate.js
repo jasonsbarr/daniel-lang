@@ -249,7 +249,7 @@ const evalLambda = (ast, env) => {
 };
 
 /**
- *
+ * Create function object
  * @param {String} name
  * @param {Array} ast
  * @param {Environment} env
@@ -272,5 +272,5 @@ const makeLambda = (name, ast, env) => {
     return evaluate(body, scope);
   };
 
-  return makeFunction(lambda, "<main>", { name });
+  return makeFunction(lambda, "<main>", { name, arity: params.length });
 };
