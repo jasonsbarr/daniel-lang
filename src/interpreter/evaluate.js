@@ -211,10 +211,39 @@ const evalForList = (ast, env) => {
   return list;
 };
 
-const destructureList = () => {};
+/**
+ * Destructure a list into variable assignments
+ * @param {Array*} left
+ * @param {Array} right
+ * @param {Environment} env
+ */
+const destructureList = (left, right, env) => {
+  const names = left.value;
+  const exprs = right.value;
+
+  if (names.length > exprs.length) {
+    throw new RuntimeError(
+      `${names.length} identifiers but only ${exprs.length} values to unpack`
+    );
+  }
+
+  let i = 0;
+  let value;
+  for (let name of names) {
+    value = assign([name, exprs[i]], env);
+    i++;
+  }
+
+  return value;
+};
 
 const assign = (ast, env, def = true) => {
   const [id, expr] = ast;
+
+  if (id.type === "ListPattern") {
+    return destructureList(id, expr, env);
+  }
+
   const name = id.value;
 
   if (def && env.inCurrent(name)) {
