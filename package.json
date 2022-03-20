@@ -1,7 +1,7 @@
 {
   "name": "daniel-lang",
   "description": "A Lisp-like programming language for learning about programming languages, implemented in JavaScript",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "main": "index.js",
   "type": "module",
   "scripts": {
