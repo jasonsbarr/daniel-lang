@@ -1,5 +1,5 @@
 import { getType } from "../../lib/js/base.js";
-import { RuntimeError, TyError } from "../../lib/js/error.js";
+import { RuntimeError, TyError, ValError } from "../../lib/js/error.js";
 import { Environment } from "./environment.js";
 import { isTruthy, isIterable } from "./utils.js";
 
