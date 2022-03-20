@@ -18,6 +18,9 @@ export const evaluate = (ast, env) => {
   }
 
   switch (ast.type) {
+    case "ListPattern":
+      return evalListLiteral(ast, env);
+
     case "Symbol":
       return evalSymbol(ast, env);
 
@@ -208,12 +211,15 @@ const evalForList = (ast, env) => {
   return list;
 };
 
+const defineBinding = (ast, env, mutate = false) => {};
+
 /**
  * Define a new binding in the current environment
  * @param {Array} ast
  * @param {Environment} env
  */
 const evalDefine = (ast, env) => {
+  console.log(ast);
   if (ast.length !== 3) {
     throw new RuntimeError("Define must have exactly 2 subexpressions");
   }
@@ -227,16 +233,6 @@ const evalDefine = (ast, env) => {
     const args = id.slice(1);
     return env.set(name, makeLambda(name, [args, expr], env));
   }
-
-  const name = id.value;
-
-  if (env.inCurrent(name)) {
-    throw new ValError(`Name ${name} has already been defined in this scope`);
-  }
-
-  const value = evaluate(expr, env);
-  env.set(name, value);
-  return value;
 };
 
 /**
@@ -337,4 +333,19 @@ const makeLambda = (name, ast, env) => {
     return evaluate(body, scope);
   };
   return makeFunction(lambda, "<main>", { name, arity, varargs });
+};
+
+/**
+ *
+ * @param {Object} ast
+ * @param {Environment} env
+ */
+const evalListLiteral = (ast, env) => {
+  let list = [];
+
+  for (let val of ast.value) {
+    list.push(evaluate(val, env));
+  }
+
+  return list;
 };

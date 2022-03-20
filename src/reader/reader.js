@@ -142,12 +142,13 @@ const readList = (reader, start = "LParen", end = "RParen") => {
  * @param {Reader} reader
  */
 const readListLiteral = (reader) => {
-  const { line, col, pos } = reader.peek();
+  const { line, col, pos, file } = reader.peek();
   return {
     type: "ListPattern",
     line,
     col,
     pos,
+    file,
     value: readList(reader, "LBrack", "RBrack"),
   };
 };
@@ -157,12 +158,13 @@ const readListLiteral = (reader) => {
  * @param {Reader} reader
  */
 const readHashLiteral = (reader) => {
-  const { line, col, pos } = reader.peek();
+  const { line, col, pos, file } = reader.peek();
   return {
     type: "HashPattern",
     line,
     col,
     pos,
+    file,
     value: readList(reader, "LBrace", "RBrace"),
   };
 };
@@ -172,12 +174,13 @@ const readHashLiteral = (reader) => {
  * @param {Reader} reader
  */
 const readAmp = (reader) => {
-  const { line, col, pos } = reader.next();
+  const { line, col, pos, file } = reader.next();
   return {
     type: "Varargs",
     line,
     col,
     pos,
+    file,
     value: "&",
   };
 };
