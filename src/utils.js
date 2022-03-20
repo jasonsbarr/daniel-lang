@@ -22,3 +22,10 @@ export const getAllOwnKeys = (obj) =>
   Object.keys(obj).concat(Object.getOwnPropertySymbols(obj));
 
 export const isNil = (obj) => obj === null || obj === undefined;
+
+export const pipe = (val, ...fns) => fns.reduce((v, fn) => fn(v), val);
+
+export const compose =
+  (...fns) =>
+  (val) =>
+    pipe(val, ...fns);
