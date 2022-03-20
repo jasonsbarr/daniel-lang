@@ -40,6 +40,7 @@ Starting out, I will create different branches for different stages of the imple
 - 13 - Quote, quasiquote, and unquote
 - 14 - Syntactic extensions (macros)
 - 15 - Exceptions and error handling
+- 16 - Async
 
 ## Goals
 
