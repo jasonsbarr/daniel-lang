@@ -258,19 +258,34 @@ const evalLambda = (ast, env) => {
 const makeLambda = (name, ast, env) => {
   const params = ast[0].map((t) => t.value);
   const body = ast[1];
+  let varargs = params.includes("&");
+  let arity = params.length;
+
+  if (varargs) {
+    arity -= 2;
+  }
+
   const lambda = (...args) => {
     const scope = env.extend(name);
 
     if (params && params.length) {
       let i = 0;
       for (let param of params) {
-        scope.set(param, args[i]);
+        if (param === "&") {
+          varargs = true;
+          continue;
+        }
+
+        if (!varargs) {
+          scope.set(param, args[i]);
+        } else if (varargs) {
+          scope.set(param, args.slice(i));
+        }
         i++;
       }
     }
 
     return evaluate(body, scope);
   };
-
-  return makeFunction(lambda, "<main>", { name, arity: params.length });
+  return makeFunction(lambda, "<main>", { name, arity, varargs });
 };
