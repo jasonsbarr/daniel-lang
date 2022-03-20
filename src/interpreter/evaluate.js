@@ -229,14 +229,36 @@ const destructureList = (left, right, env) => {
 
   let i = 0;
   let value;
+  let rest = false;
   for (let name of names) {
+    if (name.value === "&") {
+      rest = true;
+      continue;
+    }
+
+    if (rest) {
+      if (names.slice(i + 1).length > 1) {
+        throw new RuntimeError(
+          "Can only have a single identifier after rest symbol"
+        );
+      }
+      return assign([name, exprs.slice(i)], env);
+    }
+
     value = assign([name, exprs[i]], env);
     i++;
   }
 
+  // return the last value
   return value;
 };
 
+/**
+ * Bind a value to a name
+ * @param {Array} ast
+ * @param {Environment} env
+ * @param {Boolean} def
+ */
 const assign = (ast, env, def = true) => {
   const [id, expr] = ast;
 
@@ -248,6 +270,17 @@ const assign = (ast, env, def = true) => {
 
   if (def && env.inCurrent(name)) {
     throw new ValError(`Name ${name} has already been defined in this scope`);
+  }
+
+  if (Array.isArray(expr)) {
+    // rest identifier present in destructuring list
+    let list = [];
+    for (let ex of expr) {
+      list.push(evaluate(ex, env));
+    }
+
+    env.set(name, list);
+    return list;
   }
 
   const value = evaluate(expr, env);
