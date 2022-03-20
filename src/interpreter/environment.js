@@ -35,9 +35,7 @@ export class Environment {
    * @returns {Boolean}
    */
   inCurrent(name) {
-    // doing this instead of name in this.namespace so I can use it
-    // later to check for lexical scope violations
-    return this.namespace[name] !== undefined;
+    return name in this.namespace;
   }
 
   /**
