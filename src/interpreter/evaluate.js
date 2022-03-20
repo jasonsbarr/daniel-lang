@@ -47,6 +47,9 @@ const evalList = (ast, env) => {
     case "for":
       return evalFor(ast, env);
 
+    case "for/list":
+      return evalForList(ast, env);
+
     case "define":
       return evalDefine(ast, env);
 
@@ -162,6 +165,13 @@ const evalFor = (ast, env) => {
 
   return value;
 };
+
+/**
+ * List comprehension
+ * @param {Array} ast
+ * @param {Environment} env
+ */
+const evalForList = (ast, env) => {};
 
 /**
  * Define a new binding in the current environment
