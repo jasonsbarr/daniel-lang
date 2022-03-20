@@ -211,6 +211,8 @@ const evalForList = (ast, env) => {
   return list;
 };
 
+const destructureList = () => {};
+
 const assign = (ast, env, def = true) => {
   const [id, expr] = ast;
   const name = id.value;
