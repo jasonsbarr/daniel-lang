@@ -87,7 +87,7 @@ const getLoadOrder = (deps) => {
 
 const define = (name, url, deps, module) => {
   if (module === undefined || typeof module !== "function") {
-    throw new Error("Module must be a function type");
+    throw new Error(`Module constructor for ${name} is not a function type`);
   }
 
   if (url in moduleTable) {
