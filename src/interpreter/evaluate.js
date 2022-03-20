@@ -211,7 +211,18 @@ const evalForList = (ast, env) => {
   return list;
 };
 
-const defineBinding = (ast, env, mutate = false) => {};
+const assign = (ast, env, def = true) => {
+  const [id, expr] = ast;
+  const name = id.value;
+
+  if (def && env.inCurrent(name)) {
+    throw new ValError(`Name ${name} has already been defined in this scope`);
+  }
+
+  const value = evaluate(expr, env);
+  env.set(name, value);
+  return value;
+};
 
 /**
  * Define a new binding in the current environment
@@ -219,7 +230,6 @@ const defineBinding = (ast, env, mutate = false) => {};
  * @param {Environment} env
  */
 const evalDefine = (ast, env) => {
-  console.log(ast);
   if (ast.length !== 3) {
     throw new RuntimeError("Define must have exactly 2 subexpressions");
   }
@@ -233,6 +243,8 @@ const evalDefine = (ast, env) => {
     const args = id.slice(1);
     return env.set(name, makeLambda(name, [args, expr], env));
   }
+
+  return assign([id, expr], env);
 };
 
 /**
@@ -245,13 +257,7 @@ const evalSet = (ast, env) => {
     throw new RuntimeError("Define must have exactly 2 subexpressions");
   }
 
-  const id = ast[1];
-  const expr = ast[2];
-  const name = id.value;
-  const value = evaluate(expr, env);
-
-  env.set(name, value);
-  return value;
+  return assign(ast.slice(1), env, false);
 };
 
 /**
@@ -268,9 +274,8 @@ const evalLet = (ast, env) => {
   const body = ast[2];
   const newEnv = env.extend(`letExpr${ID++}`);
 
-  for (let [id, expr] of defns) {
-    let name = id.value;
-    newEnv.set(name, evaluate(expr, env));
+  for (let defn of defns) {
+    assign(defn, newEnv);
   }
 
   return evaluate(body, newEnv);
