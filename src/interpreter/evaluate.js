@@ -1,5 +1,6 @@
 import { RuntimeError } from "../../lib/js/error.js";
 import { Environment } from "./environment.js";
+import { isTruthy } from "./utils.js";
 
 /**
  *
@@ -35,6 +36,9 @@ const evalList = (ast, env) => {
   switch (fst.value) {
     case "begin":
       return evalBlock(ast.slice(1), env);
+
+    case "if":
+      return evalIf(ast, env);
 
     default:
       return evalCall(ast, env);
@@ -84,4 +88,20 @@ const evalCall = (ast, env) => {
 const evalSymbol = (ast, env) => {
   const val = env.get(ast.value);
   return val;
+};
+
+const evalIf = (ast, env) => {
+  if (ast.length !== 4) {
+    throw new RuntimeError("If expression must have exactly 3 subexpressions");
+  }
+
+  const cond = ast[1];
+  const then = ast[2];
+  const els = ast[3];
+
+  if (isTruthy(evaluate(cond, env))) {
+    return evaluate(then, env);
+  }
+
+  return evaluate(els, env);
 };
