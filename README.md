@@ -52,7 +52,7 @@ These are the language forms I intend to implement that form the core of the lan
 - [02 - Reader](https://github.com/jasonsbarr/daniel-lang/tree/02-reader)
 - [03 - Eval and call expressions](https://github.com/jasonsbarr/daniel-lang/tree/03-eval)
 - [04 - Modules and the module loader](https://github.com/jasonsbarr/daniel-lang/tree/04-module-loader)
-- 05 - Conditionals and iteration
+- [05 - Conditionals and iteration](https://github.com/jasonsbarr/daniel-lang/tree/05-if-for)
 - 06 - Define, set, and let
 - 07 - Fun, fun, functions
 - 08 - Lists and destructuring
