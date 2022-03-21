@@ -142,6 +142,10 @@ export const createRuntime = ({
     stderr,
     isBrowser,
     isDanielFunction,
+    makeFunction,
+    makeModule,
+    resolveRequire,
+    resolveNativeRequire,
   };
 };
 
