@@ -7,6 +7,7 @@ export const argparser = (argv) => {
   const nakedOpts = ["-h", "-v"];
   let command;
   let file;
+  let evalString;
   let args = [];
   let i = 0;
   let option;
@@ -14,6 +15,7 @@ export const argparser = (argv) => {
   for (let arg of argv) {
     if (option) {
       option = false;
+      i++;
       continue;
     }
 
@@ -32,6 +34,12 @@ export const argparser = (argv) => {
       if (arg.includes("=")) {
         let [opt, value] = arg.split("=");
         args.push({ opt, value });
+      } else if (arg === "-e") {
+        if (!argv[i + i]) {
+          throw new Error("-e option requires a string to evaluate");
+        }
+        command = "eval";
+        evalString = argv[i + 1];
       } else {
         if (arg.length === 2 && argv[i + 1] && !argv[i + 1].startsWith("-")) {
           let opt = arg;
@@ -56,5 +64,5 @@ export const argparser = (argv) => {
     i++;
   }
 
-  return { command, file, args };
+  return { command, file, args, evalString };
 };
