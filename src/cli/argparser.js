@@ -4,9 +4,9 @@
  */
 export const argparser = (argv) => {
   const fileExt = /\.dan$/;
+  const nakedOpts = ["-h", "-v", "-i"];
   let command;
   let file;
-  let evalString;
   let args = [];
   let i = 0;
   let option;
@@ -16,7 +16,21 @@ export const argparser = (argv) => {
       option = false;
       continue;
     }
-    if (arg.startsWith("-")) {
+
+    if (argv.length === 1 && nakedOpts.includes(arg)) {
+    } else if (arg.startsWith("-")) {
+      switch (arg) {
+        case "-h":
+          command = "help";
+          break;
+        case "-v":
+          command = "version";
+          break;
+        case "-i":
+          break;
+        default:
+          throw new Error("Unrecognized option");
+      }
       if (arg.includes("=")) {
         let [opt, value] = arg.split("=");
         args.push({ opt, value });
