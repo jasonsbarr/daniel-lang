@@ -202,7 +202,10 @@ const evalForList = (ast, env) => {
     for (let item of seq) {
       let newEnv = env.extend(`for/listExpr${ID++}`);
       newEnv.set(id, item);
-      list.push(evaluate(body, newEnv));
+      let value = evaluate(body, newEnv);
+      if (value !== null && val !== undefined) {
+        list.push();
+      }
     }
   } else {
     throw new TyError("iterable", getType(seq));
