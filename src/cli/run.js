@@ -12,7 +12,7 @@ const version = JSON.parse(
   fs.readFileSync(path.join(__dirname, "../../package.json"), "utf-8")
 ).version;
 
-const getHelp = (cmd) => cmd.help;
+const getHelp = (cmd) => console.log(cmd.help);
 const exit = (code) => process.exit(code);
 const tryCatch = (fn, errFn) => {
   try {
@@ -20,6 +20,11 @@ const tryCatch = (fn, errFn) => {
   } catch (e) {
     return errFn(e);
   }
+};
+
+const helpCmd = {
+  run: () => {},
+  help: "Display this help message",
 };
 
 const replCmd = {
@@ -32,14 +37,16 @@ const replCmd = {
     );
     initializeRepl();
   },
-  help: "",
+  help: `Launch an interactive Daniel session.
+Usage: daniel`,
 };
 
 const evalCmd = {
   run: (evalString, args) => {
     println(EVAL(evalString));
   },
-  help: "",
+  help: `Evaluate a string argument as if it were Daniel code.
+Usage: daniel -e [code] or daniel eval [code]`,
 };
 
 const runCmd = {
@@ -54,7 +61,8 @@ const runCmd = {
     };
     return tryCatch(fn, errFn);
   },
-  help: "",
+  help: `Parse and evaluate a Daniel (*.dan) file.
+Usage: daniel [filename] or daniel run [filename]`,
 };
 
 const run = () => {
