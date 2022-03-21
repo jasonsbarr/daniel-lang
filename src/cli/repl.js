@@ -49,10 +49,41 @@ const isRecoverableError = (error, cmd, openParenCount, closeParenCount) => {
 
 const writer = (output) => printStr(output);
 
-repl.start({
-  prompt: `${chalk.cyanBright(`(daniel v${version}):>`)} `,
-  input: process.stdin,
-  output: process.stdout,
-  eval: EVAL,
-  writer,
-});
+const initializeRepl = () => {
+  const replServer = repl.start({
+    prompt: `${chalk.cyanBright(`(daniel v${version}):>`)} `,
+    input: process.stdin,
+    output: process.stdout,
+    eval: EVAL,
+    writer,
+  });
+
+  replServer.defineCommand("load", {
+    help: "Load a Daniel language file into the REPL session",
+    // use 'function' function because we need access to 'this'
+    action: function (file) {
+      try {
+        const stats = fs.statSync(file);
+
+        if (stats && stats.isFile()) {
+          replServer.editorMode - true;
+          const data = fs.readFileSync(file, "utf-8");
+          this.write(data);
+          replServer.editorMode = false;
+          this.write("\n");
+        } else {
+          this.output.write(`Failed to load: ${file} is not a valid file\n`);
+        }
+      } catch (e) {
+        if (e.message === "Cannot read property 'line' of undefined") {
+          // ignore error - sometimes parser errors at end of already-loaded file for some reason
+        } else {
+          this.output.write(`Failed to load: ${file}\n`);
+        }
+      }
+      this.displayPrompt();
+    },
+  });
+};
+
+initializeRepl();
