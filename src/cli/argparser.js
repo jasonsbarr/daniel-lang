@@ -35,7 +35,7 @@ export const argparser = (argv) => {
         let [opt, value] = arg.split("=");
         args.push({ opt, value });
       } else {
-        if (arg.length === 2 && !argv[i + 1].startsWith("-")) {
+        if (arg.length === 2 && argv[i + 1] && !argv[i + 1].startsWith("-")) {
           let opt = arg;
           let value = argv[i + 1];
           option = true;
