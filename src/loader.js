@@ -55,6 +55,11 @@ const getLoadOrder = (deps) => {
       return;
     }
 
+    if (node in modules) {
+      // it's already been evaluated and loaded
+      return;
+    }
+
     // it's unvisited, so mark it as currently being visited
     currentlyVisited[node] = true;
     if (node in toVisit) {
