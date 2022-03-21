@@ -96,6 +96,8 @@ const evalBlock = (ast, env) => {
   return value;
 };
 
+const unpackList = (list, env) => {};
+
 /**
  *
  * @param {Object[]} ast
