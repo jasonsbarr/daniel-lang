@@ -451,9 +451,20 @@ const makeLambda = (name, ast, env) => {
  */
 const evalListLiteral = (ast, env) => {
   let list = [];
+  let unpack = false;
 
   for (let val of ast.value) {
-    list.push(evaluate(val, env));
+    if (val.type === "Amp") {
+      unpack = true;
+      continue;
+    }
+
+    if (unpack === true) {
+      list.push(...unpackList(val, env));
+      unpack = false;
+    } else {
+      list.push(evaluate(val, env));
+    }
   }
 
   return list;
