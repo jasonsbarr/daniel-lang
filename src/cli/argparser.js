@@ -4,7 +4,7 @@
  */
 export const argparser = (argv) => {
   const fileExt = /\.dan$/;
-  const nakedOpts = ["-h", "-v", "-i"];
+  const nakedOpts = ["-h", "-v"];
   let command;
   let file;
   let args = [];
@@ -24,8 +24,6 @@ export const argparser = (argv) => {
           break;
         case "-v":
           command = "version";
-          break;
-        case "-i":
           break;
         default:
           throw new Error("Unrecognized option");
