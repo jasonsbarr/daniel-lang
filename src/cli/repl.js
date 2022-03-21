@@ -50,7 +50,7 @@ const isRecoverableError = (error, cmd, openParenCount, closeParenCount) => {
 const writer = (output) => printStr(output);
 
 repl.start({
-  prompt: `${chalk.green(`(daniel v${version}): >`)} `,
+  prompt: `${chalk.cyanBright(`(daniel v${version}):>`)} `,
   input: process.stdin,
   output: process.stdout,
   eval: EVAL,
