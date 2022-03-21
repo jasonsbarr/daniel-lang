@@ -3,9 +3,10 @@ import path from "path";
 import chalk from "chalk";
 import { argparser } from "./argparser.js";
 import { initializeRepl } from "./repl.js";
-import { EVAL } from "../eval.js";
+import { EVAL, EVAL_ENV } from "../eval.js";
 import { dirname } from "../utils.js";
 import { println } from "../../lib/js/io.js";
+import { globals } from "../interpreter/global.js";
 
 const __dirname = dirname(import.meta.url);
 const version = JSON.parse(
@@ -30,13 +31,26 @@ Usage: daniel --help or daniel -h`,
 
 const replCmd = {
   run(args) {
+    let env = globals;
+
+    for (let arg of args) {
+      if (arg.opt === "-i") {
+        const input = fs.readFileSync(arg.value, "utf-8");
+        env = EVAL_ENV(input, env);
+      } else {
+        throw new Error(
+          `Unknown option ${arg.opt} for interactive Daniel console`
+        );
+      }
+    }
+
     console.log(
       `${chalk.blueBright(
         `***** Welcome to the Daniel interactive prompt, v${version} *****`
       )}
     ${chalk.yellowBright('Enter ".help" for the list of available commands')}\n`
     );
-    initializeRepl();
+    initializeRepl(env);
   },
   help: `Launch an interactive Daniel session.
 Usage: daniel`,
