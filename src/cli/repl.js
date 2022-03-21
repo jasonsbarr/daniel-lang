@@ -49,7 +49,7 @@ const isRecoverableError = (error, cmd, openParenCount, closeParenCount) => {
 
 const writer = (output) => printStr(output);
 
-const initializeRepl = () => {
+export const initializeRepl = () => {
   const replServer = repl.start({
     prompt: `${chalk.cyanBright(`(daniel v${version}):>`)} `,
     input: process.stdin,
