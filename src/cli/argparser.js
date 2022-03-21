@@ -18,7 +18,6 @@ export const argparser = (argv) => {
     }
 
     if (argv.length === 1 && nakedOpts.includes(arg)) {
-    } else if (arg.startsWith("-")) {
       switch (arg) {
         case "-h":
           command = "help";
@@ -31,6 +30,7 @@ export const argparser = (argv) => {
         default:
           throw new Error("Unrecognized option");
       }
+    } else if (arg.startsWith("-")) {
       if (arg.includes("=")) {
         let [opt, value] = arg.split("=");
         args.push({ opt, value });
