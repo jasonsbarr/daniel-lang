@@ -1,9 +1,12 @@
 {
-  "name": "daniel-lang",
+  "name": "@jasonsbarr/daniel",
   "description": "A Lisp-like programming language for learning about programming languages, implemented in JavaScript",
   "version": "0.1.0",
   "main": "index.js",
   "type": "module",
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },

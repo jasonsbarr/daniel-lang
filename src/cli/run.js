@@ -153,5 +153,3 @@ export const run = () => {
       return exit(1);
   }
 };
-
-run();
