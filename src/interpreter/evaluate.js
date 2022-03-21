@@ -107,6 +107,28 @@ const evalBlock = (ast, env) => {
 };
 
 /**
+ * Unpack a list into function arguments or another list
+ * @param {Object|Object[]} list
+ * @param {Environment} env
+ */
+const unpackList = (list, env) => {
+  let items;
+
+  if (Array.isArray(list)) {
+    // is a call or other list expression
+    items = evalList(list, env);
+  } else if (list.type === "ListPattern") {
+    items = list.values.map((i) => evaluate(i, env));
+  } else if (list.type === "Symbol") {
+    items = evaluate(list, env);
+  } else {
+    throw new RuntimeError("Argument to unpack must be a list");
+  }
+
+  return items;
+};
+
+/**
  *
  * @param {Object[]} ast
  * @param {Environment} env
@@ -125,7 +147,22 @@ const evalCall = (ast, env) => {
     );
   }
 
-  const args = ast.slice(1).map((arg) => evaluate(arg, env));
+  const args = [];
+  let unpack = false;
+
+  for (let arg of ast.slice(1)) {
+    if (arg.type === "Amp") {
+      unpack = true;
+      continue;
+    }
+
+    if (unpack === true) {
+      args.push(...unpackList(arg, env));
+      unpack = false;
+    } else {
+      args.push(evaluate(arg, env));
+    }
+  }
 
   return fst.call(null, ...args);
 };
@@ -424,9 +461,20 @@ const makeLambda = (name, ast, env) => {
  */
 const evalListLiteral = (ast, env) => {
   let list = [];
+  let unpack = false;
 
   for (let val of ast.value) {
-    list.push(evaluate(val, env));
+    if (val.type === "Amp") {
+      unpack = true;
+      continue;
+    }
+
+    if (unpack === true) {
+      list.push(...unpackList(val, env));
+      unpack = false;
+    } else {
+      list.push(evaluate(val, env));
+    }
   }
 
   return list;
