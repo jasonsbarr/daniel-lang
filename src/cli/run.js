@@ -12,7 +12,7 @@ const version = JSON.parse(
   fs.readFileSync(path.join(__dirname, "../../package.json"), "utf-8")
 ).version;
 
-const getHelp = (cmd) => console.log(cmd.help);
+const getHelp = (cmd) => cmd.help;
 const exit = (code) => process.exit(code);
 const tryCatch = (fn, errFn) => {
   try {
@@ -23,12 +23,12 @@ const tryCatch = (fn, errFn) => {
 };
 
 const helpCmd = {
-  run: () => {},
+  run() {},
   help: "Display this help message",
 };
 
 const replCmd = {
-  run: (args) => {
+  run(args) {
     console.log(
       `${chalk.blueBright(
         `***** Welcome to the Daniel interactive prompt, v${version} *****`
@@ -42,7 +42,7 @@ Usage: daniel`,
 };
 
 const evalCmd = {
-  run: (evalString, args) => {
+  run(evalString, args) {
     println(EVAL(evalString));
   },
   help: `Evaluate a string argument as if it were Daniel code.
@@ -50,7 +50,7 @@ Usage: daniel -e [code] or daniel eval [code]`,
 };
 
 const runCmd = {
-  run: (file, args) => {
+  run(file, args) {
     const fn = () => {
       const input = fs.readFileSync(file, "utf-8");
       return EVAL(input);
@@ -63,6 +63,15 @@ const runCmd = {
   },
   help: `Parse and evaluate a Daniel (*.dan) file.
 Usage: daniel [filename] or daniel run [filename]`,
+};
+
+const versionCmd = {
+  run() {
+    console.log(`Daniel Programming Language, version ${version}`);
+  },
+
+  help: `Get the currently installed version of Daniel
+Usage: daniel help`,
 };
 
 const run = () => {
@@ -92,6 +101,13 @@ const run = () => {
         return exit(0);
       }
       return runCmd.run(file, args);
+
+    case "version":
+      if (args.includes("-h")) {
+        console.log(getHelp(versionCmd));
+        return exit(0);
+      }
+      return versionCmd.run();
 
     default:
       console.error(
