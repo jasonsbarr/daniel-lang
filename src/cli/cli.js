@@ -1,6 +1,7 @@
 import fs from "fs";
 import path from "path";
 import chalk from "chalk";
+import figlet from "figlet";
 import { argparser } from "./argparser.js";
 import { initializeRepl } from "./repl.js";
 import { EVAL, EVAL_ENV } from "../eval.js";
@@ -102,9 +103,10 @@ const versionCmd = {
 
 const commands = [replCmd, evalCmd, runCmd, versionCmd, helpCmd];
 const runHelp = () => {
+  console.log(chalk.blueBright(figlet.textSync("Daniel Programming Language")));
   console.log(
     chalk.blueBright(
-      `***** Welcome to the Daniel interactive prompt, v${version} *****\n`
+      `***** Welcome to the Daniel Programming Language, v${version} *****\n`
     )
   );
   for (let command of commands) {
