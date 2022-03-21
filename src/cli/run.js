@@ -24,7 +24,8 @@ const tryCatch = (fn, errFn) => {
 
 const helpCmd = {
   run() {},
-  help: "Display this help message",
+  help: `Display a help message listing all commands and their usage
+Usage: daniel help or daniel -h`,
 };
 
 const replCmd = {
@@ -71,7 +72,7 @@ const versionCmd = {
   },
 
   help: `Get the currently installed version of Daniel
-Usage: daniel help`,
+Usage: daniel version or daniel -v`,
 };
 
 const run = () => {

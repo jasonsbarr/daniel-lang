@@ -4,7 +4,7 @@
  */
 export const argparser = (argv) => {
   const fileExt = /\.dan$/;
-  const nakedOpts = ["-h", "-v"];
+  const nakedOpts = ["-h", "-v", "--help", "--version"];
   let command;
   let file;
   let evalString;
@@ -22,9 +22,11 @@ export const argparser = (argv) => {
     if (argv.length === 1 && nakedOpts.includes(arg)) {
       switch (arg) {
         case "-h":
+        case "--help":
           command = "help";
           break;
         case "-v":
+        case "--version":
           command = "version";
           break;
         default:
