@@ -51,7 +51,7 @@ const writer = (output) => printStr(output);
 
 export const initializeRepl = () => {
   const replServer = repl.start({
-    prompt: `${chalk.cyanBright(`(daniel v${version}):>`)} `,
+    prompt: `${chalk.cyanBright(`(daniel v${version})\n>`)} `,
     input: process.stdin,
     output: process.stdout,
     eval: EVAL,
