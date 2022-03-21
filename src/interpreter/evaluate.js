@@ -10,6 +10,16 @@ let ID = 0;
  *
  * @param {Object|Object[]} ast
  * @param {Environment} env
+ */
+export const evaluateAndGetEnv = (ast, env) => {
+  evaluate(ast, env);
+  return env;
+};
+
+/**
+ *
+ * @param {Object|Object[]} ast
+ * @param {Environment} env
  * @returns
  */
 export const evaluate = (ast, env) => {
@@ -203,8 +213,8 @@ const evalForList = (ast, env) => {
       let newEnv = env.extend(`for/listExpr${ID++}`);
       newEnv.set(id, item);
       let value = evaluate(body, newEnv);
-      if (value !== null && val !== undefined) {
-        list.push();
+      if (value !== null && value !== undefined) {
+        list.push(value);
       }
     }
   } else {
