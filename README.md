@@ -33,7 +33,7 @@ Starting out, I will create different branches for different stages of the imple
 - [06 - Define, set, and let](https://github.com/jasonsbarr/daniel-lang/tree/06-define-let)
 - [07 - Fun, fun, functions](https://github.com/jasonsbarr/daniel-lang/tree/07-functions)
 - [08 - Lists and destructuring](https://github.com/jasonsbarr/daniel-lang/tree/08-lists)
-- 09 - Making a CLI tool
+- [09 - Making a CLI tool](https://github.com/jasonsbarr/daniel-lang/tree/09-cli)
 - 10 - Modules and imports
 - 11 - Adding keywords
 - 12 - Maps and structs
