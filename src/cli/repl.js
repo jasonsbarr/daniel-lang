@@ -59,7 +59,7 @@ export const initializeRepl = () => {
   });
 
   replServer.defineCommand("load", {
-    help: "Load a Daniel language file into the REPL session",
+    help: "Load a Daniel language file (*.dan) into the REPL session",
     // use 'function' function because we need access to 'this'
     action: function (file) {
       try {

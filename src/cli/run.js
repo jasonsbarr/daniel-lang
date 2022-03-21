@@ -14,9 +14,9 @@ const version = JSON.parse(
 const runRepl = () => {
   console.log(
     `${chalk.blueBright(
-      "*** Welcome to the Daniel interactive prompt, v${version} ***"
+      `***** Welcome to the Daniel interactive prompt, v${version} *****`
     )}
-${chalk.yellowBright('Enter ".help" for the list of available commands')}\n`
+    ${chalk.yellowBright('Enter ".help" for the list of available commands')}\n`
   );
   initializeRepl();
 };
