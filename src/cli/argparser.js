@@ -20,6 +20,9 @@ export const argparser = (argv) => {
     } else if (fileExt.test(arg)) {
       file = arg;
     } else {
+      if (command) {
+        throw new Error("More than one command was given");
+      }
       command = arg;
     }
   }
