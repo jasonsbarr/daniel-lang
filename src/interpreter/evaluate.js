@@ -96,7 +96,27 @@ const evalBlock = (ast, env) => {
   return value;
 };
 
-const unpackList = (list, env) => {};
+/**
+ * Unpack a list into function arguments or another list
+ * @param {Object|Object[]} list
+ * @param {Environment} env
+ */
+const unpackList = (list, env) => {
+  let items;
+
+  if (Array.isArray(list)) {
+    // is a call or other list expression
+    items = evalList(list, env);
+  } else if (list.type === "ListPattern") {
+    items = list.values.map((i) => evaluate(i, env));
+  } else if (list.type === "Symbol") {
+    items = evaluate(list, env);
+  } else {
+    throw new RuntimeError("Argument to unpack must be a list");
+  }
+
+  return items;
+};
 
 /**
  *
@@ -117,7 +137,22 @@ const evalCall = (ast, env) => {
     );
   }
 
-  const args = ast.slice(1).map((arg) => evaluate(arg, env));
+  const args = [];
+  let unpack = false;
+
+  for (let arg of ast.slice(1)) {
+    if (arg.type === "Amp") {
+      unpack = true;
+      continue;
+    }
+
+    if (unpack === true) {
+      args.push(...unpackList(arg, env));
+      unpack = false;
+    } else {
+      args.push(evaluate(arg, env));
+    }
+  }
 
   return fst.call(null, ...args);
 };

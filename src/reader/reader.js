@@ -176,7 +176,7 @@ const readHashLiteral = (reader) => {
 const readAmp = (reader) => {
   const { line, col, pos, file } = reader.next();
   return {
-    type: "Varargs",
+    type: "Amp",
     line,
     col,
     pos,
