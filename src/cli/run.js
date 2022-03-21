@@ -25,7 +25,7 @@ const tryCatch = (fn, errFn) => {
 const helpCmd = {
   run() {},
   help: `Display a help message listing all commands and their usage
-Usage: daniel help or daniel -h`,
+Usage: daniel --help or daniel -h`,
 };
 
 const replCmd = {
@@ -72,10 +72,10 @@ const versionCmd = {
   },
 
   help: `Get the currently installed version of Daniel
-Usage: daniel version or daniel -v`,
+Usage: daniel --version or daniel -v`,
 };
 
-const run = () => {
+export const run = () => {
   const { args, command, file, evalString } = argparser(process.argv.slice(2));
   console.log(
     `command: ${command}\nargs: ${JSON.stringify(args)}\nfile: ${file}`
