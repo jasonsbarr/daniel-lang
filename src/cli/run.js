@@ -24,9 +24,9 @@ const tryCatch = (fn, errFn) => {
 };
 
 const helpCmd = {
-  run() {},
-  help: `Display a help message listing all commands and their usage
-Usage: daniel --help or daniel -h`,
+  help: `${chalk.blueBright("Command: help")}
+Display a help message listing all commands and their usage
+Usage: daniel --help or daniel -h\n`,
 };
 
 const replCmd = {
@@ -34,13 +34,15 @@ const replCmd = {
     let env = globals;
 
     for (let arg of args) {
-      if (arg.opt === "-i") {
-        const input = fs.readFileSync(arg.value, "utf-8");
-        env = EVAL_ENV(input, env);
-      } else {
-        throw new Error(
-          `Unknown option ${arg.opt} for interactive Daniel console`
-        );
+      switch (arg.opt) {
+        case "-i":
+          const input = fs.readFileSync(arg.value, "utf-8");
+          env = EVAL_ENV(input, env);
+          break;
+        default:
+          throw new Error(
+            `Unknown option ${arg.opt} for interactive Daniel console`
+          );
       }
     }
 
@@ -52,16 +54,18 @@ const replCmd = {
     );
     initializeRepl(env);
   },
-  help: `Launch an interactive Daniel session.
-Usage: daniel`,
+  help: `${chalk.blueBright("Daniel interactive console:")}
+Launch an interactive Daniel session.
+Usage: daniel\n`,
 };
 
 const evalCmd = {
   run(evalString, args) {
     println(EVAL(evalString));
   },
-  help: `Evaluate a string argument as if it were Daniel code.
-Usage: daniel -e [code] or daniel eval [code]`,
+  help: `${chalk.blueBright("Command: eval")}
+Evaluate a string argument as if it were Daniel code.
+Usage: daniel -e [code] or daniel eval [code]\n`,
 };
 
 const runCmd = {
@@ -76,8 +80,9 @@ const runCmd = {
     };
     return tryCatch(fn, errFn);
   },
-  help: `Parse and evaluate a Daniel (*.dan) file.
-Usage: daniel [filename] or daniel run [filename]`,
+  help: `${chalk.blueBright("Command: run")}
+Parse and evaluate a Daniel (*.dan) file.
+Usage: daniel [filename] or daniel run [filename]\n`,
 };
 
 const versionCmd = {
@@ -85,44 +90,51 @@ const versionCmd = {
     console.log(`Daniel Programming Language, version ${version}`);
   },
 
-  help: `Get the currently installed version of Daniel
-Usage: daniel --version or daniel -v`,
+  help: `${chalk.blueBright("Command: version")}
+Get the currently installed version of Daniel
+Usage: daniel --version or daniel -v\n`,
+};
+
+const commands = [helpCmd, replCmd, evalCmd, runCmd, versionCmd];
+const runHelp = () => {
+  for (let command of commands) {
+    console.log(command.help);
+  }
 };
 
 export const run = () => {
   const { args, command, file, evalString } = argparser(process.argv.slice(2));
-  console.log(
-    `command: ${command}\nargs: ${JSON.stringify(args)}\nfile: ${file}`
-  );
+  const argNames = args.map((arg) => arg.opt);
+
   if (!command) {
-    if (args.includes("-h")) {
-      console.log(getHelp(repl));
-      return exit(0);
-    }
     return replCmd.run(args);
   }
 
   switch (command) {
     case "eval":
-      if (args.includes("-h")) {
+      if (argNames.includes("-h")) {
         console.log(getHelp(evalCmd));
         return exit(0);
       }
       return evalCmd.run(evalString, args);
 
     case "run":
-      if (args.includes("-h")) {
+      if (argNames.includes("-h")) {
         console.log(getHelp(runCmd));
         return exit(0);
       }
       return runCmd.run(file, args);
 
     case "version":
-      if (args.includes("-h")) {
+      if (argNames.includes("-h")) {
         console.log(getHelp(versionCmd));
         return exit(0);
       }
       return versionCmd.run();
+
+    case "help":
+      runHelp();
+      return exit(0);
 
     default:
       console.error(
