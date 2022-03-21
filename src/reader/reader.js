@@ -4,8 +4,8 @@ import { Token, tokenize } from "./tokenizer.js";
  * Parsing error class
  */
 class ReadError extends Error {
-  constructor(text, line, col) {
-    super(`Invalid token ${text} at ${line}:${col}`);
+  constructor(text, line, col, file) {
+    super(`Invalid token ${text} at ${file} ${line}:${col}`);
   }
 }
 
@@ -100,7 +100,7 @@ const readAtom = (reader) => {
     return { ...token, value: token.text };
   }
 
-  throw new ReadError(token.text, token.line, token.col);
+  throw new ReadError(token.text, token.line, token.col, token.file);
 };
 
 /**
@@ -113,7 +113,7 @@ const readList = (reader, start = "LParen", end = "RParen") => {
   let token = reader.next();
 
   if (!token.match(start)) {
-    throw new ReadError(token.text, token.line, token.col);
+    throw new ReadError(token.text, token.line, token.col, token.file);
   }
 
   while (!token.match(end)) {
@@ -128,7 +128,7 @@ const readList = (reader, start = "LParen", end = "RParen") => {
     token = reader.peek();
 
     if (!token) {
-      throw new ReadError("EOF", t.line, t.col);
+      throw new ReadError("EOF", t.line, t.col, t.file);
     }
   }
 

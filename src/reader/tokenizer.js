@@ -1,3 +1,5 @@
+import { getFileURL } from "../utils.js";
+
 class LexerError extends Error {
   constructor(char, line, col) {
     super(`Invalid token ${char} at (${line}:${col})`);
@@ -56,8 +58,9 @@ class InputStream {
    * Sets the InputStream initial state
    * @param {String} buffer
    */
-  constructor(buffer) {
+  constructor(buffer, file) {
     this.buffer = buffer;
+    this.file = getFileURL(file);
     this.pos = 0;
     this.line = 1;
     this.col = 1;
@@ -113,8 +116,8 @@ class Lexer {
    * @param {String} inputStr
    * @returns {Lexer}
    */
-  input(inputStr) {
-    this.inputStr = new InputStream(inputStr);
+  input(inputStr, file) {
+    this.inputStr = new InputStream(inputStr, file);
 
     return this;
   }
@@ -123,8 +126,8 @@ class Lexer {
    * Matches a rule with the current position of the input stream and creates a Token
    * @returns {Token}
    */
-  token(file) {
-    let { buffer, pos, line, col } = this.inputStr;
+  token() {
+    let { buffer, pos, line, col, file } = this.inputStr;
 
     if (this.inputStr.eof()) {
       return null;
@@ -159,10 +162,10 @@ class Lexer {
    * Returns an array of the tokens found in the input buffer
    * @returns {Token[]}
    */
-  tokenize(file) {
+  tokenize() {
     let tokens = [];
     while (!this.inputStr.eof()) {
-      let tok = this.token(file);
+      let tok = this.token();
 
       if (tok !== null) {
         tokens.push(tok);
@@ -214,4 +217,4 @@ const rules = [
 const lexer = new Lexer(rules);
 
 export const tokenize = (input, file = "<stdin>") =>
-  lexer.input(input).tokenize(file);
+  lexer.input(input, file).tokenize();

@@ -40,7 +40,7 @@ const getLoadOrder = (deps) => {
   let visited = {};
 
   const visitNode = (node) => {
-    if (!(node in moduleTable)) {
+    if (!(node in moduleTable) && !(node in modules)) {
       throw new Error(`Unknown module ${nameMap[node]}`);
     }
 

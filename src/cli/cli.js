@@ -78,7 +78,7 @@ const runCmd = {
   run(file, args) {
     const fn = () => {
       const input = fs.readFileSync(file, "utf-8");
-      return EVAL(input);
+      return EVAL(input, { file: file });
     };
     const errFn = (e) => {
       console.error(e.message);
