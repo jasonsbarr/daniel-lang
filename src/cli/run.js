@@ -25,8 +25,8 @@ const tryCatch = (fn, errFn) => {
 
 const helpCmd = {
   help: `${chalk.blueBright("Command: help")}
-Display a help message listing all commands and their usage
-Usage: daniel --help or daniel -h\n`,
+    Display a help message listing all commands and their usage
+    Usage: daniel --help or daniel -h\n`,
 };
 
 const replCmd = {
@@ -55,8 +55,13 @@ const replCmd = {
     initializeRepl(env);
   },
   help: `${chalk.blueBright("Daniel interactive console:")}
-Launch an interactive Daniel session.
-Usage: daniel\n`,
+    Launch an interactive Daniel session.
+    Usage: daniel
+
+    ${chalk.blueBright("Options")}:
+        ${chalk.yellowBright(
+          "-i"
+        )}: load a Daniel source file for interactive use\n`,
 };
 
 const evalCmd = {
@@ -64,8 +69,8 @@ const evalCmd = {
     println(EVAL(evalString));
   },
   help: `${chalk.blueBright("Command: eval")}
-Evaluate a string argument as if it were Daniel code.
-Usage: daniel -e [code] or daniel eval [code]\n`,
+    Evaluate a string argument as if it were Daniel code.
+    Usage: daniel -e [code] or daniel eval [code]\n`,
 };
 
 const runCmd = {
@@ -81,8 +86,8 @@ const runCmd = {
     return tryCatch(fn, errFn);
   },
   help: `${chalk.blueBright("Command: run")}
-Parse and evaluate a Daniel (*.dan) file.
-Usage: daniel [filename] or daniel run [filename]\n`,
+    Parse and evaluate a Daniel (*.dan) file.
+    Usage: daniel [filename] or daniel run [filename]\n`,
 };
 
 const versionCmd = {
@@ -91,12 +96,17 @@ const versionCmd = {
   },
 
   help: `${chalk.blueBright("Command: version")}
-Get the currently installed version of Daniel
-Usage: daniel --version or daniel -v\n`,
+    Get the currently installed version of Daniel
+    Usage: daniel --version or daniel -v\n`,
 };
 
-const commands = [helpCmd, replCmd, evalCmd, runCmd, versionCmd];
+const commands = [replCmd, evalCmd, runCmd, versionCmd, helpCmd];
 const runHelp = () => {
+  console.log(
+    chalk.blueBright(
+      `***** Welcome to the Daniel interactive prompt, v${version} *****\n`
+    )
+  );
   for (let command of commands) {
     console.log(command.help);
   }
