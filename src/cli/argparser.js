@@ -6,16 +6,30 @@ export const argparser = (argv) => {
   const fileExt = /\.dan$/;
   let command;
   let file;
+  let evalString;
   let args = [];
+  let i = 0;
+  let option;
 
   for (let arg of argv) {
+    if (option) {
+      option = false;
+      continue;
+    }
     if (arg.startsWith("-")) {
       if (arg.includes("=")) {
-        let [opt, val] = arg.split("=");
-        args.push({ opt, val });
+        let [opt, value] = arg.split("=");
+        args.push({ opt, value });
       } else {
-        let opt = arg;
-        args.push({ opt, val: null });
+        if (arg.length === 2 && !argv[i + 1].startsWith("-")) {
+          let opt = arg;
+          let value = argv[i + 1];
+          option = true;
+          args.push({ opt, value });
+        } else {
+          let opt = arg;
+          args.push({ opt, value: null });
+        }
       }
     } else if (fileExt.test(arg)) {
       file = arg;
@@ -25,6 +39,8 @@ export const argparser = (argv) => {
       }
       command = arg;
     }
+
+    i++;
   }
 
   return { command, file, args };
