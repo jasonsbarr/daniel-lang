@@ -40,6 +40,7 @@ export const argparser = (argv) => {
         }
         command = "eval";
         evalString = argv[i + 1];
+        option = true;
       } else {
         if (arg.length === 2 && argv[i + 1] && !argv[i + 1].startsWith("-")) {
           let opt = arg;
