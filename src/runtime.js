@@ -59,15 +59,24 @@ export const makeFunction = (
 };
 
 /**
+ * Resolve an in-language import to a file URL
+ * @param {String} importVal The import string value
+ * @param {*} callingFile The file importing the module
+ */
+export const resolveImport = (importVal, callingFile) => {};
+
+/**
  * Resolves a Daniel-lang module to an absolute path from a require string
  * @param {String} rq
  * @returns {String}
  */
 export const resolveRequire = (rq) => {
   if (rq.startsWith("file://")) {
+    // already resolved
     return rq;
   }
 
+  // global module
   return getFileURL(path.join(__dirname, "../lib", `${rq}.dan`));
 };
 
@@ -79,6 +88,12 @@ export const resolveRequire = (rq) => {
  * @returns {String}
  */
 export const resolveNativeRequire = (rq) => {
+  if (rq.startsWith("file://")) {
+    // already resolved
+    return rq;
+  }
+
+  // global module
   return getFileURL(path.join(__dirname, "../lib/js", `${rq}.js`));
 };
 
