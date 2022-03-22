@@ -3,4 +3,14 @@
         (for/list (i lst)
             (fn i)))
 
-    (provide map))
+    (define (filter pred lst)
+        (for/list (i lst)
+            (if (fn i) i nil)))
+
+    (define (reduce fn acc lst)
+        (for (i lst)
+            (set! acc (fn acc i))))
+
+    (provide map)
+    (provide filter)
+    (provide reduce))
