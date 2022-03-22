@@ -1,17 +1,18 @@
 import { fileURLToPath } from "url";
 import fs from "fs";
-import { EVAL } from "./eval.js";
+import { EVAL } from "../eval.js";
 import {
   resolveRequire,
   resolveNativeRequire,
   createRuntime,
-} from "./runtime.js";
-import { createModuleEnv } from "./interpreter/module.js";
+} from "../runtime.js";
+import { Environment, createEnv } from "./environment.js";
 
 let moduleTable = {};
 let nameMap = {};
 let modules = {};
 const rt = createRuntime();
+const globalEnv = createEnv();
 
 const getModuleURLs = (requires, nativeRequires) => {
   let urls = [];
@@ -128,30 +129,38 @@ const evaluateModules = (depsOrder) => {
 
 /**
  * Load the dependencies for module {name} (the root module)
- * @param {String} name
- * @param {Boolean} native
+ * @param {Object} options
+ * @param {String} options.name
+ * @param {Boolean} options.native
+ * @param {Environment} options.env
  * @returns
  */
-export const loadModules = async ({ name = "", native = false } = {}) => {
+export const loadModules = async ({
+  name = "",
+  native = false,
+  env = global,
+} = {}) => {
   let moduleURL = native ? resolveNativeRequire(name) : resolveRequire(name);
   nameMap[moduleURL] = name;
 
   // populate moduleTable with dependency tree
   const defineModule = async (moduleURL) => {
+    console.log(moduleURL);
     let name, requires, nativeRequires, module;
-    if (native) {
+    try {
       // is native (JS) module
       ({ name, requires, nativeRequires, module } = await import(moduleURL));
-    } else {
+    } catch (e) {
       const filePath = fileURLToPath(moduleURL);
       const fileName = filePath.split("/").pop();
       const moduleName = fileName.split(".")[0];
       const input = fs.readFileSync(filePath, "utf-8");
-      const env = createModuleEnv(name || moduleName, filePath);
+      const moduleEnv = env.extend(name || moduleName, moduleName, fileName);
+
       ({ name, requires, nativeRequires, module } = EVAL(input, {
         file: filePath,
         module: name || moduleName,
-        env,
+        moduleEnv,
       }));
     }
 
