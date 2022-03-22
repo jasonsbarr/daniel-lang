@@ -35,8 +35,8 @@ Starting out, I will create different branches for different stages of the imple
 - [08 - Lists and destructuring](https://github.com/jasonsbarr/daniel-lang/tree/08-lists)
 - [09 - Making a CLI tool](https://github.com/jasonsbarr/daniel-lang/tree/09-cli)
 - [10 - Modules and imports](https://github.com/jasonsbarr/daniel-lang/tree/10-imports)
-- 11 - Adding keywords
-- 12 - Maps and structs
+- 11 - Keywords and maps
+- 12 - Structs
 - 13 - Classes and objects
 - 14 - Quote, quasiquote, and unquote
 - 15 - Syntactic extensions (macros)
