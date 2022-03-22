@@ -132,11 +132,7 @@ const evaluateModules = (depsOrder) => {
  * @param {Boolean} native
  * @returns
  */
-export const loadModules = async ({
-  name = "",
-  native = false,
-  url = "",
-} = {}) => {
+export const loadModules = async ({ name = "", native = false } = {}) => {
   let moduleURL = native ? resolveNativeRequire(name) : resolveRequire(name);
   nameMap[moduleURL] = name;
 
