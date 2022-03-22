@@ -200,7 +200,7 @@ const readModule = (reader) => {
       col,
       pos,
       file,
-      value: "module-begin",
+      value: "begin-module",
     },
     readForm(reader),
   ];
