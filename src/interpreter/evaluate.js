@@ -23,14 +23,14 @@ export const evaluateAndGetEnv = (ast, env) => {
  * @param {Environment} env
  * @returns
  */
-export const evaluate = (ast, env) => {
+export const evaluate = (ast, env, module = "<main>") => {
   if (Array.isArray(ast)) {
     return evalList(ast, env);
   }
 
   switch (ast.type) {
     case "ListPattern":
-      return evalListLiteral(ast, env);
+      return evalListLiteral(ast, env, module);
 
     case "Symbol":
       return evalSymbol(ast, env);
@@ -87,7 +87,7 @@ const evalList = (ast, env) => {
       return evalLet(ast, env);
 
     case "lambda":
-      return evalLambda(ast, env);
+      return evalLambda(ast, env, module);
 
     default:
       return evalCall(ast, env);
@@ -405,7 +405,7 @@ const evalLet = (ast, env) => {
  * @param {Environment} env
  * @returns {Function}
  */
-const evalLambda = (ast, env) => {
+const evalLambda = (ast, env, module) => {
   if (ast.length !== 3) {
     throw new RuntimeError(
       "Lambda expression must have exactly 2 subexpressions"
@@ -413,7 +413,7 @@ const evalLambda = (ast, env) => {
   }
 
   const name = `lambda${ID++}`;
-  return makeLambda(name, ast.slice(1), env);
+  return makeLambda(name, ast.slice(1), env, module);
 };
 
 /**
@@ -455,7 +455,7 @@ const makeLambda = (name, ast, env) => {
 
     return evaluate(body, scope);
   };
-  return makeFunction(lambda, "<main>", { name, arity, varargs });
+  return makeFunction(lambda, module, { name, arity, varargs });
 };
 
 /**

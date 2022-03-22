@@ -7,7 +7,7 @@ export const EVAL = (
   { env, file = "<stdin>", module = "<main>" } = {}
 ) => {
   env = env ? env : createMainModule(file);
-  return evaluate(read(input, file), env);
+  return evaluate(read(input, file), env, module);
 };
 
 export const EVAL_ENV = (
@@ -16,5 +16,5 @@ export const EVAL_ENV = (
 ) => {
   console.log(file);
   env = env ? env : createMainModule(file);
-  return evaluateAndGetEnv(read(input, file), env);
+  return evaluateAndGetEnv(read(input, file), env, module);
 };
