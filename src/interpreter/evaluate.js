@@ -12,7 +12,7 @@ let ID = 0;
  * @param {Object|Object[]} ast
  * @param {Environment} env
  */
-export const evaluateAndGetEnv = (ast, env) => {
+export const evaluateAndGetEnv = async (ast, env) => {
   evaluate(ast, env);
   return env;
 };
@@ -23,9 +23,9 @@ export const evaluateAndGetEnv = (ast, env) => {
  * @param {Environment} env
  * @returns
  */
-export const evaluate = (ast, env, module = "<main>") => {
+export const evaluate = async (ast, env, module = "<main>") => {
   if (Array.isArray(ast)) {
-    return evalList(ast, env, module);
+    return await evalList(ast, env, module);
   }
 
   switch (ast.type) {
@@ -54,7 +54,7 @@ export const evaluate = (ast, env, module = "<main>") => {
  * @param {Environment} env
  * @returns
  */
-const evalList = (ast, env, module) => {
+const evalList = async (ast, env, module) => {
   if (ast.length === 0) {
     return null;
   }
@@ -63,40 +63,40 @@ const evalList = (ast, env, module) => {
 
   switch (fst.value) {
     case "begin":
-      return evalBlock(ast.slice(1), env);
+      return await evalBlock(ast.slice(1), env);
 
     case "begin-module":
-      return evalModule(ast[0], env, evaluate);
+      return await evalModule(ast[0], env, evaluate);
 
     case "provide":
-      return evalProvide(ast, env, module, evaluate);
+      return await evalProvide(ast, env, module, evaluate);
 
     case "open":
-      return evalOpen(ast, env, module, evaluate);
+      return await evalOpen(ast, env, module, evaluate);
 
     case "if":
-      return evalIf(ast, env);
+      return await evalIf(ast, env);
 
     case "for":
-      return evalFor(ast, env);
+      return await evalFor(ast, env);
 
     case "for/list":
-      return evalForList(ast, env);
+      return await evalForList(ast, env);
 
     case "define":
-      return evalDefine(ast, env);
+      return await evalDefine(ast, env);
 
     case "set!":
-      return evalSet(ast, env);
+      return await evalSet(ast, env);
 
     case "let":
-      return evalLet(ast, env);
+      return await evalLet(ast, env);
 
     case "lambda":
-      return evalLambda(ast, env, module);
+      return await evalLambda(ast, env, module);
 
     default:
-      return evalCall(ast, env);
+      return await evalCall(ast, env);
   }
 };
 
@@ -106,11 +106,11 @@ const evalList = (ast, env, module) => {
  * @param {Environment} env
  * @returns
  */
-const evalBlock = (ast, env) => {
+const evalBlock = async (ast, env) => {
   let value;
 
   for (let exp of ast) {
-    value = evaluate(exp, env);
+    value = await evaluate(exp, env);
   }
 
   return value;
@@ -121,16 +121,16 @@ const evalBlock = (ast, env) => {
  * @param {Object|Object[]} list
  * @param {Environment} env
  */
-const unpackList = (list, env) => {
+const unpackList = async (list, env) => {
   let items;
 
   if (Array.isArray(list)) {
     // is a call or other list expression
     items = evalList(list, env);
   } else if (list.type === "ListPattern") {
-    items = list.values.map((i) => evaluate(i, env));
+    items = list.values.map(async (i) => await evaluate(i, env));
   } else if (list.type === "Symbol") {
-    items = evaluate(list, env);
+    items = await evaluate(list, env);
   } else {
     throw new RuntimeError("Argument to unpack must be a list");
   }
@@ -144,12 +144,12 @@ const unpackList = (list, env) => {
  * @param {Environment} env
  * @returns
  */
-const evalCall = (ast, env) => {
+const evalCall = async (ast, env) => {
   if (ast[0] === undefined) {
     return null;
   }
 
-  const fst = evaluate(ast[0], env);
+  const fst = await evaluate(ast[0], env);
 
   if (typeof fst !== "function") {
     throw new RuntimeError(
@@ -167,22 +167,22 @@ const evalCall = (ast, env) => {
     }
 
     if (unpack === true) {
-      args.push(...unpackList(arg, env));
+      args.push(...(await unpackList(arg, env)));
       unpack = false;
     } else {
-      args.push(evaluate(arg, env));
+      args.push(await evaluate(arg, env));
     }
   }
 
   return fst.call(null, ...args);
 };
 
-const evalSymbol = (ast, env) => {
+const evalSymbol = async (ast, env) => {
   const val = env.get(ast.value);
   return val;
 };
 
-const evalIf = (ast, env) => {
+const evalIf = async (ast, env) => {
   if (ast.length !== 4) {
     throw new RuntimeError("If expression must have exactly 3 subexpressions");
   }
@@ -191,11 +191,11 @@ const evalIf = (ast, env) => {
   const then = ast[2];
   const els = ast[3];
 
-  if (isTruthy(evaluate(cond, env))) {
-    return evaluate(then, env);
+  if (isTruthy(await evaluate(cond, env))) {
+    return await evaluate(then, env);
   }
 
-  return evaluate(els, env);
+  return await evaluate(els, env);
 };
 
 /**
@@ -206,7 +206,7 @@ const evalIf = (ast, env) => {
  * @param {Array} ast
  * @param {Environment} env
  */
-const evalFor = (ast, env) => {
+const evalFor = async (ast, env) => {
   if (ast.length !== 3) {
     throw new RuntimeError("For expression must have exactly 2 subexpressions");
   }
@@ -220,14 +220,14 @@ const evalFor = (ast, env) => {
   // later we may allow multiple clauses
   let [id, seq] = clause;
   id = id.value;
-  seq = evaluate(seq, env);
+  seq = await evaluate(seq, env);
 
   if (isIterable(seq)) {
     for (let item of seq) {
       let newEnv = env.extend(`forExpr${ID++}`);
 
       newEnv.set(id, item);
-      value = evaluate(body, newEnv);
+      value = await evaluate(body, newEnv);
     }
   } else {
     throw new TyError("iterable", getType(seq));
@@ -241,7 +241,7 @@ const evalFor = (ast, env) => {
  * @param {Array} ast
  * @param {Environment} env
  */
-const evalForList = (ast, env) => {
+const evalForList = async (ast, env) => {
   if (ast.length !== 3) {
     throw new RuntimeError(
       "List comprehension must have exactly 2 subexpressions"
@@ -253,13 +253,13 @@ const evalForList = (ast, env) => {
   let list = [];
   let [id, seq] = clause;
   id = id.value;
-  seq = evaluate(seq, env);
+  seq = await evaluate(seq, env);
 
   if (isIterable(seq)) {
     for (let item of seq) {
       let newEnv = env.extend(`for/listExpr${ID++}`);
       newEnv.set(id, item);
-      let value = evaluate(body, newEnv);
+      let value = await evaluate(body, newEnv);
       if (value !== null && value !== undefined) {
         list.push(value);
       }
@@ -319,7 +319,7 @@ const destructureList = (left, right, env) => {
  * @param {Environment} env
  * @param {Boolean} def
  */
-const assign = (ast, env, def = true) => {
+const assign = async (ast, env, def = true) => {
   const [id, expr] = ast;
 
   if (id.type === "ListPattern") {
@@ -336,14 +336,14 @@ const assign = (ast, env, def = true) => {
     // rest identifier present in destructuring list
     let list = [];
     for (let ex of expr) {
-      list.push(evaluate(ex, env));
+      list.push(await evaluate(ex, env));
     }
 
     env.set(name, list);
     return list;
   }
 
-  const value = evaluate(expr, env);
+  const value = await evaluate(expr, env);
   env.set(name, value);
   return value;
 };
@@ -353,7 +353,7 @@ const assign = (ast, env, def = true) => {
  * @param {Array} ast
  * @param {Environment} env
  */
-const evalDefine = (ast, env) => {
+const evalDefine = async (ast, env) => {
   if (ast.length !== 3) {
     throw new RuntimeError("Define must have exactly 2 subexpressions");
   }
@@ -365,12 +365,12 @@ const evalDefine = (ast, env) => {
     // is function definition
     const name = id[0].value;
     const args = id.slice(1);
-    const func = makeLambda(name, [args, expr], env);
+    const func = await makeLambda(name, [args, expr], env);
     env.set(name, func);
     return func;
   }
 
-  return assign([id, expr], env);
+  return await assign([id, expr], env);
 };
 
 /**
@@ -378,12 +378,12 @@ const evalDefine = (ast, env) => {
  * @param {Array} ast
  * @param {Environment} env
  */
-const evalSet = (ast, env) => {
+const evalSet = async (ast, env) => {
   if (ast.length !== 3) {
     throw new RuntimeError("Define must have exactly 2 subexpressions");
   }
 
-  return assign(ast.slice(1), env, false);
+  return await assign(ast.slice(1), env, false);
 };
 
 /**
@@ -391,7 +391,7 @@ const evalSet = (ast, env) => {
  * @param {Array} ast
  * @param {Environment} env
  */
-const evalLet = (ast, env) => {
+const evalLet = async (ast, env) => {
   if (ast.length !== 3) {
     throw new RuntimeError("Let must have exactly 2 subexpressions");
   }
@@ -401,7 +401,7 @@ const evalLet = (ast, env) => {
   const newEnv = env.extend(`letExpr${ID++}`);
 
   for (let defn of defns) {
-    assign(defn, newEnv);
+    await assign(defn, newEnv);
   }
 
   return evaluate(body, newEnv);
@@ -413,7 +413,7 @@ const evalLet = (ast, env) => {
  * @param {Environment} env
  * @returns {Function}
  */
-const evalLambda = (ast, env, module) => {
+const evalLambda = async (ast, env, module) => {
   if (ast.length !== 3) {
     throw new RuntimeError(
       "Lambda expression must have exactly 2 subexpressions"
@@ -421,7 +421,7 @@ const evalLambda = (ast, env, module) => {
   }
 
   const name = `lambda${ID++}`;
-  return makeLambda(name, ast.slice(1), env, module);
+  return await makeLambda(name, ast.slice(1), env, module);
 };
 
 /**
@@ -431,7 +431,7 @@ const evalLambda = (ast, env, module) => {
  * @param {Environment} env
  * @returns {Function}
  */
-const makeLambda = (name, ast, env, module) => {
+const makeLambda = async (name, ast, env, module) => {
   const params = ast[0].map((t) => t.value);
   const body = ast[1];
   let varargs = params.includes("&");
@@ -441,7 +441,7 @@ const makeLambda = (name, ast, env, module) => {
     arity -= 2;
   }
 
-  const lambda = (...args) => {
+  const lambda = async (...args) => {
     const scope = env.extend(name);
 
     if (params && params.length) {
@@ -461,7 +461,7 @@ const makeLambda = (name, ast, env, module) => {
       }
     }
 
-    return evaluate(body, scope);
+    return await evaluate(body, scope);
   };
   return makeFunction(lambda, module, { name, arity, varargs });
 };
@@ -471,7 +471,7 @@ const makeLambda = (name, ast, env, module) => {
  * @param {Object} ast
  * @param {Environment} env
  */
-const evalListLiteral = (ast, env) => {
+const evalListLiteral = async (ast, env) => {
   let list = [];
   let unpack = false;
 
@@ -482,10 +482,10 @@ const evalListLiteral = (ast, env) => {
     }
 
     if (unpack === true) {
-      list.push(...unpackList(val, env));
+      list.push(...(await unpackList(val, env)));
       unpack = false;
     } else {
-      list.push(evaluate(val, env));
+      list.push(await evaluate(val, env));
     }
   }
 

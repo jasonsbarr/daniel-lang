@@ -1,0 +1,5 @@
+(begin-module
+    (define (add a b)
+        (+ a b))
+
+    (provides add))

@@ -170,7 +170,7 @@ export const loadModules = async ({ name = "", env = globalEnv } = {}) => {
         nameMap[moduleURL] = moduleName;
       }
 
-      ({ name, requires, nativeRequires, module } = EVAL(input, {
+      ({ name, requires, nativeRequires, module } = await EVAL(input, {
         file: filePath,
         module: name || moduleName,
         env,
@@ -196,8 +196,8 @@ export const loadModules = async ({ name = "", env = globalEnv } = {}) => {
   return modules;
 };
 
-export const createGlobalEnv = () => {
-  loadModules({ name: "global", env: globalEnv });
+export const createGlobalEnv = async () => {
+  await loadModules({ name: "global", env: globalEnv });
 
   return globalEnv;
 };
@@ -206,8 +206,8 @@ export const createGlobalEnv = () => {
  * Bind the provides of an opened module into another module's environment
  * @param {Environment} env
  */
-export const bindOpensToModuleEnv = (env) => {
-  loadModules({ name: env.module, env });
+export const bindOpensToModuleEnv = async (env) => {
+  await loadModules({ name: env.module, env });
 
   return env;
 };

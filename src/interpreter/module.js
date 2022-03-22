@@ -2,6 +2,7 @@
 import { Environment } from "./environment.js";
 import { makeModule } from "../runtime.js";
 import { RuntimeError, ArgumentsError } from "../../lib/js/error.js";
+import { bindOpensToModuleEnv } from "./loader.js";
 
 /**
  * Evaluate a module form into a module object with function
@@ -11,7 +12,7 @@ import { RuntimeError, ArgumentsError } from "../../lib/js/error.js";
  * @param {Function} evaluate
  */
 
-export const evalModule = (ast, env, evaluate) => {
+export const evalModule = async (ast, env, evaluate) => {
   if (ast.exprs.length < 2) {
     throw new RuntimeError(
       "A module must contain a name and at least one expression"
@@ -30,7 +31,7 @@ export const evalModule = (ast, env, evaluate) => {
   const moduleEnv = env.extend(`${env.name}.${name}`, name, file);
   let i = 0;
   for (let exp of exprs) {
-    let value = evaluate(exp, moduleEnv, name);
+    let value = await evaluate(exp, moduleEnv, name);
 
     if (value.provide) {
       provides[value.name] = value.export;
@@ -66,4 +67,6 @@ export const evalProvide = (ast, env, module) => {
   };
 };
 
-export const evalOpen = (ast, env, module, evaluate) => {};
+export const evalOpen = async (ast, env, module, evaluate) => {
+  return;
+};

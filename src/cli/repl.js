@@ -25,8 +25,8 @@ const isRecoverableError = (error, cmd, openParenCount, closeParenCount) => {
   return openParenCount > closeParenCount;
 };
 
-export const initializeRepl = (env) => {
-  const EVAL = (cmd, context, fileName, callback) => {
+export const initializeRepl = async (env) => {
+  const EVAL = async (cmd, context, fileName, callback) => {
     let openParenCount = 0;
     let closeParenCount = 0;
 
@@ -39,10 +39,10 @@ export const initializeRepl = (env) => {
     }
 
     if (openParenCount === closeParenCount) {
-      callback(null, evaluate(cmd, { env }));
+      callback(null, await evaluate(cmd, { env }));
     } else {
       try {
-        result = vm.runInThisContext(evaluate(cmd, { env }));
+        result = vm.runInThisContext(await evaluate(cmd, { env }));
       } catch (e) {
         if (isRecoverableError(e, cmd, openParenCount, closeParenCount)) {
           return callback(new repl.Recoverable(e));

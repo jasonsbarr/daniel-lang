@@ -61,7 +61,10 @@ class InputStream {
    */
   constructor(buffer, file) {
     this.buffer = buffer;
-    this.file = file.startsWith("file://") ? file : getFileURL(file);
+    this.file =
+      file.startsWith("file://") || file.startsWith("<")
+        ? file
+        : getFileURL(file);
     this.pos = 0;
     this.line = 1;
     this.col = 1;

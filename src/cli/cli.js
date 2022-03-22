@@ -14,6 +14,8 @@ const version = JSON.parse(
   fs.readFileSync(path.join(__dirname, "../../package.json"), "utf-8")
 ).version;
 
+const globalEnv = await createGlobalEnv();
+
 const getHelp = (cmd) => cmd.help;
 const exit = (code) => process.exit(code);
 const tryCatch = (fn, errFn) => {
@@ -31,15 +33,15 @@ const helpCmd = {
 };
 
 const replCmd = {
-  run(args) {
-    let env = createGlobalEnv();
+  async run(args) {
+    let env = globalEnv;
 
     for (let arg of args) {
       switch (arg.opt) {
         case "-i":
           const input = fs.readFileSync(arg.value, "utf-8");
           const module = arg.value.split(".")[0];
-          env = EVAL_ENV(input, { env, module, file: arg.value });
+          env = await EVAL_ENV(input, { env, module, file: arg.value });
           break;
         default:
           throw new Error(
@@ -48,7 +50,7 @@ const replCmd = {
       }
     }
 
-    env = env.extend("main", "<main>");
+    env = env.extend("<main>", "<main>");
 
     console.log(
       `${chalk.blueBright(
@@ -69,8 +71,8 @@ const replCmd = {
 };
 
 const evalCmd = {
-  run(evalString, args) {
-    println(EVAL(evalString));
+  async run(evalString, args) {
+    println(await EVAL(evalString));
   },
   help: `${chalk.blueBright("Command: eval")}
     Evaluate a string argument as if it were Daniel code.
@@ -78,12 +80,14 @@ const evalCmd = {
 };
 
 const runCmd = {
-  run(file, args) {
-    const fn = () => {
+  async run(file, args) {
+    const fn = async () => {
       // need global env with modules
       const input = fs.readFileSync(file, "utf-8");
-      const env = createGlobalEnv();
-      return EVAL(input, { file, env });
+      return await EVAL(input, {
+        file,
+        env: globalEnv.extend("<main>", "<main>"),
+      });
     };
     const errFn = (e) => {
       console.error(e.message);
