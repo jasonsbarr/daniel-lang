@@ -46,7 +46,7 @@ const getLoadOrder = (deps) => {
 
     if (node in currentlyVisited) {
       throw new Error(
-        `We have a circular dependency that includes ${nameMap[node]}`
+        `You have a circular dependency that includes ${nameMap[node]}`
       );
     }
 

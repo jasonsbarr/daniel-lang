@@ -185,7 +185,25 @@ const readAmp = (reader) => {
   };
 };
 
-const readModule = (reader) => {};
+/**
+ * Read a module starting with module-begin
+ * @param {Reader} reader
+ */
+const readModule = (reader) => {
+  const { line, col, pos, file } = reader.next();
+
+  return [
+    {
+      type: "Module",
+      line,
+      col,
+      pos,
+      file,
+      value: "module-begin",
+    },
+    ...readList(reader),
+  ];
+};
 
 /**
  * Dispatcher function for token stream reader
