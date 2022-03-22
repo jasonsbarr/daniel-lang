@@ -38,7 +38,8 @@ const replCmd = {
       switch (arg.opt) {
         case "-i":
           const input = fs.readFileSync(arg.value, "utf-8");
-          env = EVAL_ENV(input, env);
+          const module = arg.value.split("/").pop().split(".")[0];
+          env = EVAL_ENV(input, env, module);
           break;
         default:
           throw new Error(

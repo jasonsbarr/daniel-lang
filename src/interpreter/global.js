@@ -20,3 +20,4 @@ export const createGlobalEnv = () => {
 };
 
 export const globals = createGlobalEnv();
+export { modules };

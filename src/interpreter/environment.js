@@ -13,8 +13,8 @@ export class Environment {
    * Create a new env with the current one as its parent
    * @param {String} name Name for the new env
    */
-  extend(name) {
-    const env = createEnv(this, { module: this.module, name });
+  extend(name, module = this.module) {
+    const env = createEnv(this, { module, name });
     this.children.push(env);
     return env;
   }

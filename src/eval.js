@@ -1,9 +1,19 @@
 import { read } from "./reader/reader.js";
 import { evaluate, evaluateAndGetEnv } from "./interpreter/evaluate.js";
-import { globals } from "./interpreter/global.js";
+import { createMainModule } from "./interpreter/module.js";
 
-export const EVAL = (input, { env = globals, file = "<stdin>" } = {}) =>
-  evaluate(read(input, file), env);
+const main = createMainModule();
 
-export const EVAL_ENV = (input, { env = globals, file = "<stdin>" } = {}) =>
-  evaluateAndGetEnv(read(input, file), env);
+export const EVAL = (
+  input,
+  { env = main, file = "<stdin>", module = "<main>" } = {}
+) => {
+  return evaluate(read(input, file), env);
+};
+
+export const EVAL_ENV = (
+  input,
+  { env = main, file = "<stdin>", module = "<main>" } = {}
+) => {
+  return evaluateAndGetEnv(read(input, file), env);
+};
