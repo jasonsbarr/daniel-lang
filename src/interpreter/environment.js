@@ -28,7 +28,7 @@ export class Environment {
    * @param {String} name Name for the new env
    */
   extend(name, module = this.module, file = "<stdin>") {
-    const env = createEnv(this, { module, name, file });
+    const env = createEnv({ parent: this, module, name, file });
     this.children.push(env);
     return env;
   }
@@ -84,7 +84,9 @@ export class Environment {
   }
 }
 
-export const createEnv = (
+export const createEnv = ({
   parent = null,
-  { module = "<global>", name = "global", file = "<stdin>" } = {}
-) => new Environment(parent, module, name, file);
+  module = "<global>",
+  name = "<global>",
+  file = "<stdin>",
+} = {}) => new Environment(parent, module, name, file);
