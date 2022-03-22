@@ -181,6 +181,7 @@ class Lexer {
  */
 const NIL = rule("Nil", String.raw`nil`);
 const BOOL = rule("Boolean", String.raw`true|false`);
+const MODULE = rule("Module", String.raw`begin-module`);
 const STRING = rule("String", String.raw`"(?:\\.|[^\\"])*"?`);
 const NUMBER = rule("Number", String.raw`[-\+]?[0-9]*\.?[0-9]+`);
 const COMMENT = rule("Comment", String.raw`;.*`);
@@ -200,6 +201,7 @@ const SYMBOL = rule(
 const rules = [
   NIL,
   BOOL,
+  MODULE,
   STRING,
   NUMBER,
   COMMENT,

@@ -185,6 +185,8 @@ const readAmp = (reader) => {
   };
 };
 
+const readModule = (reader) => {};
+
 /**
  * Dispatcher function for token stream reader
  * @param {Reader} reader
@@ -211,6 +213,8 @@ const readForm = (reader) => {
       return readHashLiteral(reader);
     case "Amp":
       return readAmp(reader);
+    case "Module":
+      return readModule(reader);
     default:
       return readAtom(reader);
   }

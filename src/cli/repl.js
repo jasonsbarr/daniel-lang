@@ -13,6 +13,11 @@ const version = JSON.parse(
   fs.readFileSync(path.join(__dirname, "../../package.json"), "utf-8")
 ).version;
 
+const writer = (output) => printStr(output);
+
+/**
+ * Original author of most of the following 2 functions: {@link https://github.com/AmyShackles}
+ */
 const isRecoverableError = (error, cmd, openParenCount, closeParenCount) => {
   if (error.name === "ReadError") {
     return /"Invalid token EOF"/.test(error.message);
@@ -20,8 +25,6 @@ const isRecoverableError = (error, cmd, openParenCount, closeParenCount) => {
 
   return openParenCount > closeParenCount;
 };
-
-const writer = (output) => printStr(output);
 
 export const initializeRepl = (env = globals) => {
   const EVAL = (cmd, context, fileName, callback) => {

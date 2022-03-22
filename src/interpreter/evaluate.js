@@ -3,6 +3,7 @@ import { RuntimeError, TyError, ValError } from "../../lib/js/error.js";
 import { Environment } from "./environment.js";
 import { isTruthy, isIterable } from "./utils.js";
 import { makeFunction } from "../runtime.js";
+import { evalModule } from "./module.js";
 
 let ID = 0;
 
@@ -63,6 +64,9 @@ const evalList = (ast, env) => {
   switch (fst.value) {
     case "begin":
       return evalBlock(ast.slice(1), env);
+
+    case "begin-module":
+      return evalModule(ast, env, evaluate);
 
     case "if":
       return evalIf(ast, env);
