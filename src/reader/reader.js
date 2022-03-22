@@ -113,6 +113,7 @@ const readList = (reader, start = "LParen", end = "RParen") => {
   let token = reader.next();
 
   if (!token.match(start)) {
+    // console.log(reader.tokens[reader.pos + 1]);
     throw new ReadError(token.text, token.line, token.col, token.file);
   }
 
@@ -192,7 +193,7 @@ const readAmp = (reader) => {
 const readModule = (reader) => {
   const { line, col, pos, file } = reader.next();
 
-  return [
+  let mod = [
     {
       type: "Module",
       line,
@@ -201,8 +202,14 @@ const readModule = (reader) => {
       file,
       value: "module-begin",
     },
-    ...readList(reader),
+    readForm(reader),
   ];
+
+  while (reader.peek().type !== "RParen") {
+    mod.push(readForm(reader));
+  }
+
+  return mod;
 };
 
 /**
@@ -211,12 +218,6 @@ const readModule = (reader) => {
  */
 const readForm = (reader) => {
   const token = reader.peek();
-
-  if (token.match("Comment") || token.match("WS")) {
-    // skip
-    reader.next();
-    return null;
-  }
 
   switch (token.type) {
     case "RParen":
@@ -239,7 +240,11 @@ const readForm = (reader) => {
 };
 
 export const read = (input, file) => {
-  const reader = new Reader(tokenize(input, file));
+  // filter out all whitespace and comments
+  const tokens = tokenize(input, file).filter(
+    (t) => t.type !== "WS" && t.type !== "Comment"
+  );
+  const reader = new Reader(tokens);
   const first = reader.tokens[0];
   let begin;
 
