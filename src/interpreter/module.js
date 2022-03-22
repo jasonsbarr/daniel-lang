@@ -33,7 +33,7 @@ export const evalModule = async (ast, env, evaluate) => {
   for (let exp of exprs) {
     let value = await evaluate(exp, moduleEnv, name);
 
-    if (value.provide) {
+    if (value && value.provide) {
       provides[value.name] = value.export;
     }
   }
@@ -83,7 +83,6 @@ export const evalOpen = async (ast, env, module, evaluate) => {
   }
 
   const [openSym, modVal] = ast;
-  console.log(modVal);
   const modFile = resolveImport(modVal.value, openSym.file);
   const modName = modFile.split("/").pop().split(".")[0];
 

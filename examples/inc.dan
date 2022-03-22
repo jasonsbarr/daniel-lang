@@ -1,0 +1,6 @@
+(begin-module "inc"
+    (open "./module")
+    (define (inc x)
+        (+ 1 x))
+
+    (provide inc))
