@@ -28,7 +28,7 @@ export class Environment {
    * @param {Module} module
    */
   bindModuleNames(module) {
-    for (let [k, v] of Object.entries(module.provides)) {
+    for (let [k, v] of Object.entries(module)) {
       this.set(k, v);
     }
   }

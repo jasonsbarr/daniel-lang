@@ -129,10 +129,10 @@ const evaluateModules = (depsOrder, env) => {
     }
     // resolve the module
     modules[dep] = moduleTable[dep].module(rt, ...mods);
-  }
 
-  if (env) {
-    env.bindModuleNames(modules[dep]);
+    if (env) {
+      env.bindModuleNames(modules[dep]);
+    }
   }
 };
 
@@ -156,7 +156,6 @@ export const loadModules = async ({ name = "", env = globalEnv } = {}) => {
 
   // populate moduleTable with dependency tree
   const defineModule = async (moduleURL) => {
-    console.log(moduleURL);
     let name, requires, nativeRequires, module;
     try {
       // check if is native (JS) module
@@ -176,7 +175,6 @@ export const loadModules = async ({ name = "", env = globalEnv } = {}) => {
         module: name || moduleName,
         env,
       }));
-      console.log("mod:", name, requires, nativeRequires, module);
     }
 
     const rootDeps = getModuleURLs(requires, nativeRequires);
