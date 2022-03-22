@@ -6,7 +6,6 @@ import chalk from "chalk";
 import { printStr } from "../../lib/js/io.js";
 import { EVAL as evaluate } from "../eval.js";
 import { dirname } from "../utils.js";
-import { globals } from "../interpreter/global.js";
 
 const __dirname = dirname(import.meta.url);
 const version = JSON.parse(
@@ -26,7 +25,7 @@ const isRecoverableError = (error, cmd, openParenCount, closeParenCount) => {
   return openParenCount > closeParenCount;
 };
 
-export const initializeRepl = (env = globals) => {
+export const initializeRepl = (env) => {
   const EVAL = (cmd, context, fileName, callback) => {
     let openParenCount = 0;
     let closeParenCount = 0;

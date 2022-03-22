@@ -1,13 +1,13 @@
-import { globals, modules } from "./global.js";
+// import { globals } from "./global.js";
 import { Environment } from "./environment.js";
 import { makeModule } from "../runtime.js";
 import { RuntimeError, ArgumentsError } from "../../lib/js/error.js";
 
-export const createMainModule = (file = "<stdin>") => {
+export const createMainModule = (globals, file = "<stdin>") => {
   return globals.extend("<main>", "<main>", file);
 };
 
-export const createModuleEnv = (name, file) => {
+export const createModuleEnv = (globals, name, file) => {
   return globals.extend(`<global>.${name}`, name, file);
 };
 

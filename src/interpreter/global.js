@@ -1,10 +1,7 @@
-import { loadModules } from "../loader.js";
 import { createEnv } from "./environment.js";
 import { getAllOwnKeys } from "../utils.js";
 
-const modules = await loadModules({ name: "global", native: true });
-
-export const createGlobalEnv = () => {
+export const createGlobalEnv = (modules) => {
   const globalEnv = createEnv();
 
   for (let key of getAllOwnKeys(modules)) {
@@ -18,6 +15,3 @@ export const createGlobalEnv = () => {
 
   return globalEnv;
 };
-
-export const globals = createGlobalEnv();
-export { modules };
