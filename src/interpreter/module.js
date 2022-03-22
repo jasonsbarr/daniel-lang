@@ -28,7 +28,7 @@ export const evalModule = (ast, env, evaluate) => {
     throw new RuntimeError("A module name must be a string");
   }
 
-  const moduleEnv = module.extend(`${env.name}.${name}`, name, file);
+  const moduleEnv = env.extend(`${env.name}.${name}`, name, file);
 
   for (let exp of exprs) {
     let value = evaluate(exp, moduleEnv, name);
@@ -38,8 +38,10 @@ export const evalModule = (ast, env, evaluate) => {
     }
   }
 
+  const module = () => makeModule(name, provides);
+
   return {
-    module: makeModule(name, provides),
+    module,
     requires,
     nativeRequires,
     name,

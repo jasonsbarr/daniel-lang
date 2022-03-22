@@ -143,7 +143,7 @@ const evaluateModules = (depsOrder, env) => {
  * @param {Environment} options.env
  * @returns
  */
-export const loadModules = async ({ name = "", env = null } = {}) => {
+export const loadModules = async ({ name = "", env = globalEnv } = {}) => {
   let moduleURL;
 
   try {
@@ -161,19 +161,11 @@ export const loadModules = async ({ name = "", env = null } = {}) => {
     try {
       // check if is native (JS) module
       ({ name, requires, nativeRequires, module } = await import(moduleURL));
-
-      if (name === "global" && !env) {
-        env = globalEnv;
-      }
     } catch (e) {
       const filePath = fileURLToPath(moduleURL);
       const fileName = filePath.split("/").pop();
       const moduleName = fileName.split(".")[0];
       const input = fs.readFileSync(filePath, "utf-8");
-
-      if ((name === "global" || moduleName === "global") && !env) {
-        env = globalEnv;
-      }
 
       const moduleEnv = env.extend(name || moduleName, moduleName, fileName);
 
@@ -184,7 +176,7 @@ export const loadModules = async ({ name = "", env = null } = {}) => {
       ({ name, requires, nativeRequires, module } = EVAL(input, {
         file: filePath,
         module: name || moduleName,
-        moduleEnv,
+        env: moduleEnv,
       }));
     }
 

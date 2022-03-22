@@ -202,6 +202,7 @@ const readModule = (reader) => {
       file,
       value: "begin-module",
     },
+    // get name string
     readForm(reader),
   ];
 

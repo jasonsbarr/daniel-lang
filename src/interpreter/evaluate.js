@@ -25,7 +25,7 @@ export const evaluateAndGetEnv = (ast, env) => {
  */
 export const evaluate = (ast, env, module = "<main>") => {
   if (Array.isArray(ast)) {
-    return evalList(ast, env);
+    return evalList(ast, env, module);
   }
 
   switch (ast.type) {
@@ -54,7 +54,7 @@ export const evaluate = (ast, env, module = "<main>") => {
  * @param {Environment} env
  * @returns
  */
-const evalList = (ast, env) => {
+const evalList = (ast, env, module) => {
   if (ast.length === 0) {
     return null;
   }
@@ -365,7 +365,9 @@ const evalDefine = (ast, env) => {
     // is function definition
     const name = id[0].value;
     const args = id.slice(1);
-    return env.set(name, makeLambda(name, [args, expr], env));
+    const func = makeLambda(name, [args, expr], env);
+    env.set(name, func);
+    return func;
   }
 
   return assign([id, expr], env);

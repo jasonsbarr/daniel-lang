@@ -1,4 +1,4 @@
-(begin-module
+(begin-module "list"
     (define (map fn lst)
         (for/list (i lst)
             (fn i)))
