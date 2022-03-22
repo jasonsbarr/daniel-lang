@@ -82,7 +82,8 @@ const runCmd = {
     const fn = () => {
       // need global env with modules
       const input = fs.readFileSync(file, "utf-8");
-      return EVAL(input, { file });
+      const env = createGlobalEnv();
+      return EVAL(input, { file, env });
     };
     const errFn = (e) => {
       console.error(e.message);

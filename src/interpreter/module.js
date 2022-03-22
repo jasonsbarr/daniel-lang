@@ -47,7 +47,7 @@ export const evalModule = (ast, env, evaluate) => {
   };
 };
 
-export const evalProvide = (ast, env, module, evaluate) => {
+export const evalProvide = (ast, env, module) => {
   const name = ast[1];
   if (name && name.type !== "Symbol") {
     throw new ArgumentsError(

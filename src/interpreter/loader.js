@@ -117,7 +117,7 @@ const define = (name, url, deps, module) => {
  * @param {String[]} depsOrder
  * @param {Environment}
  */
-const evaluateModules = (depsOrder, env) => {
+const evaluateModules = (depsOrder, env, open = true) => {
   for (let dep of depsOrder) {
     let deps = moduleTable[dep].deps;
     let mods = [];
@@ -130,7 +130,7 @@ const evaluateModules = (depsOrder, env) => {
     // resolve the module
     modules[dep] = moduleTable[dep].module(rt, ...mods);
 
-    if (env) {
+    if (env && open) {
       env.bindModuleNames(modules[dep]);
     }
   }
@@ -200,4 +200,14 @@ export const createGlobalEnv = () => {
   loadModules({ name: "global", env: globalEnv });
 
   return globalEnv;
+};
+
+/**
+ * Bind the provides of an opened module into another module's environment
+ * @param {Environment} env
+ */
+export const bindOpensToModuleEnv = (env) => {
+  loadModules({ name: env.module, env });
+
+  return env;
 };

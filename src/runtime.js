@@ -1,4 +1,5 @@
 import path from "path";
+import { fileURLToPath } from "url";
 import { curryN } from "ramda";
 import { getFileURL, isBrowser, dirname, getAllOwnKeys } from "./utils.js";
 
@@ -63,7 +64,12 @@ export const makeFunction = (
  * @param {String} importVal The import string value
  * @param {*} callingFile The file importing the module
  */
-export const resolveImport = (importVal, callingFile) => {};
+export const resolveImport = (importVal, callingFile) => {
+  if (importVal.startsWith(".")) {
+    // relative import
+    return getFileURL(path.join(fileURLToPath(callingFile), importVal));
+  }
+};
 
 /**
  * Resolves a Daniel-lang module to an absolute path from a require string
