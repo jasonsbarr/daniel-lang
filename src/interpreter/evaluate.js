@@ -11,9 +11,10 @@ let ID = 0;
  *
  * @param {Object|Object[]} ast
  * @param {Environment} env
+ * @param {String} module
  */
-export const evaluateAndGetEnv = async (ast, env) => {
-  evaluate(ast, env);
+export const evaluateAndGetEnv = async (ast, env, module) => {
+  evaluate(ast, env, module);
   return env;
 };
 
@@ -21,6 +22,7 @@ export const evaluateAndGetEnv = async (ast, env) => {
  *
  * @param {Object|Object[]} ast
  * @param {Environment} env
+ * @param {String} module
  * @returns
  */
 export const evaluate = async (ast, env, module = "<main>") => {
@@ -33,7 +35,7 @@ export const evaluate = async (ast, env, module = "<main>") => {
       return evalListLiteral(ast, env, module);
 
     case "Symbol":
-      return evalSymbol(ast, env);
+      return evalSymbol(ast, env, module);
 
     case "Number":
     case "String":
@@ -52,6 +54,7 @@ export const evaluate = async (ast, env, module = "<main>") => {
  *
  * @param {Object[]} ast
  * @param {Environment} env
+ * @param {String} module
  * @returns
  */
 const evalList = async (ast, env, module) => {
@@ -104,6 +107,7 @@ const evalList = async (ast, env, module) => {
  *
  * @param {Object[]} ast
  * @param {Environment} env
+ * @param {String} module
  * @returns
  */
 const evalBlock = async (ast, env, module) => {
@@ -120,6 +124,7 @@ const evalBlock = async (ast, env, module) => {
  * Unpack a list into function arguments or another list
  * @param {Object|Object[]} list
  * @param {Environment} env
+ * @param {String} module
  */
 const unpackList = async (list, env, module) => {
   let items;
@@ -142,6 +147,7 @@ const unpackList = async (list, env, module) => {
  *
  * @param {Object[]} ast
  * @param {Environment} env
+ * @param {String} module
  * @returns
  */
 const evalCall = async (ast, env, module) => {
@@ -205,6 +211,7 @@ const evalIf = async (ast, env, module) => {
  * clause -> id sequence
  * @param {Array} ast
  * @param {Environment} env
+ * @param {String} module
  */
 const evalFor = async (ast, env, module) => {
   if (ast.length !== 3) {
@@ -239,6 +246,7 @@ const evalFor = async (ast, env, module) => {
  * List comprehension
  * @param {Array} ast
  * @param {Environment} env
+ * @param {String} module
  */
 const evalForList = async (ast, env) => {
   if (ast.length !== 3) {
@@ -315,6 +323,7 @@ const destructureList = (left, right, env) => {
  * Bind a value to a name
  * @param {Array} ast
  * @param {Environment} env
+ * @param {String} module
  * @param {Boolean} def
  */
 const assign = async (ast, env, module, def = true) => {
@@ -350,6 +359,7 @@ const assign = async (ast, env, module, def = true) => {
  * Define a new binding in the current environment
  * @param {Array} ast
  * @param {Environment} env
+ * @param {String} module
  */
 const evalDefine = async (ast, env, module) => {
   if (ast.length !== 3) {
@@ -375,6 +385,7 @@ const evalDefine = async (ast, env, module) => {
  * Define a new binding in the current environment
  * @param {Array} ast
  * @param {Environment} env
+ * @param {String} module
  */
 const evalSet = async (ast, env, module) => {
   if (ast.length !== 3) {
@@ -388,8 +399,9 @@ const evalSet = async (ast, env, module) => {
  * Evaluate a let expression
  * @param {Array} ast
  * @param {Environment} env
+ * @param {String} module
  */
-const evalLet = async (ast, en, modulev) => {
+const evalLet = async (ast, env, module) => {
   if (ast.length !== 3) {
     throw new RuntimeError("Let must have exactly 2 subexpressions");
   }
@@ -409,6 +421,7 @@ const evalLet = async (ast, en, modulev) => {
  * Evaluate a lambda expression to create a function
  * @param {Array} ast
  * @param {Environment} env
+ * @param {String} module
  * @returns {Function}
  */
 const evalLambda = async (ast, env, module) => {
@@ -427,6 +440,7 @@ const evalLambda = async (ast, env, module) => {
  * @param {String} name
  * @param {Array} ast
  * @param {Environment} env
+ * @param {String} module
  * @returns {Function}
  */
 const makeLambda = async (name, ast, env, module) => {
@@ -468,6 +482,7 @@ const makeLambda = async (name, ast, env, module) => {
  *
  * @param {Object} ast
  * @param {Environment} env
+ * @param {String} module
  */
 const evalListLiteral = async (ast, env, module) => {
   let list = [];
