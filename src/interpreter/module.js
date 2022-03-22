@@ -1,6 +1,6 @@
 // import { globals } from "./global.js";
 import { Environment } from "./environment.js";
-import { makeModule } from "../runtime.js";
+import { makeModule, resolveImport } from "../runtime.js";
 import { RuntimeError, ArgumentsError } from "../../lib/js/error.js";
 import { bindOpensToModuleEnv } from "./loader.js";
 
@@ -67,6 +67,27 @@ export const evalProvide = (ast, env, module) => {
   };
 };
 
+/**
+ *
+ * @param {Array} ast
+ * @param {Environment} env
+ * @param {String} module
+ * @param {Function} evaluate
+ * @returns
+ */
 export const evalOpen = async (ast, env, module, evaluate) => {
-  return;
+  if (ast.length !== 2) {
+    throw new RuntimeError(
+      "Open expression must be the symbol open plus a value that resolves to a module"
+    );
+  }
+
+  const [openSym, modVal] = ast;
+  console.log(modVal);
+  const modFile = resolveImport(modVal.value, openSym.file);
+  const modName = modFile.split("/").pop().split(".")[0];
+
+  await bindOpensToModuleEnv(env, modName, modFile);
+
+  return null;
 };

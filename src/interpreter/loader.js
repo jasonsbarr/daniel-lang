@@ -143,13 +143,23 @@ const evaluateModules = (depsOrder, env, { open = true } = {}) => {
  * @param {Environment} options.env
  * @returns
  */
-export const loadModules = async ({ name = "", env = globalEnv } = {}) => {
-  let moduleURL;
+export const loadModules = async ({
+  name = "",
+  env = globalEnv,
+  url = null,
+} = {}) => {
+  let moduleURL = url ? url : "";
 
-  try {
-    moduleURL = resolveNativeRequire(name);
-  } catch (e) {
-    moduleURL = resolveRequire(name);
+  if (moduleURL === "") {
+    if (fs.existsSync(fileURLToPath(resolveNativeRequire(name)))) {
+      moduleURL = resolveNativeRequire(name);
+    } else if (fs.existsSync(fileURLToPath(resolveRequire(name)))) {
+      moduleURL = resolveRequire(name);
+    } else {
+      throw new Error(
+        `Could not resolve file URL for ${name || "unknown module"}`
+      );
+    }
   }
 
   nameMap[moduleURL] = name;
@@ -157,10 +167,11 @@ export const loadModules = async ({ name = "", env = globalEnv } = {}) => {
   // populate moduleTable with dependency tree
   const defineModule = async (moduleURL) => {
     let name, requires, nativeRequires, module;
-    try {
+
+    if (moduleURL.endsWith(".js")) {
       // check if is native (JS) module
       ({ name, requires, nativeRequires, module } = await import(moduleURL));
-    } catch (e) {
+    } else if (moduleURL.endsWith(".dan")) {
       const filePath = fileURLToPath(moduleURL);
       const fileName = filePath.split("/").pop();
       const moduleName = fileName.split(".")[0];
@@ -175,6 +186,8 @@ export const loadModules = async ({ name = "", env = globalEnv } = {}) => {
         module: name || moduleName,
         env,
       }));
+    } else {
+      throw new Error("A module must be either a .js or .dan file");
     }
 
     const rootDeps = getModuleURLs(requires, nativeRequires);
@@ -206,8 +219,8 @@ export const createGlobalEnv = async () => {
  * Bind the provides of an opened module into another module's environment
  * @param {Environment} env
  */
-export const bindOpensToModuleEnv = async (env) => {
-  await loadModules({ name: env.module, env });
+export const bindOpensToModuleEnv = async (env, name, url) => {
+  await loadModules({ env, name, url });
 
   return env;
 };

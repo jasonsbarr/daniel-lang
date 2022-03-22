@@ -66,8 +66,10 @@ export const makeFunction = (
  * @param {*} callingFile The file importing the module
  */
 export const resolveImport = (importVal, callingFile) => {
+  const basePath = callingFile.split("/").slice(0, -1).join("/");
+
   if (importVal.startsWith(".")) {
-    const absPath = path.join(fileURLToPath(callingFile), importVal);
+    const absPath = path.join(fileURLToPath(basePath), importVal);
     // relative import
     if (fs.existsSync(`${absPath}.dan`)) {
       // Daniel module
