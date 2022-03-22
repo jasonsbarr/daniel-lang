@@ -1,4 +1,5 @@
 import path from "path";
+import fs from "fs";
 import { fileURLToPath } from "url";
 import { curryN } from "ramda";
 import { getFileURL, isBrowser, dirname, getAllOwnKeys } from "./utils.js";
@@ -66,9 +67,27 @@ export const makeFunction = (
  */
 export const resolveImport = (importVal, callingFile) => {
   if (importVal.startsWith(".")) {
+    const absPath = path.join(fileURLToPath(callingFile), importVal);
     // relative import
-    return getFileURL(path.join(fileURLToPath(callingFile), importVal));
+    if (fs.existsSync(`${absPath}.dan`)) {
+      // Daniel module
+      return getFileURL(`${absPath}.dan`);
+    } else if (fs.existsSync(`${absPath}.js`)) {
+      // Native (JS) module
+      return getFileURL(`${absPath}.js`);
+    }
+  } else {
+    // global module
+    if (fs.existsSync(path.join(__dirname, "../lib", `${importVal}.dan`))) {
+      return resolveRequire(importVal);
+    } else if (
+      fs.existsSync(path.join(__dirname, "../lib/js", `${importVal}.js`))
+    ) {
+      return resolveNativeRequire(importVal);
+    }
   }
+
+  throw new Error(`Could not resolve file for module ${importVal}`);
 };
 
 /**
