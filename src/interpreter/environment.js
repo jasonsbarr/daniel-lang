@@ -1,21 +1,34 @@
 import { RefError } from "../../lib/js/error.js";
 
 export class Environment {
-  constructor(parent, module, name) {
+  constructor(parent, module, name, file = "<stdin>") {
     this.parent = parent;
     this.module = module;
     this.name = name;
+    this.file = file;
     this.namespace = Object.create(null);
     this.children = [];
     this.set("<module>", module);
+    this.set("<file>", file);
+
+    Object.defineProperty(this, "<module>", {
+      configurable: false,
+      writable: false,
+      enumerable: false,
+    });
+
+    Object.defineProperty(this, "<file>", {
+      configurable: false,
+      enumerable: false,
+    });
   }
 
   /**
    * Create a new env with the current one as its parent
    * @param {String} name Name for the new env
    */
-  extend(name, module = this.module) {
-    const env = createEnv(this, { module, name });
+  extend(name, module = this.module, file = "<stdin>") {
+    const env = createEnv(this, { module, name, file });
     this.children.push(env);
     return env;
   }
@@ -67,11 +80,11 @@ export class Environment {
   }
 
   toString() {
-    return `Environment(module=${this.module}-${this.name})`;
+    return `Environment(module=${this.module}.${this.name})`;
   }
 }
 
 export const createEnv = (
   parent = null,
-  { module = "<global>", name = "global" } = {}
-) => new Environment(parent, module, name);
+  { module = "<global>", name = "global", file = "<stdin>" } = {}
+) => new Environment(parent, module, name, file);

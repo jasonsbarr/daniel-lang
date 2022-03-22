@@ -5,7 +5,7 @@ import figlet from "figlet";
 import { argparser } from "./argparser.js";
 import { initializeRepl } from "./repl.js";
 import { EVAL, EVAL_ENV } from "../eval.js";
-import { dirname } from "../utils.js";
+import { dirname, getFileURL } from "../utils.js";
 import { println } from "../../lib/js/io.js";
 import { createMainModule } from "../interpreter/module.js";
 
@@ -32,14 +32,15 @@ const helpCmd = {
 
 const replCmd = {
   run(args) {
-    let env = createMainModule();
+    let env;
 
     for (let arg of args) {
       switch (arg.opt) {
         case "-i":
           const input = fs.readFileSync(arg.value, "utf-8");
           const module = arg.value.split(".")[0];
-          env = EVAL_ENV(input, env, module);
+          env = EVAL_ENV(input, { module, file: arg.value });
+          env.set("<file>", "<stdin>");
           break;
         default:
           throw new Error(
@@ -79,7 +80,7 @@ const runCmd = {
   run(file, args) {
     const fn = () => {
       const input = fs.readFileSync(file, "utf-8");
-      return EVAL(input, { file: file });
+      return EVAL(input, { file });
     };
     const errFn = (e) => {
       console.error(e.message);
