@@ -3,14 +3,6 @@ import { Environment } from "./environment.js";
 import { makeModule } from "../runtime.js";
 import { RuntimeError, ArgumentsError } from "../../lib/js/error.js";
 
-export const createMainModule = (globals, file = "<stdin>") => {
-  return globals.extend("<main>", "<main>", file);
-};
-
-export const createModuleEnv = (globals, name, file) => {
-  return globals.extend(`<global>.${name}`, name, file);
-};
-
 /**
  * Evaluate a module form into a module object with function
  * "module" that returns the module's exports
