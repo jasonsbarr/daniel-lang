@@ -7,3 +7,5 @@ export const createMainModule = (file = "<stdin>") => {
 export const createModuleEnv = (name, file) => {
   return globals.extend(`<global>.${name}`, name, file);
 };
+
+export const evalModule = (ast, env, evaluate) => {};
