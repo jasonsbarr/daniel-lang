@@ -7,6 +7,7 @@ import { initializeRepl } from "./repl.js";
 import { EVAL, EVAL_ENV } from "../eval.js";
 import { dirname } from "../utils.js";
 import { println } from "../../lib/js/io.js";
+import { createMainEnv } from "../interpreter/loader.js";
 
 const __dirname = dirname(import.meta.url);
 const version = JSON.parse(
@@ -31,15 +32,14 @@ const helpCmd = {
 
 const replCmd = {
   run(args) {
-    let env;
+    let env = createMainEnv();
 
     for (let arg of args) {
       switch (arg.opt) {
         case "-i":
           const input = fs.readFileSync(arg.value, "utf-8");
           const module = arg.value.split(".")[0];
-          // create global env and load modules
-          env = EVAL_ENV(input, { module, file: arg.value });
+          env = EVAL_ENV(input, { env, module, file: arg.value });
           env.set("<file>", "<stdin>");
           break;
         default:
@@ -47,10 +47,6 @@ const replCmd = {
             `Unknown option ${arg.opt} for interactive Daniel console`
           );
       }
-    }
-
-    if (!env) {
-      // create global env and load modules
     }
 
     console.log(

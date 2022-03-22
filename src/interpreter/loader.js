@@ -112,7 +112,12 @@ const define = (name, url, deps, module) => {
   };
 };
 
-const evaluateModules = (depsOrder) => {
+/**
+ *
+ * @param {String[]} depsOrder
+ * @param {Environment|null} [env = null]
+ */
+const evaluateModules = (depsOrder, env) => {
   for (let dep of depsOrder) {
     let deps = moduleTable[dep].deps;
     let mods = [];
@@ -125,22 +130,28 @@ const evaluateModules = (depsOrder) => {
     // resolve the module
     modules[dep] = moduleTable[dep].module(rt, ...mods);
   }
+
+  if (env) {
+    env.bindModuleNames(modules[dep]);
+  }
 };
 
 /**
  * Load the dependencies for module {name} (the root module)
  * @param {Object} options
  * @param {String} options.name
- * @param {Boolean} options.native
  * @param {Environment} options.env
  * @returns
  */
-export const loadModules = async ({
-  name = "",
-  native = false,
-  env = global,
-} = {}) => {
-  let moduleURL = native ? resolveNativeRequire(name) : resolveRequire(name);
+export const loadModules = async ({ name = "", env = null } = {}) => {
+  let moduleURL;
+
+  try {
+    moduleURL = resolveNativeRequire(name);
+  } catch (e) {
+    moduleURL = resolveRequire(name);
+  }
+
   nameMap[moduleURL] = name;
 
   // populate moduleTable with dependency tree
@@ -148,14 +159,27 @@ export const loadModules = async ({
     console.log(moduleURL);
     let name, requires, nativeRequires, module;
     try {
-      // is native (JS) module
+      // check if is native (JS) module
       ({ name, requires, nativeRequires, module } = await import(moduleURL));
+
+      if (name === "global" && !env) {
+        env = globalEnv;
+      }
     } catch (e) {
       const filePath = fileURLToPath(moduleURL);
       const fileName = filePath.split("/").pop();
       const moduleName = fileName.split(".")[0];
       const input = fs.readFileSync(filePath, "utf-8");
+
+      if ((name === "global" || moduleName === "global") && !env) {
+        env = globalEnv;
+      }
+
       const moduleEnv = env.extend(name || moduleName, moduleName, fileName);
+
+      if (name === "") {
+        nameMap[moduleURL] = moduleName;
+      }
 
       ({ name, requires, nativeRequires, module } = EVAL(input, {
         file: filePath,
@@ -167,7 +191,7 @@ export const loadModules = async ({
     const rootDeps = getModuleURLs(requires, nativeRequires);
 
     if (!(moduleURL in moduleTable)) {
-      define(name, moduleURL, rootDeps, module);
+      define(name || moduleName, moduleURL, rootDeps, module);
     }
 
     for await (let dep of rootDeps) {
@@ -178,7 +202,13 @@ export const loadModules = async ({
 
   await defineModule(moduleURL);
   const loadOrder = getLoadOrder([moduleURL]);
-  evaluateModules(loadOrder);
+  evaluateModules(loadOrder, env);
 
   return modules;
+};
+
+export const createMainEnv = (file) => {
+  loadModules({ name: "global" });
+
+  return globalEnv.extend("<main>", "<main>", file);
 };

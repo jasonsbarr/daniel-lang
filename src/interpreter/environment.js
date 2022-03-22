@@ -24,6 +24,16 @@ export class Environment {
   }
 
   /**
+   *
+   * @param {Module} module
+   */
+  bindModuleNames(module) {
+    for (let [k, v] of Object.entries(module.provides)) {
+      this.set(k, v);
+    }
+  }
+
+  /**
    * Create a new env with the current one as its parent
    * @param {String} name Name for the new env
    */
