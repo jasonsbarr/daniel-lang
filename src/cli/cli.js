@@ -5,19 +5,13 @@ import figlet from "figlet";
 import { argparser } from "./argparser.js";
 import { initializeRepl } from "./repl.js";
 import { EVAL, EVAL_ENV } from "../eval.js";
-import { dirname, getFileURL } from "../utils.js";
+import { dirname } from "../utils.js";
 import { println } from "../../lib/js/io.js";
-import { loadModules } from "../loader.js";
-import { createGlobalEnv } from "../interpreter/global.js";
-import { createMainModule } from "../interpreter/module.js";
 
 const __dirname = dirname(import.meta.url);
 const version = JSON.parse(
   fs.readFileSync(path.join(__dirname, "../../package.json"), "utf-8")
 ).version;
-
-const modules = await loadModules({ name: "global", native: true });
-const globals = createGlobalEnv(modules);
 
 const getHelp = (cmd) => cmd.help;
 const exit = (code) => process.exit(code);
@@ -44,8 +38,7 @@ const replCmd = {
         case "-i":
           const input = fs.readFileSync(arg.value, "utf-8");
           const module = arg.value.split(".")[0];
-          env = createMainModule(globals, arg.value);
-
+          // create global env and load modules
           env = EVAL_ENV(input, { module, file: arg.value });
           env.set("<file>", "<stdin>");
           break;
@@ -57,7 +50,7 @@ const replCmd = {
     }
 
     if (!env) {
-      env = createMainModule(globals);
+      // create global env and load modules
     }
 
     console.log(
@@ -90,6 +83,7 @@ const evalCmd = {
 const runCmd = {
   run(file, args) {
     const fn = () => {
+      // need global env with modules
       const input = fs.readFileSync(file, "utf-8");
       return EVAL(input, { file });
     };
