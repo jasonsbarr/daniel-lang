@@ -58,7 +58,7 @@ These are the language forms I intend to implement that form the core of the lan
 - [07 - Fun, fun, functions](https://github.com/jasonsbarr/daniel-lang/tree/07-functions)
 - [08 - Lists and destructuring](https://github.com/jasonsbarr/daniel-lang/tree/08-lists)
 - [09 - Making a CLI tool](https://github.com/jasonsbarr/daniel-lang/tree/09-cli)
-- 10 - Modules and imports
+- [10 - Modules and imports](https://github.com/jasonsbarr/daniel-lang/tree/10-imports)
 - 11 - Adding keywords
 - 12 - Maps and structs
 - 13 - Classes and objects
