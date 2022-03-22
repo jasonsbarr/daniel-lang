@@ -1,8 +1,12 @@
+import { fileURLToPath } from "url";
+import fs from "fs";
+import { EVAL } from "./eval.js";
 import {
   resolveRequire,
   resolveNativeRequire,
   createRuntime,
 } from "./runtime.js";
+import { createModuleEnv } from "./interpreter/module.js";
 
 let moduleTable = {};
 let nameMap = {};
@@ -128,13 +132,33 @@ const evaluateModules = (depsOrder) => {
  * @param {Boolean} native
  * @returns
  */
-export const loadModules = async ({ name = "", native = false } = {}) => {
+export const loadModules = async ({
+  name = "",
+  native = false,
+  url = "",
+} = {}) => {
   let moduleURL = native ? resolveNativeRequire(name) : resolveRequire(name);
   nameMap[moduleURL] = name;
 
   // populate moduleTable with dependency tree
   const defineModule = async (moduleURL) => {
-    let { name, requires, nativeRequires, module } = await import(moduleURL);
+    let name, requires, nativeRequires, module;
+    if (native) {
+      // is native (JS) module
+      ({ name, requires, nativeRequires, module } = await import(moduleURL));
+    } else {
+      const filePath = fileURLToPath(moduleURL);
+      const fileName = filePath.split("/").pop();
+      const moduleName = fileName.split(".")[0];
+      const input = fs.readFileSync(filePath, "utf-8");
+      const env = createModuleEnv(name || moduleName, filePath);
+      ({ name, requires, nativeRequires, module } = EVAL(input, {
+        file: filePath,
+        module: name || moduleName,
+        env,
+      }));
+    }
+
     const rootDeps = getModuleURLs(requires, nativeRequires);
 
     if (!(moduleURL in moduleTable)) {

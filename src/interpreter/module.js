@@ -69,3 +69,5 @@ export const evalProvide = (ast, env, module, evaluate) => {
     export: evaluate(name, env, module),
   };
 };
+
+export const evalOpen = (ast, env, module, evaluate) => {};

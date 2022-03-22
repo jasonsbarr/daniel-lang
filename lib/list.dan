@@ -1,0 +1,6 @@
+(begin-module
+    (define (map fn lst)
+        (for/list (i lst)
+            (fn i)))
+
+    (provide map))

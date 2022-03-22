@@ -3,7 +3,7 @@ import { RuntimeError, TyError, ValError } from "../../lib/js/error.js";
 import { Environment } from "./environment.js";
 import { isTruthy, isIterable } from "./utils.js";
 import { makeFunction } from "../runtime.js";
-import { evalModule, evalProvide } from "./module.js";
+import { evalModule, evalProvide, evalOpen } from "./module.js";
 
 let ID = 0;
 
@@ -70,6 +70,9 @@ const evalList = (ast, env) => {
 
     case "provide":
       return evalProvide(ast, env, module, evaluate);
+
+    case "open":
+      return evalOpen(ast, env, module, evaluate);
 
     case "if":
       return evalIf(ast, env);
