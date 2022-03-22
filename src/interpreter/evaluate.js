@@ -3,7 +3,7 @@ import { RuntimeError, TyError, ValError } from "../../lib/js/error.js";
 import { Environment } from "./environment.js";
 import { isTruthy, isIterable } from "./utils.js";
 import { makeFunction } from "../runtime.js";
-import { evalModule } from "./module.js";
+import { evalModule, evalProvide } from "./module.js";
 
 let ID = 0;
 
@@ -67,6 +67,9 @@ const evalList = (ast, env) => {
 
     case "begin-module":
       return evalModule(ast, env, evaluate);
+
+    case "provide":
+      return evalProvide(ast, env, module, evaluate);
 
     case "if":
       return evalIf(ast, env);
@@ -423,7 +426,7 @@ const evalLambda = (ast, env, module) => {
  * @param {Environment} env
  * @returns {Function}
  */
-const makeLambda = (name, ast, env) => {
+const makeLambda = (name, ast, env, module) => {
   const params = ast[0].map((t) => t.value);
   const body = ast[1];
   let varargs = params.includes("&");
