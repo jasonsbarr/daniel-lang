@@ -3,7 +3,7 @@ import { RuntimeError, TyError, ValError } from "../../lib/js/error.js";
 import { Environment } from "./environment.js";
 import { isTruthy, isIterable } from "./utils.js";
 import { makeFunction } from "../runtime.js";
-import { evalModule, evalProvide, evalOpen } from "./module.js";
+import { evalModule, evalProvide, evalOpen, evalImport } from "./module.js";
 
 let ID = 0;
 
@@ -76,6 +76,9 @@ const evalList = async (ast, env, module) => {
 
     case "open":
       return await evalOpen(ast, env, module, evaluate);
+
+    case "import":
+      return await evalImport(ast, env, module, evaluate);
 
     case "if":
       return await evalIf(ast, env, module);

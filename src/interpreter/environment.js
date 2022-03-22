@@ -29,7 +29,24 @@ export class Environment {
    */
   bindModuleNames(module) {
     for (let [k, v] of Object.entries(module)) {
+      if (k === "__name__") {
+        continue;
+      }
       this.set(k, v);
+    }
+  }
+
+  /**
+   *
+   * @param {Module} module
+   */
+  bindModuleNamespaced(module) {
+    for (let [k, v] of Object.entries(module)) {
+      if (k === "__name__") {
+        continue;
+      }
+
+      this.set(`${module.__name__}.${k}`, v);
     }
   }
 

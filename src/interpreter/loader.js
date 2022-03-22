@@ -117,7 +117,11 @@ const define = (name, url, deps, module) => {
  * @param {String[]} depsOrder
  * @param {Environment}
  */
-const evaluateModules = (depsOrder, env, { open = true } = {}) => {
+const evaluateModules = (
+  depsOrder,
+  env,
+  { open = true, namespace = false } = {}
+) => {
   for (let dep of depsOrder) {
     let deps = moduleTable[dep].deps;
     let mods = [];
@@ -127,11 +131,13 @@ const evaluateModules = (depsOrder, env, { open = true } = {}) => {
       // guaranteed to have its dependencies already resolved
       mods.push(modules[d]);
     }
-    // resolve the module
+    // evaluate the module
     modules[dep] = moduleTable[dep].module(rt, ...mods);
 
     if (env && open) {
       env.bindModuleNames(modules[dep]);
+    } else if (env && namespace) {
+      env.bindModuleNamespaced(modules[dep]);
     }
   }
 };
@@ -147,6 +153,8 @@ export const loadModules = async ({
   name = "",
   env = globalEnv,
   url = null,
+  open = true,
+  namespace = false,
 } = {}) => {
   let moduleURL = url ? url : "";
 
@@ -177,13 +185,13 @@ export const loadModules = async ({
       const moduleName = fileName.split(".")[0];
       const input = fs.readFileSync(filePath, "utf-8");
 
-      if (name === "") {
+      if (!name) {
         nameMap[moduleURL] = moduleName;
       }
 
       ({ name, requires, nativeRequires, module } = await EVAL(input, {
         file: filePath,
-        module: name || moduleName,
+        module: name ?? moduleName,
         env,
       }));
     } else {
@@ -204,7 +212,7 @@ export const loadModules = async ({
 
   await defineModule(moduleURL);
   const loadOrder = getLoadOrder([moduleURL]);
-  evaluateModules(loadOrder, env);
+  evaluateModules(loadOrder, env, { open, namespace });
 
   return modules;
 };
@@ -221,6 +229,12 @@ export const createGlobalEnv = async () => {
  */
 export const bindOpensToModuleEnv = async (env, name, url) => {
   await loadModules({ env, name, url });
+
+  return env;
+};
+
+export const bindNamespacedModuleValues = async (env, name, url) => {
+  await loadModules({ env, name, url, open: false, namespace: true });
 
   return env;
 };

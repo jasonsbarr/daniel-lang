@@ -2,7 +2,7 @@
 import { Environment } from "./environment.js";
 import { makeModule, resolveImport } from "../runtime.js";
 import { RuntimeError, ArgumentsError } from "../../lib/js/error.js";
-import { bindOpensToModuleEnv } from "./loader.js";
+import { bindOpensToModuleEnv, bindNamespacedModuleValues } from "./loader.js";
 
 /**
  * Evaluate a module form into a module object with function
@@ -87,6 +87,22 @@ export const evalOpen = async (ast, env, module, evaluate) => {
   const modName = modFile.split("/").pop().split(".")[0];
 
   await bindOpensToModuleEnv(env, modName, modFile);
+
+  return null;
+};
+
+export const evalImport = async (ast, env) => {
+  if (ast.length !== 2) {
+    throw new RuntimeError(
+      "Open expression must be the symbol open plus a value that resolves to a module"
+    );
+  }
+
+  const [openSym, modVal] = ast;
+  const modFile = resolveImport(modVal.value, openSym.file);
+  const modName = modFile.split("/").pop().split(".")[0];
+
+  await bindNamespacedModuleValues(env, modName, modFile);
 
   return null;
 };
