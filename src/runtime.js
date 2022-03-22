@@ -63,7 +63,13 @@ export const makeFunction = (
  * @param {String} rq
  * @returns {String}
  */
-export const resolveRequire = (rq) => {};
+export const resolveRequire = (rq) => {
+  if (rq.startsWith("file://")) {
+    return rq;
+  }
+
+  return getFileURL(path.join(__dirname, "../lib", `${rq}.dan`));
+};
 
 /**
  * Resolves a native (JS) module to an absolute path from a require string
