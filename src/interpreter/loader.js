@@ -115,7 +115,7 @@ const define = (name, url, deps, module) => {
 /**
  *
  * @param {String[]} depsOrder
- * @param {Environment|null} [env = null]
+ * @param {Environment}
  */
 const evaluateModules = (depsOrder, env) => {
   for (let dep of depsOrder) {
@@ -167,8 +167,6 @@ export const loadModules = async ({ name = "", env = globalEnv } = {}) => {
       const moduleName = fileName.split(".")[0];
       const input = fs.readFileSync(filePath, "utf-8");
 
-      const moduleEnv = env.extend(name || moduleName, moduleName, fileName);
-
       if (name === "") {
         nameMap[moduleURL] = moduleName;
       }
@@ -176,8 +174,9 @@ export const loadModules = async ({ name = "", env = globalEnv } = {}) => {
       ({ name, requires, nativeRequires, module } = EVAL(input, {
         file: filePath,
         module: name || moduleName,
-        env: moduleEnv,
+        env,
       }));
+      console.log("mod:", name, requires, nativeRequires, module);
     }
 
     const rootDeps = getModuleURLs(requires, nativeRequires);
@@ -199,8 +198,8 @@ export const loadModules = async ({ name = "", env = globalEnv } = {}) => {
   return modules;
 };
 
-export const createMainEnv = (file) => {
-  loadModules({ name: "global" });
+export const createGlobalEnv = () => {
+  loadModules({ name: "global", env: globalEnv });
 
-  return globalEnv.extend("<main>", "<main>", file);
+  return globalEnv;
 };

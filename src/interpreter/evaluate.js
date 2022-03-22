@@ -66,7 +66,7 @@ const evalList = (ast, env, module) => {
       return evalBlock(ast.slice(1), env);
 
     case "begin-module":
-      return evalModule(ast, env, evaluate);
+      return evalModule(ast[0], env, evaluate);
 
     case "provide":
       return evalProvide(ast, env, module, evaluate);

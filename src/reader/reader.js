@@ -191,23 +191,20 @@ const readAmp = (reader) => {
  * @param {Reader} reader
  */
 const readModule = (reader) => {
-  const { line, col, pos, file } = reader.next();
-
-  let mod = [
-    {
-      type: "Module",
-      line,
-      col,
-      pos,
-      file,
-      value: "begin-module",
-    },
-    // get name string
-    readForm(reader),
-  ];
+  const token = reader.next();
+  const modExprs = [];
+  const mod = {
+    type: "Module",
+    line: token.line,
+    col: token.col,
+    pos: token.pos,
+    file: token.file,
+    value: "begin-module",
+    exprs: modExprs,
+  };
 
   while (reader.peek().type !== "RParen") {
-    mod.push(readForm(reader));
+    modExprs.push(readForm(reader));
   }
 
   return mod;

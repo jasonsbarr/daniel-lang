@@ -6,20 +6,19 @@ import { RuntimeError, ArgumentsError } from "../../lib/js/error.js";
 /**
  * Evaluate a module form into a module object with function
  * "module" that returns the module's exports
- * @param {Object[]} ast
+ * @param {Object} ast
  * @param {Environment} env
  * @param {Function} evaluate
  */
 
 export const evalModule = (ast, env, evaluate) => {
-  if (ast.length < 3) {
+  if (ast.exprs.length < 2) {
     throw new RuntimeError(
       "A module must contain a name and at least one expression"
     );
   }
-  const { file } = ast[0];
-  const { value: name } = ast[1];
-  const exprs = ast.slice(2);
+  const { file, value: name } = ast.exprs[0];
+  const exprs = ast.exprs.slice(1);
   let provides = {};
   let requires = [];
   let nativeRequires = [];
@@ -29,7 +28,7 @@ export const evalModule = (ast, env, evaluate) => {
   }
 
   const moduleEnv = env.extend(`${env.name}.${name}`, name, file);
-
+  let i = 0;
   for (let exp of exprs) {
     let value = evaluate(exp, moduleEnv, name);
 
@@ -57,10 +56,13 @@ export const evalProvide = (ast, env, module, evaluate) => {
       name.type
     );
   }
+
+  const exportVal = env.get(name.value);
+  exportVal.module = module;
   return {
     name: name.value,
     provide: true,
-    export: evaluate(name, env, module),
+    export: exportVal,
   };
 };
 

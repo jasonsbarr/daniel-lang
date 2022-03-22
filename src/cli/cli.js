@@ -7,7 +7,7 @@ import { initializeRepl } from "./repl.js";
 import { EVAL, EVAL_ENV } from "../eval.js";
 import { dirname } from "../utils.js";
 import { println } from "../../lib/js/io.js";
-import { createMainEnv } from "../interpreter/loader.js";
+import { createGlobalEnv } from "../interpreter/loader.js";
 
 const __dirname = dirname(import.meta.url);
 const version = JSON.parse(
@@ -32,7 +32,7 @@ const helpCmd = {
 
 const replCmd = {
   run(args) {
-    let env = createMainEnv();
+    let env = createGlobalEnv();
 
     for (let arg of args) {
       switch (arg.opt) {
@@ -40,7 +40,6 @@ const replCmd = {
           const input = fs.readFileSync(arg.value, "utf-8");
           const module = arg.value.split(".")[0];
           env = EVAL_ENV(input, { env, module, file: arg.value });
-          env.set("<file>", "<stdin>");
           break;
         default:
           throw new Error(
@@ -48,6 +47,8 @@ const replCmd = {
           );
       }
     }
+
+    env = env.extend("main", "<main>");
 
     console.log(
       `${chalk.blueBright(
