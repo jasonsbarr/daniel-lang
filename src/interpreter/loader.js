@@ -117,7 +117,7 @@ const define = (name, url, deps, module) => {
  * @param {String[]} depsOrder
  * @param {Environment}
  */
-const evaluateModules = (depsOrder, env, open = true) => {
+const evaluateModules = (depsOrder, env, { open = true } = {}) => {
   for (let dep of depsOrder) {
     let deps = moduleTable[dep].deps;
     let mods = [];
