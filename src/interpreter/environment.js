@@ -7,6 +7,7 @@ export class Environment {
     this.name = name;
     this.namespace = Object.create(null);
     this.children = [];
+    this.set("__module__", module);
   }
 
   /**
