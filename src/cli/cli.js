@@ -7,7 +7,7 @@ import { initializeRepl } from "./repl.js";
 import { EVAL, EVAL_ENV } from "../eval.js";
 import { dirname } from "../utils.js";
 import { println } from "../../lib/js/io.js";
-import { globals } from "../interpreter/global.js";
+import { createMainModule } from "../interpreter/module.js";
 
 const __dirname = dirname(import.meta.url);
 const version = JSON.parse(
@@ -32,7 +32,7 @@ const helpCmd = {
 
 const replCmd = {
   run(args) {
-    let env = globals;
+    let env = createMainModule();
 
     for (let arg of args) {
       switch (arg.opt) {
