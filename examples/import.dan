@@ -1,3 +1,5 @@
 (open "./inc")
+(open "./dec")
 
 (println (inc 2))
+(println (dec 4))

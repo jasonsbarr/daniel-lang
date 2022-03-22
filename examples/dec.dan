@@ -1,0 +1,6 @@
+(begin-module "dec"
+
+    (define (dec x)
+        (- x 1))
+
+    (provide dec))
