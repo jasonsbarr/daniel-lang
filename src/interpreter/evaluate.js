@@ -264,18 +264,18 @@ const evalFor = async (ast, env, module) => {
 
     await assign([id, item], newEnv);
 
-    let test = await evaluate(body, newEnv, module);
-
     if (when) {
+      let test = await evaluate(when, newEnv, module);
       if (isTruthy(test)) {
-        value = test;
+        value = await evaluate(body, newEnv, module);
       }
     } else if (unless) {
+      let test = await evaluate(unless, newEnv, module);
       if (!isTruthy(test)) {
-        value = test;
+        value = await evaluate(body, newEnv, module);
       }
     } else {
-      value = test;
+      value = evaluate(body, newEnv, module);
     }
   }
 
