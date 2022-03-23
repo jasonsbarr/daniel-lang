@@ -1,14 +1,14 @@
 (begin-module "list"
     (define (map fn lst)
-        (for/list (i lst)
+        (for/list ((i lst))
             (fn i)))
 
     (define (filter pred lst)
-        (for/list (i lst)
-            (if (fn i) i nil)))
+        (for/list ((i lst) :when (pred i))
+            i))
 
     (define (reduce fn acc lst)
-        (for (i lst)
+        (for ((i lst))
             (set! acc (fn acc i))))
 
     (provide map)
