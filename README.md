@@ -29,6 +29,25 @@ Starting out, I will create different branches for different stages of the imple
 
 I'm implementing this language in JavaScript for two reasons: first, it's probably my strongest language, so I don't have to think too much about how to use the tools at my disposal and can focus on implementing the language. Second, JavaScript is pretty easy to learn and read and a lot of people out there know it, and I wanted the code to be as accessible as possible. OCaml and F# are great languages for writing interpreters and compilers, but if I used OCaml it would greatly reduce the number of people who could understand my code.
 
+## Usage
+
+Currently you have to clone or fork the repo to use the language. I will distribute an NPM package once the core forms are implemented in the interpreter.
+
+Run `npm link` in the project directory to be able to use `daniel` as a standalone command.
+
+### Using the CLI
+
+- `daniel`
+- `daniel -i [filepath]` reads a file into an interactive session
+- `daniel [filepath]` evaluates a file
+- `daniel -e [code string]` evaluates a string as code
+- `daniel -h` prints the help message
+- `daniel -v` prints the current version number
+
+## Documentation
+
+Language documentation is [here](./docs)
+
 ## Core language forms
 
 These are the language forms I have yet to implement that will be part of the core of the language:
