@@ -457,7 +457,7 @@ const assign = async (ast, env, module, def = true, rest = false) => {
     throw new ValError(`Name ${name} has already been defined in this scope`);
   }
 
-  if (Array.isArray(expr && rest)) {
+  if (Array.isArray(expr) && rest) {
     // rest identifier present in destructuring list
     let list = [];
     for (let ex of expr) {
