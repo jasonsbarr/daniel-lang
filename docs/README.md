@@ -26,7 +26,7 @@ Daniel uses the underlying native (JavaScript) data types under the hood:
 - List literals are written with square brackets and no commas
   - e.g. `[1 2 3 4 5]`
 - Hash literals are written as key/value pairs with curly braces and no commas
-  - e.g. {:a "hello" :b "bonjour"}
+  - e.g. `{:a "hello" :b "bonjour"}`
   - You can use either strings or keywords as hash keys
 - Identifiers can start with any Unicode letter, plus the characters :=<>%:|?\/\*.\_$!+-, and after that may also include any Unicode number and @~^&#'.
 - Comments start with ;. There are no multi-line comments.
