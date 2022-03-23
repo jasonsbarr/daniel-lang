@@ -105,6 +105,7 @@ Call expressions and special forms are surrounded by parentheses.
 
 ## Modules, exports, and imports
 
+```lisp
 ; Define a module with `module-begin`
 ; Note that the interpreter will assume each module is contained in its
 ; own file that has the same name as the module. `module-begin`
@@ -132,6 +133,8 @@ Call expressions and special forms are surrounded by parentheses.
 ; modules that may have the same name
 (import "identity" :as "id")
 (id.id x)
+
+```
 
 ```
 
