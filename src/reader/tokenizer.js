@@ -175,7 +175,7 @@ class Lexer {
  * Rules for creating tokens
  */
 const NIL = rule("Nil", String.raw`nil`);
-const BOOL = rule("Boolean", String.raw`true|false`);
+const BOOL = rule("Boolean", String.raw`#true|#false`);
 const STRING = rule("String", String.raw`"(?:\\.|[^\\"])*"?`);
 const NUMBER = rule("Number", String.raw`[-\+]?[0-9]*\.?[0-9]+`);
 const COMMENT = rule("Comment", String.raw`;.*`);
