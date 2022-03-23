@@ -351,7 +351,7 @@ const evalForList = async (ast, env, module) => {
  * @param {Environment} env
  * @param {String} module
  */
-const destructureList = (left, right, env, module) => {
+const destructureList = (left, right, env, module, define) => {
   const names = left.value;
   const exprs = right.value ?? right; // in case it's an already-evaluated list
 
@@ -376,10 +376,10 @@ const destructureList = (left, right, env, module) => {
           "Can only have a single identifier after rest symbol"
         );
       }
-      return assign([name, exprs.slice(i)], env, module);
+      return assign([name, exprs.slice(i)], env, module, define);
     }
 
-    value = assign([name, exprs[i]], env, module);
+    value = assign([name, exprs[i]], env, module, define);
     i++;
   }
 
@@ -394,10 +394,11 @@ const destructureList = (left, right, env, module) => {
  * @param {Environment} env
  * @param {String} module
  */
-const destructureObject = (left, right, env, module) => {
+const destructureObject = async (left, right, env, module, define) => {
   const names = left.value;
-  const exprs = right.value ?? right;
+  const exprs = right; // if not evaluated, is a hash pattern or identifier token that resolves to a hash
   const exprLength = exprs.length ?? exprs.size ?? Object.keys(exprs).length;
+  let value;
 
   if (names.length > exprLength) {
     throw new RuntimeError(
@@ -405,9 +406,31 @@ const destructureObject = (left, right, env, module) => {
     );
   }
 
+  const obj = await evaluate(right, env, module);
+
   for (let name of names) {
-    // handle assignment in case of ast, Map, or object
+    // handle assignment in case of Map or struct/object
+    // Map
+    if (obj instanceof Map) {
+      if (obj.has(name.value)) {
+        value = assign([name, obj.get(name.value)], env, module, define);
+      } else if (obj.has(Symbol.for(`:${name.value}`))) {
+        value = assign(
+          [name, obj.get(Symbol.for(`:${name.value}`))],
+          env,
+          module,
+          define
+        );
+      } else {
+        throw new RuntimeError(
+          `Key ${name.value} not found in hash. Destructuring must use string or keyword keys that exist in the hash.`
+        );
+      }
+    } // handle struct/object case
   }
+
+  // return last value
+  return value;
 };
 
 /**
@@ -421,7 +444,11 @@ const assign = async (ast, env, module, def = true) => {
   const [id, expr] = ast;
 
   if (id.type === "ListPattern") {
-    return destructureList(id, expr, env, module);
+    return destructureList(id, expr, env, module, def);
+  }
+
+  if (id.type === "HashPattern") {
+    return destructureObject(id, expr, env, module, def);
   }
 
   const name = id.value;
@@ -462,11 +489,10 @@ const evalDefine = async (ast, env, module) => {
 
   if (Array.isArray(id)) {
     // is function definition
-    const name = id[0].value;
+    const name = id[0];
     const args = id.slice(1);
     const func = await makeLambda(name, [args, expr], env, module);
-    env.set(name, func);
-    return func;
+    return await assign([name, func], env, module);
   }
 
   return await assign([id, expr], env, module);
