@@ -208,7 +208,7 @@ const evalSet = (ast, env) => {
   const scope = env.lookup(name);
 
   if (scope) {
-    env.set(name, evaluate(expr, env));
+    env.set(name, evaluate(expr, scope));
   } else {
     throw new RuntimeError(`${name} is not bound in the current scope`);
   }
