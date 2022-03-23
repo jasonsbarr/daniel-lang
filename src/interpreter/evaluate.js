@@ -349,6 +349,7 @@ const evalForList = async (ast, env, module) => {
  * @param {Array*} left
  * @param {Array} right
  * @param {Environment} env
+ * @param {String} module
  */
 const destructureList = (left, right, env, module) => {
   const names = left.value;
@@ -386,7 +387,28 @@ const destructureList = (left, right, env, module) => {
   return value;
 };
 
-const destructureObject = (left, right, env, module) => {};
+/**
+ * Destructure an object, struct, or map into variable assignments
+ * @param {Object} left
+ * @param {Object|Array} right
+ * @param {Environment} env
+ * @param {String} module
+ */
+const destructureObject = (left, right, env, module) => {
+  const names = left.value;
+  const exprs = right.value ?? right;
+  const exprLength = exprs.length ?? exprs.size ?? Object.keys(exprs).length;
+
+  if (names.length > exprLength) {
+    throw new RuntimeError(
+      `${names.length} identifiers but only ${exprs.length} values to unpack`
+    );
+  }
+
+  for (let name of names) {
+    // handle assignment in case of ast, Map, or object
+  }
+};
 
 /**
  * Bind a value to a name
