@@ -462,8 +462,19 @@ const destructureObject = async (left, right, env, module, define) => {
  * @param {Boolean} def
  * @param {Boolean} rest
  */
-const assign = async (ast, env, module, def = true, rest = false) => {
+const assign = async (
+  ast,
+  env,
+  module,
+  def = true,
+  rest = false,
+  setScope = null
+) => {
   const [id, expr] = ast;
+
+  if (setScope) {
+    [setScope, env] = [env, setScope];
+  }
 
   if (id.type === "ListPattern") {
     return destructureList(id, expr, env, module, def);
@@ -488,6 +499,10 @@ const assign = async (ast, env, module, def = true, rest = false) => {
 
     env.set(name, list);
     return list;
+  }
+
+  if (setScope) {
+    [setScope, env] = [env, setScope];
   }
 
   const value = await evaluate(expr, env, module);
@@ -528,7 +543,7 @@ const evalDefine = async (ast, env, module) => {
  */
 const evalSet = async (ast, env, module) => {
   if (ast.length !== 3) {
-    throw new RuntimeError("Define must have exactly 2 subexpressions");
+    throw new RuntimeError("Set must have exactly 2 subexpressions");
   }
 
   const id = ast[1];
@@ -536,7 +551,7 @@ const evalSet = async (ast, env, module) => {
   const scope = env.lookup(name);
 
   if (scope) {
-    return assign(ast.slice(1), scope, module, false);
+    return assign(ast.slice(1), env, module, false, false, scope);
   } else {
     throw new RuntimeError(`${name} is not bound in the current scope`);
   }
