@@ -200,7 +200,7 @@ export const loadModules = async ({
         module,
       } = await EVAL(input, {
         file: filePath,
-        module: name ?? mName ?? moduleName,
+        module: mName ?? moduleName,
         env,
       }));
     } else {
