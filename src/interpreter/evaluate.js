@@ -515,7 +515,7 @@ const evalSet = async (ast, env, module) => {
   const scope = env.lookup(name);
 
   if (scope) {
-    return assign(ast.slice(1), scope, false);
+    return assign(ast.slice(1), scope, module, false);
   } else {
     throw new RuntimeError(`${name} is not bound in the current scope`);
   }
