@@ -100,6 +100,10 @@ const readAtom = (reader) => {
     return { ...token, value: token.text };
   }
 
+  if (token.match("Keyword")) {
+    return { ...token, value: Symbol.for(token.text) };
+  }
+
   throw new ReadError(token.text, token.line, token.col, token.file);
 };
 

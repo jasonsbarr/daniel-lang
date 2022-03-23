@@ -197,6 +197,10 @@ const RBRACK = rule("RBrack", String.raw`\]`);
 const LBRACE = rule("LBrace", String.raw`\{`);
 const RBRACE = rule("RBrace", String.raw`\}`);
 const AMP = rule("Amp", String.raw`&`);
+const KEYWORD = rule(
+  "Symbol",
+  String.raw`:[:=@~<>%:&\|\?\\\/\^\*\.&#'\p{L}\p{N}_\$!\+-]*`
+);
 const SYMBOL = rule(
   "Symbol",
   String.raw`[:=<>%:\|\?\\\/\*\.\p{L}_\$!\+-][:=@~<>%:&\|\?\\\/\^\*\.&#'\p{L}\p{N}_\$!\+-]*`
@@ -217,6 +221,7 @@ const rules = [
   LBRACE,
   RBRACE,
   AMP,
+  KEYWORD,
   SYMBOL,
 ];
 
