@@ -334,7 +334,7 @@ const evalForList = async (ast, env, module) => {
           list.push(await evaluate(body, newEnv, module));
         }
       } else {
-        list.push(test);
+        list.push(await evaluate(body, newEnv, module));
       }
     }
   } else {
