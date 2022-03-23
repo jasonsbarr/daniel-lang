@@ -350,7 +350,7 @@ const evalForList = async (ast, env, module) => {
  * @param {Array} right
  * @param {Environment} env
  */
-const destructureList = (left, right, env) => {
+const destructureList = (left, right, env, module) => {
   const names = left.value;
   const exprs = right.value ?? right; // in case it's an already-evaluated list
 
@@ -375,16 +375,18 @@ const destructureList = (left, right, env) => {
           "Can only have a single identifier after rest symbol"
         );
       }
-      return assign([name, exprs.slice(i)], env);
+      return assign([name, exprs.slice(i)], env, module);
     }
 
-    value = assign([name, exprs[i]], env);
+    value = assign([name, exprs[i]], env, module);
     i++;
   }
 
   // return the last value
   return value;
 };
+
+const destructureObject = (left, right, env, module) => {};
 
 /**
  * Bind a value to a name
@@ -397,7 +399,7 @@ const assign = async (ast, env, module, def = true) => {
   const [id, expr] = ast;
 
   if (id.type === "ListPattern") {
-    return destructureList(id, expr, env);
+    return destructureList(id, expr, env, module);
   }
 
   const name = id.value;
