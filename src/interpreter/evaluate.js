@@ -683,7 +683,6 @@ const evalHashLiteral = async (ast, env, module) => {
     }
 
     let m = new Map(entries);
-    console.log(m);
 
     return obj.constructor(m);
   }
