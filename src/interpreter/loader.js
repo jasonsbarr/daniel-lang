@@ -191,7 +191,7 @@ export const loadModules = async ({
       const moduleName = fileName.split(".")[0];
       const input = fs.readFileSync(filePath, "utf-8");
 
-      nameMap[moduleURL] = name ?? mName ?? moduleName;
+      nameMap[moduleURL] = mName ?? moduleName;
 
       ({
         name: mName,
@@ -200,7 +200,7 @@ export const loadModules = async ({
         module,
       } = await EVAL(input, {
         file: filePath,
-        module: name ?? mName ?? moduleName,
+        module: mName ?? moduleName,
         env,
       }));
     } else {
