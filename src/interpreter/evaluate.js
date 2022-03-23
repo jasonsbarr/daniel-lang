@@ -510,12 +510,11 @@ const evalSet = async (ast, env, module) => {
   }
 
   const id = ast[1];
-  const expr = ast[2];
   const name = id.value;
   const scope = env.lookup(name);
 
   if (scope) {
-    return assign(ast.slice(1), scope, false);
+    return assign(ast.slice(1), scope, module, false);
   } else {
     throw new RuntimeError(`${name} is not bound in the current scope`);
   }
