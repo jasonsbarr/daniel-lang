@@ -361,7 +361,16 @@ const evalSet = (ast, env) => {
     throw new RuntimeError("Define must have exactly 2 subexpressions");
   }
 
-  return assign(ast.slice(1), env, false);
+  const id = ast[1];
+  const expr = ast[2];
+  const name = id.value;
+  const scope = env.lookup(name);
+
+  if (scope) {
+    return assign(ast.slice(1), scope, false);
+  } else {
+    throw new RuntimeError(`${name} is not bound in the current scope`);
+  }
 };
 
 /**
