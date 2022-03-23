@@ -280,7 +280,7 @@ const evalFor = async (ast, env, module) => {
         value = await evaluate(body, newEnv, module);
       }
     } else {
-      value = evaluate(body, newEnv, module);
+      value = await evaluate(body, newEnv, module);
     }
   }
 
@@ -376,7 +376,7 @@ const destructureList = (left, right, env, module, define) => {
           "Can only have a single identifier after rest symbol"
         );
       }
-      return assign([name, exprs.slice(i)], env, module, define);
+      return assign([name, exprs.slice(i)], env, module, define, true);
     }
 
     value = assign([name, exprs[i]], env, module, define);
@@ -440,7 +440,7 @@ const destructureObject = async (left, right, env, module, define) => {
  * @param {String} module
  * @param {Boolean} def
  */
-const assign = async (ast, env, module, def = true) => {
+const assign = async (ast, env, module, def = true, rest = false) => {
   const [id, expr] = ast;
 
   if (id.type === "ListPattern") {
@@ -457,7 +457,7 @@ const assign = async (ast, env, module, def = true) => {
     throw new ValError(`Name ${name} has already been defined in this scope`);
   }
 
-  if (Array.isArray(expr)) {
+  if (Array.isArray(expr && rest)) {
     // rest identifier present in destructuring list
     let list = [];
     for (let ex of expr) {

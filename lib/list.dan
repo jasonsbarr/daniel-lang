@@ -7,10 +7,5 @@
         (for/list ((i lst) :when (pred i))
             i))
 
-    (define (reduce fn acc lst)
-        (for ((i lst))
-            (set! acc (fn acc i))))
-
     (provide map)
-    (provide filter)
-    (provide reduce))
+    (provide filter))
