@@ -25,6 +25,7 @@ const primitives = [
   "String",
   "Boolean",
   "Nil",
+  "Keyword",
 ];
 
 /**
@@ -249,9 +250,9 @@ const evalFor = async (ast, env, module) => {
 
   if (clause.length === 3) {
     let kw = await evaluate(clause[1], env, module);
-    if (kw === Symbol.for("when")) {
+    if (kw === Symbol.for(":when")) {
       when = clause[2];
-    } else if (kw === Symbol.for("unless")) {
+    } else if (kw === Symbol.for(":unless")) {
       unless = clause[2];
     }
   }
@@ -287,8 +288,7 @@ const evalFor = async (ast, env, module) => {
  * @param {Environment} env
  * @param {String} module
  */
-const evalForList = async (ast, env) => {
-  console.log("length:", ast.length);
+const evalForList = async (ast, env, module) => {
   if (ast.length !== 3) {
     throw new RuntimeError(
       "List comprehension must have exactly 2 subexpressions"
@@ -304,31 +304,29 @@ const evalForList = async (ast, env) => {
 
   if (clause.length === 3) {
     let kw = await evaluate(clause[1], env, module);
-    if (kw === Symbol.for("when")) {
+    if (kw === Symbol.for(":when")) {
       when = clause[2];
-    } else if (kw === Symbol.for("unless")) {
+    } else if (kw === Symbol.for(":unless")) {
       unless = clause[2];
     }
   }
   seq = await evaluate(seq, env, module);
-  console.log("seq:", seq);
 
   if (isIterable(seq)) {
     for (let item of seq) {
       let newEnv = env.extend(`for/listExpr${ID++}`, id.file);
 
-      console.log("item:", item);
       await assign([id, item], newEnv);
 
-      let test = await evaluate(body, newEnv, module);
-
       if (when) {
+        let test = await evaluate(when, newEnv, module);
         if (isTruthy(test)) {
-          list.push(test);
+          list.push(await evaluate(body, newEnv, module));
         }
       } else if (unless) {
+        let test = await evaluate(unless, newEnv, module);
         if (!isTruthy(test)) {
-          list.push(test);
+          list.push(await evaluate(body, newEnv, module));
         }
       } else {
         list.push(test);
