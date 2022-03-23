@@ -257,7 +257,7 @@ const evalForList = (ast, env) => {
  * @param {Array} right
  * @param {Environment} env
  */
-const destructureList = (left, right, env) => {
+const destructureList = (left, right, env, module, define) => {
   const names = left.value;
   const exprs = right.value;
 
@@ -282,7 +282,7 @@ const destructureList = (left, right, env) => {
           "Can only have a single identifier after rest symbol"
         );
       }
-      return assign([name, exprs.slice(i)], env);
+      return assign([name, exprs.slice(i)], env, module, define, true);
     }
 
     value = assign([name, exprs[i]], env);
@@ -299,7 +299,7 @@ const destructureList = (left, right, env) => {
  * @param {Environment} env
  * @param {Boolean} def
  */
-const assign = (ast, env, def = true) => {
+const assign = (ast, env, module, def = true, rest = false) => {
   const [id, expr] = ast;
 
   if (id.type === "ListPattern") {
@@ -312,7 +312,7 @@ const assign = (ast, env, def = true) => {
     throw new ValError(`Name ${name} has already been defined in this scope`);
   }
 
-  if (Array.isArray(expr)) {
+  if (Array.isArray(expr) && rest) {
     // rest identifier present in destructuring list
     let list = [];
     for (let ex of expr) {
