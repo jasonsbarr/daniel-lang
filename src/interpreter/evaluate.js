@@ -491,7 +491,7 @@ const evalDefine = async (ast, env, module) => {
     // is function definition
     const name = id[0];
     const args = id.slice(1);
-    const func = await makeLambda(name, [args, expr], env, module);
+    const func = await makeLambda(name.value, [args, expr], env, module);
     return await assign([name, func], env, module);
   }
 
