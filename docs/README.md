@@ -28,6 +28,7 @@ Daniel uses the underlying native (JavaScript) data types under the hood:
 - Hash literals are written as key/value pairs with curly braces and no commas
   - e.g. `{:a "hello" :b "bonjour"}`
   - You can use any hashable value as hash keys, but strings and keywords are the most common
+- Structs are created by passing a hash to the `struct` function
 - Identifiers can start with any Unicode letter, plus the characters :=<>%:|?\/\*.\_$!+-, and after that may also include any Unicode number and @~^&#'.
 - Comments start with ;. There are no multi-line comments.
 
@@ -43,6 +44,14 @@ Call expressions and special forms are surrounded by parentheses.
 ; Call expression
 ; Applies a function to arguments
 (function-name-or-expression arg1 arg2 ...)
+
+; Struct
+; note that keyword keys will be converted to string keys
+(define my-struct (struct {:a "hi" :b "bonjour"})) ;-> {struct: a => "hi" b => "bonjour"}
+
+; Update a struct with a :with expression
+; Structs are immutable, so this creates a new struct with the updated values
+{my-struct :with :c "hola"} ;-> {struct: a => "hi" b => "bonjour" c => "hola"}
 
 ; If expression
 ; Evaluates to one of two values based on its condition's truthiness or falsiness
