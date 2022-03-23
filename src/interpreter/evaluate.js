@@ -439,6 +439,7 @@ const destructureObject = async (left, right, env, module, define) => {
  * @param {Environment} env
  * @param {String} module
  * @param {Boolean} def
+ * @param {Boolean} rest
  */
 const assign = async (ast, env, module, def = true, rest = false) => {
   const [id, expr] = ast;
