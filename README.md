@@ -31,20 +31,12 @@ I'm implementing this language in JavaScript for two reasons: first, it's probab
 
 ## Core language forms
 
-These are the language forms I intend to implement that form the core of the language:
+These are the language forms I have yet to implement that will be part of the core of the language:
 
-- begin
-- provide
-- require/from/open
-- lambda
-- let
-- if
-- set!
 - quote
 - quasiquote
 - unquote
 - unquote-splicing
-- for
 - struct
 - class
 - fail (with try/catch)
