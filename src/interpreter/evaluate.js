@@ -18,6 +18,15 @@ export const evaluateAndGetEnv = async (ast, env, module) => {
   return env;
 };
 
+const primitives = [
+  "ListPattern",
+  "Symbol",
+  "Number",
+  "String",
+  "Boolean",
+  "Nil",
+];
+
 /**
  *
  * @param {Object|Object[]} ast
@@ -28,6 +37,11 @@ export const evaluateAndGetEnv = async (ast, env, module) => {
 export const evaluate = async (ast, env, module = "<main>") => {
   if (Array.isArray(ast)) {
     return await evalList(ast, env, module);
+  }
+
+  if (!primitives.includes(ast.type)) {
+    // is already evaluated
+    return ast;
   }
 
   switch (ast.type) {
@@ -154,11 +168,13 @@ const unpackList = async (list, env, module) => {
  * @returns
  */
 const evalCall = async (ast, env, module) => {
+  console.log("ast", ast);
   if (ast[0] === undefined) {
     return null;
   }
 
   const fst = await evaluate(ast[0], env, module);
+  console.log("fst:", fst);
 
   if (typeof fst !== "function") {
     throw new RuntimeError(
@@ -229,17 +245,12 @@ const evalFor = async (ast, env, module) => {
   // for now, we'll just do iteration over a single sequence
   // later we may allow multiple clauses
   let [id, seq] = clause;
-  seq = await evaluate(seq, env, module);
 
-  if (isIterable(seq)) {
-    for (let item of seq) {
-      let newEnv = env.extend(`forExpr${ID++}`, module, id.file);
+  for (let item of seq) {
+    let newEnv = env.extend(`forExpr${ID++}`, module, id.file);
 
-      await assign([id, item], newEnv);
-      value = await evaluate(body, newEnv, module);
-    }
-  } else {
-    throw new TyError("iterable", getType(seq));
+    await assign([id, item], newEnv);
+    value = await evaluate(body, newEnv, module);
   }
 
   return value;
