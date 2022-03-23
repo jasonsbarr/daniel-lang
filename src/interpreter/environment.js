@@ -40,13 +40,15 @@ export class Environment {
    *
    * @param {Module} module
    */
-  bindModuleNamespaced(module) {
+  bindModuleNamespaced(module, as) {
     for (let [k, v] of Object.entries(module)) {
       if (k === "__name__") {
         continue;
       }
 
-      this.set(`${module.__name__}.${k}`, v);
+      const ns = as ? as : module.__name__;
+
+      this.set(`${ns}.${k}`, v);
     }
   }
 

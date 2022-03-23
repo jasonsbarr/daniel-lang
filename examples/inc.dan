@@ -1,6 +1,6 @@
 (begin-module "inc"
-    (import "./module")
+    (import "./module" :as "math")
     (define (inc x)
-        (module.add 1 x))
+        (math.add 1 x))
 
     (provide inc))

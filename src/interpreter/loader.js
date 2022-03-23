@@ -120,7 +120,7 @@ const define = (name, url, deps, module) => {
 const evaluateModules = (
   depsOrder,
   env,
-  { open = true, namespace = false } = {}
+  { open = true, namespace = false, as } = {}
 ) => {
   for (let dep of depsOrder) {
     let deps = moduleTable[dep].deps;
@@ -137,7 +137,7 @@ const evaluateModules = (
     if (env && open) {
       env.bindModuleNames(modules[dep]);
     } else if (env && namespace) {
-      env.bindModuleNamespaced(modules[dep]);
+      env.bindModuleNamespaced(modules[dep], as);
     }
   }
 };
@@ -155,6 +155,7 @@ export const loadModules = async ({
   url = null,
   open = true,
   namespace = false,
+  as = null,
 } = {}) => {
   let moduleURL = url ? url : "";
 
@@ -174,24 +175,32 @@ export const loadModules = async ({
 
   // populate moduleTable with dependency tree
   const defineModule = async (moduleURL) => {
-    let name, requires, nativeRequires, module;
+    let mName, requires, nativeRequires, module;
 
     if (moduleURL.endsWith(".js")) {
       // check if is native (JS) module
-      ({ name, requires, nativeRequires, module } = await import(moduleURL));
+      ({
+        name: mName,
+        requires,
+        nativeRequires,
+        module,
+      } = await import(moduleURL));
     } else if (moduleURL.endsWith(".dan")) {
       const filePath = fileURLToPath(moduleURL);
       const fileName = filePath.split("/").pop();
       const moduleName = fileName.split(".")[0];
       const input = fs.readFileSync(filePath, "utf-8");
 
-      if (!name) {
-        nameMap[moduleURL] = moduleName;
-      }
+      nameMap[moduleURL] = name ?? mName ?? moduleName;
 
-      ({ name, requires, nativeRequires, module } = await EVAL(input, {
+      ({
+        name: mName,
+        requires,
+        nativeRequires,
+        module,
+      } = await EVAL(input, {
         file: filePath,
-        module: name ?? moduleName,
+        module: name ?? mName ?? moduleName,
         env,
       }));
     } else {
@@ -212,7 +221,7 @@ export const loadModules = async ({
 
   await defineModule(moduleURL);
   const loadOrder = getLoadOrder([moduleURL]);
-  evaluateModules(loadOrder, env, { open, namespace });
+  evaluateModules(loadOrder, env, { open, namespace, as });
 
   return modules;
 };
@@ -233,8 +242,8 @@ export const bindOpensToModuleEnv = async (env, name, url) => {
   return env;
 };
 
-export const bindNamespacedModuleValues = async (env, name, url) => {
-  await loadModules({ env, name, url, open: false, namespace: true });
+export const bindNamespacedModuleValues = async (env, name, url, as = null) => {
+  await loadModules({ env, name, url, open: false, namespace: true, as });
 
   return env;
 };

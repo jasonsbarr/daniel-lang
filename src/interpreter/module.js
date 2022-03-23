@@ -75,7 +75,7 @@ export const evalProvide = (ast, env, module) => {
  * @param {Function} evaluate
  * @returns
  */
-export const evalOpen = async (ast, env, module, evaluate) => {
+export const evalOpen = async (ast, env) => {
   if (ast.length !== 2) {
     throw new RuntimeError(
       "Open expression must be the symbol open plus a value that resolves to a module"
@@ -91,18 +91,18 @@ export const evalOpen = async (ast, env, module, evaluate) => {
   return null;
 };
 
-export const evalImport = async (ast, env) => {
-  if (ast.length !== 2) {
+export const evalImport = async (ast, env, module) => {
+  if (ast.length !== 2 && ast.length !== 4) {
     throw new RuntimeError(
-      "Open expression must be the symbol open plus a value that resolves to a module"
+      "Import expression must be the symbol open plus a value that resolves to a module, with optional :as clause"
     );
   }
 
-  const [openSym, modVal] = ast;
+  const [openSym, modVal, , as] = ast;
   const modFile = resolveImport(modVal.value, openSym.file);
   const modName = modFile.split("/").pop().split(".")[0];
 
-  await bindNamespacedModuleValues(env, modName, modFile);
+  await bindNamespacedModuleValues(env, modName, modFile, as && as.value);
 
   return null;
 };
