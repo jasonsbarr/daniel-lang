@@ -1,3 +1,4 @@
+import hash from "object-hash";
 import { getType } from "../../lib/js/base.js";
 import { RuntimeError, TyError, ValError } from "../../lib/js/error.js";
 import { Environment } from "./environment.js";
@@ -20,6 +21,7 @@ export const evaluateAndGetEnv = async (ast, env, module) => {
 
 const primitives = [
   "ListPattern",
+  "HashPattern",
   "Symbol",
   "Number",
   "String",
@@ -48,6 +50,9 @@ export const evaluate = async (ast, env, module = "<main>") => {
   switch (ast.type) {
     case "ListPattern":
       return evalListLiteral(ast, env, module);
+
+    case "HashPattern":
+      return evalHashLiteral(ast, env, module);
 
     case "Symbol":
       return evalSymbol(ast, env, module);
@@ -565,4 +570,28 @@ const evalListLiteral = async (ast, env, module) => {
   }
 
   return list;
+};
+
+const evalHashLiteral = (ast, env, module) => {
+  if (ast.value.length % 2 !== 0) {
+    throw new RuntimeError(
+      "A hash literal must contain an even number of values as a series of key/value pairs"
+    );
+  }
+
+  let hash = new Map();
+  const values = ast.value;
+
+  for (let i = 0; i < values.length; i += 2) {
+    let key = await evaluate(values[i], env, module);
+    let val = await evaluate(values[i + 1], env, module);
+
+    if (typeof key === "object" && key !== null) {
+      key = hash(key);
+    }
+
+    hash.set(key, val);
+  }
+
+  return hash;
 };
