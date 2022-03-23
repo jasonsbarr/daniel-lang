@@ -198,7 +198,7 @@ const LBRACE = rule("LBrace", String.raw`\{`);
 const RBRACE = rule("RBrace", String.raw`\}`);
 const AMP = rule("Amp", String.raw`&`);
 const KEYWORD = rule(
-  "Symbol",
+  "Keyword",
   String.raw`:[:=@~<>%:&\|\?\\\/\^\*\.&#'\p{L}\p{N}_\$!\+-]*`
 );
 const SYMBOL = rule(

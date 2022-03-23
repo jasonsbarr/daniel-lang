@@ -26,6 +26,7 @@ export const evaluateAndGetEnv = async (ast, env, module) => {
  * @returns
  */
 export const evaluate = async (ast, env, module = "<main>") => {
+  console.log(ast);
   if (Array.isArray(ast)) {
     return await evalList(ast, env, module);
   }
@@ -41,6 +42,7 @@ export const evaluate = async (ast, env, module = "<main>") => {
     case "String":
     case "Boolean":
     case "Nil":
+    case "Keyword":
       return ast.value;
 
     default:
@@ -228,7 +230,19 @@ const evalFor = async (ast, env, module) => {
 
   // for now, we'll just do iteration over a single sequence
   // later we may allow multiple clauses
-  let [id, seq] = clause;
+  let [id, seq] = clause[0];
+  let when;
+  let unless;
+
+  if (clause.length === 3) {
+    let kw = await evaluate(clause[1], env, module);
+    if (kw === Symbol.for("when")) {
+      when = clause[2];
+    } else if (kw === Symbol.for("unless")) {
+      unless = clause[2];
+    }
+  }
+
   seq = await evaluate(seq, env, module);
 
   if (isIterable(seq)) {
@@ -236,7 +250,20 @@ const evalFor = async (ast, env, module) => {
       let newEnv = env.extend(`forExpr${ID++}`, module, id.file);
 
       await assign([id, item], newEnv);
-      value = await evaluate(body, newEnv, module);
+
+      let test = await evaluate(body, newEnv, module);
+
+      if (when) {
+        if (isTruthy(test)) {
+          value = test;
+        }
+      } else if (unless) {
+        if (!isTruthy(test)) {
+          value = test;
+        }
+      } else {
+        value = test;
+      }
     }
   } else {
     throw new TyError("iterable", getType(seq));
@@ -252,6 +279,7 @@ const evalFor = async (ast, env, module) => {
  * @param {String} module
  */
 const evalForList = async (ast, env) => {
+  console.log("length:", ast.length);
   if (ast.length !== 3) {
     throw new RuntimeError(
       "List comprehension must have exactly 2 subexpressions"
@@ -261,16 +289,40 @@ const evalForList = async (ast, env) => {
   const clause = ast[1];
   const body = ast[2];
   let list = [];
-  let [id, seq] = clause;
-  seq = await evaluate(seq, env);
+  let [id, seq] = clause[0];
+  let when;
+  let unless;
+
+  if (clause.length === 3) {
+    let kw = await evaluate(clause[1], env, module);
+    if (kw === Symbol.for("when")) {
+      when = clause[2];
+    } else if (kw === Symbol.for("unless")) {
+      unless = clause[2];
+    }
+  }
+  seq = await evaluate(seq, env, module);
+  console.log("seq:", seq);
 
   if (isIterable(seq)) {
     for (let item of seq) {
       let newEnv = env.extend(`for/listExpr${ID++}`, id.file);
+
+      console.log("item:", item);
       await assign([id, item], newEnv);
-      let value = await evaluate(body, newEnv);
-      if (value !== null && value !== undefined) {
-        list.push(value);
+
+      let test = await evaluate(body, newEnv, module);
+
+      if (when) {
+        if (isTruthy(test)) {
+          list.push(test);
+        }
+      } else if (unless) {
+        if (!isTruthy(test)) {
+          list.push(test);
+        }
+      } else {
+        list.push(test);
       }
     }
   } else {
