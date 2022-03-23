@@ -673,7 +673,7 @@ const evalHashLiteral = async (ast, env, module) => {
       );
     }
 
-    let obj = evaluate(ast.value[0], env, module);
+    let obj = await evaluate(ast.value[0], env, module);
     let entries = Object.entries(obj);
 
     for (let i = 0; i < args.length; i += 2) {
@@ -683,6 +683,7 @@ const evalHashLiteral = async (ast, env, module) => {
     }
 
     let m = new Map(entries);
+    console.log(m);
 
     return obj.constructor(m);
   }
