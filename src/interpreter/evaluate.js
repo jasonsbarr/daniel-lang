@@ -510,7 +510,6 @@ const evalSet = async (ast, env, module) => {
   }
 
   const id = ast[1];
-  const expr = ast[2];
   const name = id.value;
   const scope = env.lookup(name);
 
