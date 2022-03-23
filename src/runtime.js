@@ -50,7 +50,7 @@ export const makeFunction = (
   f.varargs = varargs;
   f.daniel = true;
 
-  Object.defineProperty(f, "toString", {
+  Object.defineProperty(f, "_str", {
     enumerable: false,
     writable: false,
     configurable: false,
