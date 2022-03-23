@@ -168,13 +168,11 @@ const unpackList = async (list, env, module) => {
  * @returns
  */
 const evalCall = async (ast, env, module) => {
-  console.log("ast", ast);
   if (ast[0] === undefined) {
     return null;
   }
 
   const fst = await evaluate(ast[0], env, module);
-  console.log("fst:", fst);
 
   if (typeof fst !== "function") {
     throw new RuntimeError(
