@@ -352,7 +352,7 @@ const evalForList = async (ast, env, module) => {
  */
 const destructureList = (left, right, env) => {
   const names = left.value;
-  const exprs = right.value;
+  const exprs = right.value ?? right; // in case it's an already-evaluated list
 
   if (names.length > exprs.length) {
     throw new RuntimeError(
