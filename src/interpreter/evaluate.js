@@ -190,7 +190,7 @@ const evalCall = async (ast, env, module) => {
       throw new RuntimeError(`Undefined member ${fst.value.slice(1)}`);
     }
 
-    if (typeof member === "function") {
+    if (typeof member === "function" && ast.slice(2).length > 0) {
       const args = ast.slice(2).map((m) => evaluate(m, env, module));
       return obj[member](...args);
     }
