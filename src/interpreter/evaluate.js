@@ -179,7 +179,28 @@ const evalCall = async (ast, env, module) => {
     return null;
   }
 
-  const fst = await evaluate(ast[0], env, module);
+  let fst = ast[0];
+
+  if (fst.type === "Symbol" && fst.value.startsWith(".")) {
+    // is object accessor
+    const obj = await evaluate(ast[1], env, module);
+    const member = obj[fst.value.slice(1)]; // remove dot
+
+    if (member === undefined) {
+      throw new RuntimeError(`Undefined member ${fst.value.slice(1)}`);
+    }
+
+    if (typeof member === "function") {
+      const args = ast.slice(2).map((m) => evaluate(m, env, module));
+      return obj[member](...args);
+    }
+
+    // otherwise it's an object property
+    return member;
+  }
+
+  // else is call expression
+  fst = await evaluate(ast[0], env, module);
 
   if (typeof fst !== "function") {
     throw new RuntimeError(
