@@ -572,7 +572,7 @@ const evalListLiteral = async (ast, env, module) => {
   return list;
 };
 
-const evalHashLiteral = (ast, env, module) => {
+const evalHashLiteral = async (ast, env, module) => {
   if (ast.value.length % 2 !== 0) {
     throw new RuntimeError(
       "A hash literal must contain an even number of values as a series of key/value pairs"
