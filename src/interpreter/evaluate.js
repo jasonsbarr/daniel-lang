@@ -18,6 +18,15 @@ export const evaluateAndGetEnv = async (ast, env, module) => {
   return env;
 };
 
+const primitives = [
+  "ListPattern",
+  "Symbol",
+  "Number",
+  "String",
+  "Boolean",
+  "Nil",
+];
+
 /**
  *
  * @param {Object|Object[]} ast
@@ -26,9 +35,13 @@ export const evaluateAndGetEnv = async (ast, env, module) => {
  * @returns
  */
 export const evaluate = async (ast, env, module = "<main>") => {
-  console.log(ast);
   if (Array.isArray(ast)) {
     return await evalList(ast, env, module);
+  }
+
+  if (!primitives.includes(ast.type)) {
+    // is already evaluated
+    return ast;
   }
 
   switch (ast.type) {
@@ -245,28 +258,24 @@ const evalFor = async (ast, env, module) => {
 
   seq = await evaluate(seq, env, module);
 
-  if (isIterable(seq)) {
-    for (let item of seq) {
-      let newEnv = env.extend(`forExpr${ID++}`, module, id.file);
+  for (let item of seq) {
+    let newEnv = env.extend(`forExpr${ID++}`, module, id.file);
 
-      await assign([id, item], newEnv);
+    await assign([id, item], newEnv);
 
-      let test = await evaluate(body, newEnv, module);
+    let test = await evaluate(body, newEnv, module);
 
-      if (when) {
-        if (isTruthy(test)) {
-          value = test;
-        }
-      } else if (unless) {
-        if (!isTruthy(test)) {
-          value = test;
-        }
-      } else {
+    if (when) {
+      if (isTruthy(test)) {
         value = test;
       }
+    } else if (unless) {
+      if (!isTruthy(test)) {
+        value = test;
+      }
+    } else {
+      value = test;
     }
-  } else {
-    throw new TyError("iterable", getType(seq));
   }
 
   return value;
