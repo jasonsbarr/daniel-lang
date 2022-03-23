@@ -135,7 +135,3 @@ Call expressions and special forms are surrounded by parentheses.
 (id.id x)
 
 ```
-
-```
-
-```
