@@ -652,7 +652,42 @@ const evalListLiteral = async (ast, env, module) => {
   return list;
 };
 
+/**
+ *
+ * @param {Object} ast
+ * @param {Environment} env
+ * @param {String} module
+ */
 const evalHashLiteral = async (ast, env, module) => {
+  // check if it's a :with expression
+  // syntax {obj :with k v k2 v2 ...}
+  if (
+    ast.value[1].type === "Keyword" &&
+    ast.value[1].value === Symbol.for(":with")
+  ) {
+    let args = ast.value.slice(2);
+
+    if (args.length % 2 !== 0) {
+      throw new RuntimeError(
+        `A :with expression must take a series of key/value pairs`
+      );
+    }
+
+    let obj = evaluate(ast.value[0], env, module);
+    let entries = Object.entries(obj);
+
+    for (let i = 0; i < args.length; i += 2) {
+      let k = await evaluate(args[i], env, module);
+      let v = await evaluate(args[i + 1], env, module);
+      entries.push([k, v]);
+    }
+
+    let m = new Map(entries);
+
+    return obj.constructor(m);
+  }
+
+  // otherwise it's a hash literal expression
   if (ast.value.length % 2 !== 0) {
     throw new RuntimeError(
       "A hash literal must contain an even number of values as a series of key/value pairs"
