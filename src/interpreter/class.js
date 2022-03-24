@@ -127,9 +127,7 @@ export const evalClass = async (ast, env, module, evaluate, assign) => {
   );
 };
 
-const evalTrait = async (ast, env, module, evaluate) => {};
-
-const evalSuper = async (ast, env, module, evaluate) => {};
+export const evalTrait = async (ast, env, module, evaluate) => {};
 
 const evalDefine = async (ast, env, module, assign) => {
   const [id, expr] = ast.slice(1);
