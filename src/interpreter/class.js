@@ -154,7 +154,13 @@ const evalNewDecl = async (
     return obj;
   };
 
-  return [names, newMethod];
+  return [
+    names,
+    makeMethod(newMethod, className, module, {
+      name: "new",
+      arity: attrs.length,
+    }),
+  ];
 };
 
 const evalInit = async (ast, env, module, evaluate, className) => {};

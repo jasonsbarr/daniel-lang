@@ -174,7 +174,14 @@ const isDanielFunction = (func) => typeof func === "function" && func.daniel;
 
 export const makeClass = (classObj, module) => {};
 
-export const makeMethod = () => {};
+export const makeMethod = (
+  method,
+  className,
+  module,
+  { name, arity, varargs } = {}
+) => {
+  return method;
+};
 
 /**
  * Returns a Daniel runtime object based on the current platform
