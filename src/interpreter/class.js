@@ -14,24 +14,24 @@ import { objectClass } from "../../lib/js/_object.js";
  * @param {Function} assign
  */
 export const evalClass = async (ast, env, module, evaluate, assign) => {
-  const { value: className, file } = ast[1].value;
-  const classEnv = env.extend(className, module, file);
+  let { value: className, file } = ast[1];
+  let classEnv = env.extend(className, module, file);
   let i = 2;
   let superClass = objectClass;
   let traits = [];
+  console.log(className);
 
   while (!Array.isArray(ast[i])) {
     // handle superclass and possible traits
     i++;
   }
 
-  const superObj = Object.create(superClass.proto);
-  const defns = ast.slice(i);
-  const publicMethods = new Map();
-  const privateMethods = new Map();
-  const staticMethods = new Map();
-  const classVars = new Map();
-  const attrs = [];
+  let superObj = Object.create(superClass.proto);
+  let defns = ast.slice(i);
+  let publicMethods = new Map();
+  let staticMethods = new Map();
+  let classVars = new Map();
+  let attrs = [];
 
   classEnv.set("super", superObj);
 
@@ -40,7 +40,7 @@ export const evalClass = async (ast, env, module, evaluate, assign) => {
 
     switch (sym.value) {
       case "define":
-        let [name, value] = evalDefine(defn, classEnv, module, assign);
+        let [name, value] = await evalDefine(defn, classEnv, module, assign);
         if (Array.isArray(name)) {
           if (!Array.isArray(value)) {
             throw new RuntimeError(
@@ -61,7 +61,7 @@ export const evalClass = async (ast, env, module, evaluate, assign) => {
 
       // new and init are both executed in the class environment, they do not create their own environments
       case "new":
-        let [names, newMethod] = evalNewDecl(
+        let [names, newMethod] = await evalNewDecl(
           defn.slice(1),
           classEnv,
           module,
@@ -74,7 +74,7 @@ export const evalClass = async (ast, env, module, evaluate, assign) => {
         break;
 
       case "init":
-        let initMethod = evalInit(
+        let initMethod = await evalInit(
           defn.slice(2), // only argument to init is this, so don't need the args array - it's just there to hold space
           classEnv,
           module,
@@ -99,8 +99,8 @@ export const evalClass = async (ast, env, module, evaluate, assign) => {
           }
         } else {
           // define public method;
-          const name = defn[0].value;
-          const method = evalMethod(
+          let name = defn[0].value;
+          let method = evalMethod(
             name,
             defn.slice(1),
             classEnv,
@@ -115,13 +115,12 @@ export const evalClass = async (ast, env, module, evaluate, assign) => {
     }
   }
 
-  const klass = makeClass(
+  let klass = makeClass(
     {
       name: className,
       superClass,
       classVars,
       publicMethods,
-      privateMethods,
       staticMethods,
       attrs,
     },
@@ -135,7 +134,7 @@ export const evalClass = async (ast, env, module, evaluate, assign) => {
 export const evalTrait = async (ast, env, module, evaluate) => {};
 
 const evalDefine = async (ast, env, module, assign) => {
-  const [id, expr] = ast.slice(1);
+  let [id, expr] = ast.slice(1);
   let name =
     typeof id.value === "string" ? id.value : id.value.map((s) => s.value); // if not a string, it's an array of Symbol syntax objects
   let value = await assign([id, expr], env, module);
@@ -158,20 +157,25 @@ const evalNewDecl = async (
     }
     names.push(name.value.description.slice(1));
   }
-  let attrs = superClass.attrs.concat(attrs);
 
-  let newMethod = (proto, ...args) => {
-    if (args.length < attrs.length) {
-      throw new ArgumentsError(`new ${className}`, attrs.length, args.length);
+  let allAttrs = superClass.attrs.concat(names);
+
+  let newMethod = async (proto, ...args) => {
+    if (args.length !== allAttrs.length) {
+      throw new ArgumentsError(
+        `new ${className}`,
+        `${allAttrs.length}`,
+        args.length
+      );
     }
 
-    let superArgs = args
-      .slice(0, superClass.attrs.length)
-      .map((arg) => evaluate(arg, env, module));
+    let allArgs = [];
 
-    let allArgs = superArgs.concat(
-      args.slice(superArgs.length).map((arg) => evaluate(arg, env, module))
-    );
+    for (let arg of args) {
+      let value = await evaluate(arg, env, module);
+      console.log(value);
+      allArgs.push(value);
+    }
 
     let i = 0;
     let obj = Object.create(proto);
@@ -192,8 +196,8 @@ const evalNewDecl = async (
     });
 
     for (let arg of allArgs) {
-      env.set(attrs[i], arg);
-      obj[attrs[i]] = arg;
+      env.set(allAttrs[i], arg);
+      obj[allAttrs[i]] = arg;
       i++;
     }
 
@@ -206,14 +210,15 @@ const evalNewDecl = async (
     names,
     makeMethod(newMethod, className, module, {
       name: "new",
-      arity: attrs.length,
+      arity: allAttrs.length,
     }),
   ];
 };
 
 const evalInit = async (ast, env, module, evaluate, className) => {
-  const initMethod = (thisArg) => {
-    return await evaluate(ast, env, module);
+  const initMethod = async (thisArg) => {
+    await evaluate(ast, env, module);
+    return thisArg;
   };
 
   return makeMethod(initMethod, className, module, { name: "init" });
@@ -228,8 +233,8 @@ const evalMethod = async (
   className,
   file
 ) => {
-  const params = ast[0].map((t) => t.value);
-  const body = ast[1];
+  let params = ast[0].map((t) => t.value);
+  let body = ast[1];
   let varargs = params.includes("&");
   let arity = params.length;
 
@@ -237,7 +242,7 @@ const evalMethod = async (
     arity -= 2;
   }
 
-  const method = (thisArg, ...args) => {
+  const method = async (thisArg, ...args) => {
     let scope = env.extend(`${className}.${name}`, module, file);
     let varargs = false;
 

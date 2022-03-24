@@ -3,8 +3,9 @@ import fs from "fs";
 import { fileURLToPath } from "url";
 import { curryN } from "ramda";
 import { getFileURL, isBrowser, dirname, getAllOwnKeys } from "./utils.js";
-import { makeObject } from "../lib/js/_object.js";
 import { printStr } from "../lib/js/io.js";
+import { ArgumentsError, RuntimeError } from "../lib/js/error.js";
+import { getType } from "../lib/js/base.js";
 
 const __dirname = dirname(import.meta.url);
 let STDOUT, STDIN, STDERR;
@@ -175,11 +176,11 @@ export const makeModule = (name, provides) => {
 const isDanielFunction = (func) => typeof func === "function" && func.daniel;
 
 export const makeClass = (
-  { name, superClass, classVars, publicMethods, privateMethods, staticMethods },
+  { name, superClass, classVars, publicMethods, staticMethods, attrs },
   module
 ) => {
   let proto = Object.create(superClass.proto);
-  let newMethod = () => Object.create(proto);
+  let newMethod = (proto) => Object.create(proto);
   let initMethod = (obj) => obj;
 
   for (let [n, method] of publicMethods) {
@@ -194,8 +195,29 @@ export const makeClass = (
     }
   }
 
-  const constructor = (...args) => {
-    let obj = newMethod(proto, ...args);
+  let constructor = (...args) => {
+    let params = [];
+
+    // Enable using a hash as a single argument to constructor just like a struct
+    if (args.length === 1 && args[0] instanceof Map) {
+      let keys = args[0].keys();
+
+      for (let key of keys) {
+        let i = attrs.find((a) => key === a);
+
+        if (i < 0) {
+          throw new RuntimeError(
+            `Hash key ${key} not found in ${module}.${className} attribute names`
+          );
+        }
+
+        params[i] = args[i];
+      }
+    } else {
+      params = args;
+    }
+
+    let obj = newMethod(proto, ...params);
 
     obj.toString = () => {
       return `{${this.type}: ${[...Object.entries(this)]
@@ -220,12 +242,16 @@ export const makeClass = (
       configurable: false,
     });
 
+    // call init method, if any
+    obj = initMethod(obj);
+
     return obj;
   };
 
   constructor.proto = proto;
   constructor.__name__ = name;
   constructor.type = "Class";
+  constructor.attrs = attrs;
 
   for (let [n, value] of classVars) {
     constructor[n] = value;
@@ -241,7 +267,25 @@ export const makeClass = (
     });
   }
 
+  Object.defineProperty(constructor, "proto", {
+    writable: false,
+    enumerable: false,
+    configurable: false,
+  });
+
+  Object.defineProperty(constructor, "__name__", {
+    writable: false,
+    enumerable: false,
+    configurable: false,
+  });
+
   Object.defineProperty(constructor, "type", {
+    writable: false,
+    enumerable: false,
+    configurable: false,
+  });
+
+  Object.defineProperty(constructor, "attrs", {
     writable: false,
     enumerable: false,
     configurable: false,
