@@ -21,7 +21,7 @@ export const evalClass = async (ast, env, module, evaluate, assign) => {
   let traits = [];
 
   while (!Array.isArray(ast[i])) {
-    // handle possible superclass and traits
+    // handle superclass and possible traits
     i++;
   }
 
@@ -115,10 +115,10 @@ export const evalClass = async (ast, env, module, evaluate, assign) => {
     }
   }
 
-  return makeClass(
+  const klass = makeClass(
     {
       name: className,
-      super: superClass,
+      superClass,
       classVars,
       publicMethods,
       privateMethods,
@@ -127,6 +127,9 @@ export const evalClass = async (ast, env, module, evaluate, assign) => {
     },
     module
   );
+
+  env.set(className, klass);
+  return klass;
 };
 
 export const evalTrait = async (ast, env, module, evaluate) => {};
@@ -157,7 +160,6 @@ const evalNewDecl = async (
   }
   let attrs = superClass.attrs.concat(attrs);
 
-  // don't forget to create proto object in the constructor function
   let newMethod = (proto, ...args) => {
     if (args.length < attrs.length) {
       throw new ArgumentsError(`new ${className}`, attrs.length, args.length);
