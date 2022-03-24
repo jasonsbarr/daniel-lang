@@ -172,7 +172,7 @@ export const makeModule = (name, provides) => {
  */
 const isDanielFunction = (func) => typeof func === "function" && func.daniel;
 
-export const makeClass = (classObj, superClass) => {};
+export const makeClass = (classObj, module) => {};
 
 export const makeMethod = () => {};
 
