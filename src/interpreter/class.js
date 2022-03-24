@@ -50,10 +50,12 @@ export const evalClass = async (ast, env, module, evaluate, assign) => {
           let i = 0;
           for (let n of names) {
             classVars.set(n, value[i]);
+            classEnv.set(n, value[i]);
             i++;
           }
         } else {
           classVars.set(name, value);
+          classEnv.set(name, value);
         }
         break;
 
