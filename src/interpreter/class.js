@@ -25,6 +25,7 @@ export const evalClass = async (ast, env, module, evaluate, assign) => {
     i++;
   }
 
+  const superObj = Object.create(superClass.proto);
   const defns = ast.slice(i);
   const publicMethods = new Map();
   const privateMethods = new Map();
@@ -32,9 +33,10 @@ export const evalClass = async (ast, env, module, evaluate, assign) => {
   const classVars = new Map();
   const attrs = [];
 
+  classEnv.set("super", superObj);
+
   for (let defn of defns) {
     let sym = defn[0];
-    let method;
 
     switch (sym.value) {
       case "define":
@@ -54,6 +56,8 @@ export const evalClass = async (ast, env, module, evaluate, assign) => {
           classVars.set(name, value);
         }
         break;
+
+      // new and init are both executed in the class environment, they do not create their own environments
       case "new":
         let [names, newMethod] = evalNewDecl(
           defn.slice(1),
@@ -68,19 +72,43 @@ export const evalClass = async (ast, env, module, evaluate, assign) => {
         break;
 
       case "init":
+        let initMethod = evalInit(
+          defn.slice(2), // only argument to init is this, so don't need the args array - it's just there to hold space
+          classEnv,
+          module,
+          evaluate
+        );
+        publicMethods.set("init", initMethod);
+        break;
 
       default:
         if (defn[1].type === "Keyword") {
           switch (defn[1].value) {
             case Symbol.for(":private"):
+              break;
 
             case Symbol.for(":static"):
+              break;
 
             default:
-              "Whoops, wrong keyword! Throw error here.";
+              throw new RuntimeError(
+                `Unknown keyword ${defn[1].value.description} in class declaration`
+              );
           }
         } else {
           // define public method;
+          const name = defn[0].value;
+          const method = evalMethod(
+            name,
+            defn.slice(1),
+            classEnv,
+            module,
+            evaluate,
+            className,
+            file
+          );
+          classEnv.set(name, method);
+          break;
         }
     }
   }
@@ -167,6 +195,8 @@ const evalNewDecl = async (
       i++;
     }
 
+    env.set("this", obj);
+
     return obj;
   };
 
@@ -179,6 +209,47 @@ const evalNewDecl = async (
   ];
 };
 
-const evalInit = async (ast, env, module, evaluate, className) => {};
+const evalInit = async (ast, env, module, evaluate, className) => {
+  const initMethod = (thisArg) => {
+    return await evaluate(ast, env, module);
+  };
 
-const evalMethod = async (ast, env, module, evaluate, className) => {};
+  return makeMethod(initMethod, className, module, { name: "init" });
+};
+
+const evalMethod = async (name, ast, env, module, evaluate, className) => {
+  const params = ast[0].map((t) => t.value);
+  const body = ast[1];
+  let varargs = params.includes("&");
+  let arity = params.length;
+
+  if (varargs) {
+    arity -= 2;
+  }
+
+  const method = (thisArg, ...args) => {
+    let scope = env.extend(`${className}.${name}`, module, file);
+    let varargs = false;
+
+    if (params && params.length) {
+      let i = 0;
+      for (let param of params) {
+        if (param === "&") {
+          varargs = true;
+          continue;
+        }
+
+        if (!varargs) {
+          scope.set(param, args[i]);
+        } else if (varargs) {
+          scope.set(param, args.slice(i));
+        }
+        i++;
+      }
+    }
+
+    return await evaluate(body, scope, module);
+  };
+
+  return makeMethod(method, className, module, { name, arity, varargs });
+};
