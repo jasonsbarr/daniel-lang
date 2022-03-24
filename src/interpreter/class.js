@@ -215,7 +215,15 @@ const evalInit = async (ast, env, module, evaluate, className) => {
   return makeMethod(initMethod, className, module, { name: "init" });
 };
 
-const evalMethod = async (name, ast, env, module, evaluate, className) => {
+const evalMethod = async (
+  name,
+  ast,
+  env,
+  module,
+  evaluate,
+  className,
+  file
+) => {
   const params = ast[0].map((t) => t.value);
   const body = ast[1];
   let varargs = params.includes("&");
