@@ -200,7 +200,14 @@ const evalCall = async (ast, env, module) => {
     }
 
     // otherwise it's an object property
-    return member;
+    if (ast.slice(1).length === 2) {
+      // set attribute
+      const value = evaluate(ast[2], env, module);
+      obj[member] = value;
+      return value;
+    }
+    // otherwise it's a getter
+    return obj[member];
   }
 
   // else is call expression
