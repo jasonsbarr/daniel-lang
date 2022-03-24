@@ -172,6 +172,10 @@ export const makeModule = (name, provides) => {
  */
 const isDanielFunction = (func) => typeof func === "function" && func.daniel;
 
+export const makeClass = (classObj, superClass) => {};
+
+export const makeMethod = () => {};
+
 /**
  * Returns a Daniel runtime object based on the current platform
  * @param {Object} stdin
@@ -194,6 +198,8 @@ export const createRuntime = ({
     makeModule,
     resolveRequire,
     resolveNativeRequire,
+    makeClass,
+    makeMethod,
   };
 };
 
