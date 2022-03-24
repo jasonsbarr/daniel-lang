@@ -103,7 +103,7 @@ const evalList = async (ast, env, module) => {
       return await evalImport(ast, env, module, evaluate);
 
     case "class":
-      return await evalClass(ast, env, module, evaluate);
+      return await evalClass(ast, env, module, evaluate, assign);
 
     case "if":
       return await evalIf(ast, env, module);
@@ -292,7 +292,7 @@ const evalFor = async (ast, env, module) => {
   for (let item of seq) {
     let newEnv = env.extend(`forExpr${ID++}`, module, id.file);
 
-    await assign([id, item], newEnv);
+    await assign([id, item], newEnv, module);
 
     if (when) {
       let test = await evaluate(when, newEnv, module);
