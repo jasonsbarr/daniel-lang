@@ -10,6 +10,7 @@ export class Environment {
     this.children = [];
     this.set("<module>", module);
     this.set("<file>", file);
+    this.set("<name>", name);
 
     Object.defineProperty(this, "<module>", {
       configurable: false,
