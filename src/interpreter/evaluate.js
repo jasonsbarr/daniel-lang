@@ -472,8 +472,8 @@ const assign = async (
 ) => {
   const [id, expr] = ast;
 
-  if (setScope) {
-    [setScope, env] = [env, setScope];
+  if (!setScope) {
+    setScope = env;
   }
 
   if (id.type === "ListPattern") {
@@ -497,16 +497,12 @@ const assign = async (
       list.push(await evaluate(ex, env, module));
     }
 
-    env.set(name, list);
+    setScope.set(name, list);
     return list;
   }
 
-  if (setScope) {
-    [setScope, env] = [env, setScope];
-  }
-
   const value = await evaluate(expr, env, module);
-  env.set(name, value);
+  setScope.set(name, value);
   return value;
 };
 
