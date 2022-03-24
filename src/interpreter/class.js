@@ -19,7 +19,6 @@ export const evalClass = async (ast, env, module, evaluate, assign) => {
   let i = 2;
   let superClass = objectClass;
   let traits = [];
-  console.log(className);
 
   while (!Array.isArray(ast[i])) {
     // handle superclass and possible traits
@@ -75,7 +74,7 @@ export const evalClass = async (ast, env, module, evaluate, assign) => {
 
       case "init":
         let initMethod = await evalInit(
-          defn.slice(2), // only argument to init is this, so don't need the args array - it's just there to hold space
+          defn[2], // only argument to init is this, so don't need the args array - it's just there to hold space
           classEnv,
           module,
           evaluate
@@ -100,7 +99,7 @@ export const evalClass = async (ast, env, module, evaluate, assign) => {
         } else {
           // define public method;
           let name = defn[0].value;
-          let method = evalMethod(
+          let method = await evalMethod(
             name,
             defn.slice(1),
             classEnv,
@@ -110,6 +109,7 @@ export const evalClass = async (ast, env, module, evaluate, assign) => {
             file
           );
           classEnv.set(name, method);
+          publicMethods.set(name, method);
           break;
         }
     }
@@ -172,9 +172,7 @@ const evalNewDecl = async (
     let allArgs = [];
 
     for (let arg of args) {
-      let value = await evaluate(arg, env, module);
-      console.log(value);
-      allArgs.push(value);
+      allArgs.push(await evaluate(arg, env, module));
     }
 
     let i = 0;
@@ -182,6 +180,7 @@ const evalNewDecl = async (
 
     obj.type = className;
     obj.id = hash(v4());
+    obj.proto = proto;
 
     Object.defineProperty(obj, "type", {
       writable: false,
@@ -251,6 +250,10 @@ const evalMethod = async (
       for (let param of params) {
         if (param === "&") {
           varargs = true;
+          continue;
+        }
+
+        if (param === "this") {
           continue;
         }
 

@@ -6,6 +6,7 @@ import { isTruthy, isIterable } from "./utils.js";
 import { makeFunction } from "../runtime.js";
 import { evalModule, evalProvide, evalOpen, evalImport } from "./module.js";
 import { evalClass } from "./class.js";
+import { printStr } from "../../lib/js/io.js";
 
 let ID = 0;
 
@@ -189,25 +190,32 @@ const evalCall = async (ast, env, module) => {
     // is object accessor
     const obj = await evaluate(ast[1], env, module);
     const member = obj[fst.value.slice(1)]; // remove dot
+    const memberName = fst.value.slice(1);
 
     if (member === undefined) {
       throw new RuntimeError(`Undefined member ${fst.value.slice(1)}`);
     }
 
     if (typeof member === "function" && ast.slice(2).length > 0) {
-      const args = ast.slice(2).map((m) => evaluate(m, env, module));
-      return obj[member](...args);
+      const args = ast.slice(1); // have to get this as an arg
+      const params = [];
+
+      for (let arg of args) {
+        params.push(await evaluate(arg, env, module));
+      }
+
+      return obj[memberName](...params);
     }
 
     // otherwise it's an object property
     if (ast.slice(1).length === 2) {
-      // set attribute
-      const value = evaluate(ast[2], env, module);
-      obj[member] = value;
+      // set attribute value
+      const value = await evaluate(ast[2], env, module);
+      obj[memberName] = value;
       return value;
     }
     // otherwise it's a getter
-    return obj[member];
+    return member;
   }
 
   // else is call expression
