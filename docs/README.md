@@ -142,5 +142,39 @@ Call expressions and special forms are surrounded by parentheses.
 ; modules that may have the same name
 (import "identity" :as "id")
 (id.id x)
+```
 
+## Object-oriented programming
+
+Even though Lisps are known more for functional programming, there is a long history of OOP in Lisp languages. Daniel is a fully object-oriented language with classes, inheritance, and traits (similar to interfaces).
+
+```lisp
+; Creating a class
+(class Person
+    (new :name :age)) ; The new form creates instance variables in the order the args need to be given to the constructor
+
+; Instantiating a class
+(define jason (Person "Jason" 41))
+
+; You can also instantiate a class by passing a hash to the constructor
+(define jason (Person {:name "Jason" :age 41}))
+
+; Use the define form within a class to set a class variable
+; Also, the init method is called on the instance after it is instantiated with arguments
+(class Person
+    (define people 0)
+    (new :name :age)
+    (init (this)
+        (.people Person (+ (.people Person) 1))))
+
+; You can create public methods
+(class Person
+    (new :name :age)
+    (greet (this other-name)
+        (string-append "Hello " other-name)))
+
+; Access properties as function calls with a dot at the beginning
+(.name jason) ; get
+(.name jason "Jason Barr") ; set
+(.greet jason "Robert") ; method call
 ```
