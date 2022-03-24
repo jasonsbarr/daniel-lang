@@ -56,7 +56,6 @@ These are the language forms I have yet to implement that will be part of the co
 - quasiquote
 - unquote
 - unquote-splicing
-- class
 - fail (with try/catch)
 - macro
 - async
@@ -72,6 +71,7 @@ These forms are already implemented in the interpreter:
 - define
 - set!
 - struct
+- class
 
 ## Branches that show the stages of development
 
