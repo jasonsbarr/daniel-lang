@@ -196,7 +196,7 @@ const evalCall = async (ast, env, module) => {
       throw new RuntimeError(`Undefined member ${fst.value.slice(1)}`);
     }
 
-    if (typeof member === "function" && ast.slice(2).length > 0) {
+    if (typeof member === "function") {
       const args = ast.slice(1); // have to get this as an arg
       const params = [];
 
