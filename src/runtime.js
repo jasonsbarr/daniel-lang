@@ -3,6 +3,8 @@ import fs from "fs";
 import { fileURLToPath } from "url";
 import { curryN } from "ramda";
 import { getFileURL, isBrowser, dirname, getAllOwnKeys } from "./utils.js";
+import { makeObject } from "../lib/js/_object.js";
+import { printStr } from "../lib/js/io.js";
 
 const __dirname = dirname(import.meta.url);
 let STDOUT, STDIN, STDERR;
@@ -172,14 +174,107 @@ export const makeModule = (name, provides) => {
  */
 const isDanielFunction = (func) => typeof func === "function" && func.daniel;
 
-export const makeClass = (classObj, module) => {};
+export const makeClass = (
+  { name, superClass, classVars, publicMethods, privateMethods, staticMethods },
+  module
+) => {
+  let proto = Object.create(superClass.proto);
+  let newMethod = () => Object.create(proto);
+  let initMethod = (obj) => obj;
+
+  for (let [n, method] of publicMethods) {
+    proto[n] = method;
+
+    if (n === "new") {
+      newMethod = method;
+    }
+
+    if (n === "init") {
+      initMethod = method;
+    }
+  }
+
+  const constructor = (...args) => {
+    let obj = newMethod(proto, ...args);
+
+    obj.toString = () => {
+      return `{${this.type}: ${[...Object.entries(this)]
+        .map(
+          ([k, v]) =>
+            `${typeof k === "symbol" ? k.description : k} => ${printStr(v)}`
+        )
+        .join(" ")}}`;
+    };
+
+    obj.constructor = constructor;
+
+    Object.defineProperty(obj, "toString", {
+      writable: false,
+      configurable: false,
+      enumerable: false,
+    });
+
+    Object.defineProperty(obj, "constructor", {
+      writable: false,
+      enumerable: false,
+      configurable: false,
+    });
+
+    return obj;
+  };
+
+  constructor.proto = proto;
+  constructor.__name__ = name;
+  constructor.type = "Class";
+
+  for (let [n, value] of classVars) {
+    constructor[n] = value;
+  }
+
+  for (let [n, method] of staticMethods) {
+    constructor[n] = method;
+
+    Object.defineProperty(constructor, n, {
+      writable: false,
+      enumerable: false,
+      configurable: false,
+    });
+  }
+
+  Object.defineProperty(constructor, "type", {
+    writable: false,
+    enumerable: false,
+    configurable: false,
+  });
+
+  Object.defineProperty(constructor, "toString", {
+    enumerable: false,
+    writable: false,
+    configurable: false,
+    value: () => `Class(${module}.${name})`,
+  });
+
+  return constructor;
+};
 
 export const makeMethod = (
   method,
   className,
   module,
-  { name, arity, varargs } = {}
+  { name, arity, varargs = false } = {}
 ) => {
+  method.__name__ = name ?? method.name ?? "<method>";
+  arity = arity ?? method.length;
+  method.className = className;
+  method.varargs = varargs;
+
+  Object.defineProperty(method, "_str", {
+    enumerable: false,
+    writable: false,
+    configurable: false,
+    value: () => `Function(${module}.${className}.${method.__name__})`,
+  });
+
   return method;
 };
 
