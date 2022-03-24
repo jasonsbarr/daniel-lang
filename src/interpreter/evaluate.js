@@ -5,6 +5,7 @@ import { Environment } from "./environment.js";
 import { isTruthy, isIterable } from "./utils.js";
 import { makeFunction } from "../runtime.js";
 import { evalModule, evalProvide, evalOpen, evalImport } from "./module.js";
+import { evalClass } from "./class.js";
 
 let ID = 0;
 
@@ -100,6 +101,9 @@ const evalList = async (ast, env, module) => {
 
     case "import":
       return await evalImport(ast, env, module, evaluate);
+
+    case "class":
+      return await evalClass(ast, env, module, evaluate);
 
     case "if":
       return await evalIf(ast, env, module);
