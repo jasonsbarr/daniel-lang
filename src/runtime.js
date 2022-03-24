@@ -175,7 +175,7 @@ export const makeModule = (name, provides) => {
  */
 const isDanielFunction = (func) => typeof func === "function" && func.daniel;
 
-export const makeClass = (
+export const makeClass = async (
   { name, superClass, classVars, publicMethods, staticMethods, attrs },
   module
 ) => {
@@ -195,15 +195,27 @@ export const makeClass = (
     }
   }
 
-  let constructor = (...args) => {
+  let constructor = async (...args) => {
     let params = [];
 
     // Enable using a hash as a single argument to constructor just like a struct
     if (args.length === 1 && args[0] instanceof Map) {
-      let keys = args[0].keys();
+      let map = args[0];
+      let keys = [...args[0].keys()];
+      let i;
 
       for (let key of keys) {
-        let i = attrs.find((a) => key === a);
+        if (typeof key === "symbol" && key.description.startsWith(":")) {
+          i = attrs.findIndex((a) => key.description.slice(1) === a);
+        } else if (typeof key === "symbol") {
+          i = attrs.findIndex((a) => key.description === a);
+        } else if (typeof key === "string") {
+          i = attrs.findIndex((a) => key === a);
+        } else {
+          throw new RuntimeError(
+            "A hash given to an object constructor must have string, keyword, or symbol keys"
+          );
+        }
 
         if (i < 0) {
           throw new RuntimeError(
@@ -211,16 +223,16 @@ export const makeClass = (
           );
         }
 
-        params[i] = args[i];
+        params[i] = map.get(key);
       }
     } else {
       params = args;
     }
 
-    let obj = newMethod(proto, ...params);
+    let obj = await newMethod(proto, ...params);
 
     obj.toString = () => {
-      return `{${this.type}: ${[...Object.entries(this)]
+      return `{${obj.type}: ${[...Object.entries(obj)]
         .map(
           ([k, v]) =>
             `${typeof k === "symbol" ? k.description : k} => ${printStr(v)}`
@@ -243,7 +255,7 @@ export const makeClass = (
     });
 
     // call init method, if any
-    obj = initMethod(obj);
+    obj = await initMethod(obj);
 
     return obj;
   };
