@@ -388,6 +388,7 @@ const destructureList = (left, right, env, module, define) => {
 
   let i = 0;
   let value;
+  let values = [];
   let rest = false;
   for (let name of names) {
     if (name.value === "&") {
@@ -405,11 +406,12 @@ const destructureList = (left, right, env, module, define) => {
     }
 
     value = assign([name, exprs[i]], env, module, define);
+    values.push(value);
     i++;
   }
 
   // return the last value
-  return value;
+  return values;
 };
 
 /**
@@ -424,6 +426,7 @@ const destructureObject = async (left, right, env, module, define) => {
   const exprs = right; // if not evaluated, is a hash pattern or identifier token that resolves to a hash
   const exprLength = exprs.length ?? exprs.size ?? Object.keys(exprs).length;
   let value;
+  let values = [];
 
   if (names.length > exprLength) {
     throw new RuntimeError(
@@ -451,11 +454,13 @@ const destructureObject = async (left, right, env, module, define) => {
           `Key ${name.value} not found in hash. Destructuring must use string or keyword keys that exist in the hash.`
         );
       }
-    } // handle struct/object case
+    }
+    // handle struct/object case
+    values.push(value);
   }
 
   // return last value
-  return value;
+  return values;
 };
 
 /**
