@@ -6,7 +6,6 @@ import { isTruthy, isIterable } from "./utils.js";
 import { makeFunction } from "../runtime.js";
 import { evalModule, evalProvide, evalOpen, evalImport } from "./module.js";
 import { evalClass } from "./class.js";
-import { printStr } from "../../lib/js/io.js";
 
 let ID = 0;
 
@@ -68,7 +67,7 @@ export const evaluate = async (ast, env, module = "<main>") => {
 
     default:
       throw new RuntimeError(
-        `Unknown expression type ${ast.type} at ${ast.file} ${ast.line}:${ast.col}`
+        `Unknown expression type ${ast.type} at ${ast.file} ${ast.syntax.line}:${ast.syntax.col}`
       );
   }
 };
