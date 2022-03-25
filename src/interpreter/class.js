@@ -18,7 +18,6 @@ export const evalClass = async (ast, env, module, evaluate, assign) => {
   let classEnv = env.extend(className, module, file);
   let i = 2;
   let superClass = objectClass;
-  let traits = [];
 
   while (!Array.isArray(ast[i])) {
     if (ast[i].type === "Keyword") {
@@ -43,14 +42,11 @@ export const evalClass = async (ast, env, module, evaluate, assign) => {
     i++;
   }
 
-  let superObj = Object.create(superClass.proto);
   let defns = ast.slice(i);
   let publicMethods = new Map();
   let staticMethods = new Map();
   let classVars = new Map();
   let attrs = [];
-
-  classEnv.set("super", superObj);
 
   for (let defn of defns) {
     let sym = defn[0];
@@ -95,7 +91,8 @@ export const evalClass = async (ast, env, module, evaluate, assign) => {
           defn[2], // only argument to init is this, so don't need the args array - it's just there to hold space
           classEnv,
           module,
-          evaluate
+          evaluate,
+          className
         );
         publicMethods.set("init", initMethod);
         break;
@@ -176,7 +173,8 @@ const evalNewDecl = async (
     names.push(name.value.description.slice(1));
   }
 
-  let allAttrs = superClass.attrs.concat(names);
+  let superAttrs = superClass.attrs;
+  let allAttrs = superAttrs.concat(names);
 
   let newMethod = async (proto, ...args) => {
     if (args.length !== allAttrs.length) {
@@ -196,6 +194,14 @@ const evalNewDecl = async (
     let i = 0;
     let obj = Object.create(proto);
 
+    let superObj = Object.create(superClass.proto);
+    superObj = await superObj.new(
+      superClass.proto,
+      ...allArgs.slice(0, superAttrs.length)
+    );
+
+    env.set("super", superObj);
+
     obj.type = className;
     obj.id = hash(v4());
     obj.proto = proto;
@@ -207,6 +213,12 @@ const evalNewDecl = async (
     });
 
     Object.defineProperty(obj, "id", {
+      writable: false,
+      configurable: false,
+      enumerable: false,
+    });
+
+    Object.defineProperty(obj, "proto", {
       writable: false,
       configurable: false,
       enumerable: false,
@@ -259,7 +271,7 @@ const evalMethod = async (
     arity -= 2;
   }
 
-  const method = async (thisArg, ...args) => {
+  const method = async (...args) => {
     let scope = env.extend(`${className}.${name}`, module, file);
     let varargs = false;
 
@@ -268,10 +280,6 @@ const evalMethod = async (
       for (let param of params) {
         if (param === "&") {
           varargs = true;
-          continue;
-        }
-
-        if (param === "this") {
           continue;
         }
 
