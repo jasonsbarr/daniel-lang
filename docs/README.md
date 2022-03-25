@@ -184,6 +184,6 @@ Even though Lisps are known more for functional programming, there is a long his
 (class Programmer :extends Person
     (new :languages)
     (do-code (this lang-index)
-        ; super keyword accesses superclass methods
+        ; super argument accesses superclass methods
         (.work super (string-append "programming " (get lang-index (.languages this))))))
 ```
