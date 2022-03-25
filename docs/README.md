@@ -146,7 +146,7 @@ Call expressions and special forms are surrounded by parentheses.
 
 ## Object-oriented programming
 
-Even though Lisps are known more for functional programming, there is a long history of OOP in Lisp languages. Daniel is a fully object-oriented language with classes, inheritance, and traits (similar to interfaces).
+Even though Lisps are known more for functional programming, there is a long history of OOP in Lisp languages. Daniel is a fully object-oriented language with classes and inheritance.
 
 ```lisp
 ; Creating a class
