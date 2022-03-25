@@ -6,7 +6,6 @@ import { isTruthy, isIterable } from "./utils.js";
 import { makeFunction } from "../runtime.js";
 import { evalModule, evalProvide, evalOpen, evalImport } from "./module.js";
 import { evalClass } from "./class.js";
-import { printStr } from "../../lib/js/io.js";
 
 let ID = 0;
 
@@ -51,13 +50,13 @@ export const evaluate = async (ast, env, module = "<main>") => {
 
   switch (ast.type) {
     case "ListPattern":
-      return evalListLiteral(ast, env, module);
+      return await evalListLiteral(ast, env, module);
 
     case "HashPattern":
-      return evalHashLiteral(ast, env, module);
+      return await evalHashLiteral(ast, env, module);
 
     case "Symbol":
-      return evalSymbol(ast, env, module);
+      return await evalSymbol(ast, env, module);
 
     case "Number":
     case "String":
@@ -68,7 +67,7 @@ export const evaluate = async (ast, env, module = "<main>") => {
 
     default:
       throw new RuntimeError(
-        `Unknown expression type ${ast.type} at ${ast.file} ${ast.line}:${ast.col}`
+        `Unknown expression type ${ast.type} at ${ast.file} ${ast.syntax.line}:${ast.syntax.col}`
       );
   }
 };
@@ -86,6 +85,13 @@ const evalList = async (ast, env, module) => {
   }
 
   const fst = ast[0];
+
+  // obviously problematic if someone defines an in-lang object with attribute "syntax"
+  // that ends up being the first element of an evaluated list
+  if (typeof fst !== "object" || fst.syntax === undefined) {
+    // ast already evaluated
+    return ast;
+  }
 
   switch (fst.value) {
     case "begin":

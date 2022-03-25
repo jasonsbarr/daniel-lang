@@ -81,27 +81,87 @@ const readAtom = (reader) => {
   const token = reader.next();
 
   if (token.match("Number")) {
-    return { ...token, value: Number(token.text) };
+    return {
+      type: token.type,
+      value: Number(token.text),
+      syntax: {
+        line: token.line,
+        col: token.col,
+        file: token.file,
+        pos: token.pos,
+        text: token.text,
+      },
+    };
   }
 
   if (token.match("Nil")) {
-    return { ...token, value: null };
+    return {
+      type: token.type,
+      value: null,
+      syntax: {
+        line: token.line,
+        col: token.col,
+        file: token.file,
+        pos: token.pos,
+        text: token.text,
+      },
+    };
   }
 
   if (token.match("Boolean")) {
-    return { ...token, value: token.text === "true" };
+    return {
+      type: token.type,
+      value: token.text === "true",
+      syntax: {
+        line: token.line,
+        col: token.col,
+        file: token.file,
+        pos: token.pos,
+        text: token.text,
+      },
+    };
   }
 
   if (token.match("String")) {
-    return { ...token, value: replaceEscapeChars(token.text.slice(1, -1)) };
+    return {
+      type: token.type,
+      value: replaceEscapeChars(token.text.slice(1, -1)),
+      syntax: {
+        line: token.line,
+        col: token.col,
+        file: token.file,
+        pos: token.pos,
+        text: token.text,
+      },
+    };
   }
 
   if (token.match("Symbol")) {
-    return { ...token, value: token.text };
+    return {
+      type: token.type,
+      value: token.text,
+      syntax: {
+        line: token.line,
+        col: token.col,
+        file: token.file,
+        pos: token.pos,
+        text: token.text,
+      },
+    };
   }
 
   if (token.match("Keyword")) {
-    return { ...token, value: Symbol.for(token.text) };
+    return {
+      type: token.type,
+      value: Symbol.for(token.text),
+      syntax: {
+        line: token.line,
+        col: token.col,
+        file: token.file,
+        pos: token.pos,
+        text: token.text,
+      },
+    };
   }
 
   throw new ReadError(token.text, token.line, token.col, token.file);
@@ -150,11 +210,8 @@ const readListLiteral = (reader) => {
   const { line, col, pos, file } = reader.peek();
   return {
     type: "ListPattern",
-    line,
-    col,
-    pos,
-    file,
     value: readList(reader, "LBrack", "RBrack"),
+    syntax: { line, col, pos, file },
   };
 };
 
@@ -166,11 +223,8 @@ const readHashLiteral = (reader) => {
   const { line, col, pos, file } = reader.peek();
   return {
     type: "HashPattern",
-    line,
-    col,
-    pos,
-    file,
     value: readList(reader, "LBrace", "RBrace"),
+    syntax: { line, col, pos, file },
   };
 };
 
@@ -179,14 +233,11 @@ const readHashLiteral = (reader) => {
  * @param {Reader} reader
  */
 const readAmp = (reader) => {
-  const { line, col, pos, file } = reader.next();
+  const { text, line, col, pos, file } = reader.next();
   return {
     type: "Amp",
-    line,
-    col,
-    pos,
-    file,
     value: "&",
+    syntax: { text, line, col, pos, file },
   };
 };
 
@@ -199,12 +250,15 @@ const readModule = (reader) => {
   const modExprs = [];
   const mod = {
     type: "Module",
-    line: token.line,
-    col: token.col,
-    pos: token.pos,
-    file: token.file,
     value: "begin-module",
     exprs: modExprs,
+    syntax: {
+      text: "begin-module",
+      line: token.line,
+      col: token.col,
+      pos: token.pos,
+      file: token.file,
+    },
   };
 
   while (reader.peek().type !== "RParen") {
@@ -253,22 +307,20 @@ export const read = (input, file) => {
   if (first) {
     begin = {
       type: "Symbol",
-      text: "begin",
-      line: first.line,
-      col: first.col,
-      pos: first.pos,
-      file: first.file,
       value: "begin",
+      syntax: {
+        text: "begin",
+        line: first.line,
+        col: first.col,
+        pos: first.pos,
+        file: first.file,
+      },
     };
   } else {
     begin = {
       type: "Symbol",
-      text: "begin",
-      line: 0,
-      col: 0,
-      pos: 0,
-      file: "",
       value: "begin",
+      syntax: { text: "begin", line: 0, col: 0, pos: 0, file: "" },
     };
   }
 
