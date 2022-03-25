@@ -38,8 +38,6 @@ export const evalClass = async (ast, env, module, evaluate, assign) => {
             "Extends keyword must be followed by a class name"
           );
         }
-      } else if (ast[i].value === Symbol.for(":uses")) {
-        // get and process trait(s)
       }
     }
     i++;

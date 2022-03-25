@@ -87,6 +87,7 @@ const evalList = async (ast, env, module) => {
   const fst = ast[0];
 
   // obviously problematic if someone defines an in-lang object with attribute "syntax"
+  // that ends up being the first element of an evaluated list
   if (typeof fst !== "object" || fst.syntax === undefined) {
     // ast already evaluated
     return ast;
