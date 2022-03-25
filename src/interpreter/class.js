@@ -21,7 +21,27 @@ export const evalClass = async (ast, env, module, evaluate, assign) => {
   let traits = [];
 
   while (!Array.isArray(ast[i])) {
-    // handle superclass and possible traits
+    if (ast[i].type === "Keyword") {
+      if (ast[i].value === Symbol.for(":extends")) {
+        i++;
+
+        if (ast[i].type !== "Symbol") {
+          throw new RuntimeError(
+            "Extends keyword must be followed by a class name"
+          );
+        }
+
+        superClass = classEnv.get(ast[i].value);
+
+        if (superClass.type !== "Class") {
+          throw new RuntimeError(
+            "Extends keyword must be followed by a class name"
+          );
+        }
+      } else if (ast[i].value === Symbol.for(":uses")) {
+        // get and process trait(s)
+      }
+    }
     i++;
   }
 
@@ -115,7 +135,7 @@ export const evalClass = async (ast, env, module, evaluate, assign) => {
     }
   }
 
-  let klass = makeClass(
+  let klass = await makeClass(
     {
       name: className,
       superClass,

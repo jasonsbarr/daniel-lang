@@ -50,13 +50,13 @@ export const evaluate = async (ast, env, module = "<main>") => {
 
   switch (ast.type) {
     case "ListPattern":
-      return evalListLiteral(ast, env, module);
+      return await evalListLiteral(ast, env, module);
 
     case "HashPattern":
-      return evalHashLiteral(ast, env, module);
+      return await evalHashLiteral(ast, env, module);
 
     case "Symbol":
-      return evalSymbol(ast, env, module);
+      return await evalSymbol(ast, env, module);
 
     case "Number":
     case "String":
@@ -125,6 +125,9 @@ const evalList = async (ast, env, module) => {
 
     case "lambda":
       return await evalLambda(ast, env, module);
+
+    case undefined: // already evaluated, not a syntax object
+      return ast;
 
     default:
       return await evalCall(ast, env, module);
