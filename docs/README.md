@@ -175,7 +175,7 @@ Even though Lisps are known more for functional programming, there is a long his
     (work (this job)
         (string-append (.name this) " works at " job)))
 
-; Access properties as function calls with a dot at the beginning
+; Access properties as call expressions with a dot at the beginning
 (.name jason) ; get
 (.name jason "Jason Barr") ; set
 (.greet jason "Robert") ; method call
@@ -184,5 +184,6 @@ Even though Lisps are known more for functional programming, there is a long his
 (class Programmer :extends Person
     (new :languages)
     (do-code (this lang-index)
+        ; super keyword accesses superclass methods
         (.work super (string-append "programming " (get lang-index (.languages this))))))
 ```
