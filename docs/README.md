@@ -47,11 +47,11 @@ Call expressions and special forms are surrounded by parentheses.
 
 ; Struct
 ; note that keyword keys will be converted to string keys
-(define my-struct (struct {:a "hi" :b "bonjour"})) ;-> {struct: a => "hi" b => "bonjour"}
+(define my-struct (struct { :a "hi" :b "bonjour" })) ;-> { struct: a => "hi" b => "bonjour" }
 
 ; Update a struct with a :with expression
 ; Structs are immutable, so this creates a new struct with the updated values
-{my-struct :with :c "hola"} ;-> {struct: a => "hi" b => "bonjour" c => "hola"}
+{my-struct :with :c "hola"} ;-> { struct: a => "hi" b => "bonjour" c => "hola" }
 
 ; If expression
 ; Evaluates to one of two values based on its condition's truthiness or falsiness
@@ -186,4 +186,7 @@ Even though Lisps are known more for functional programming, there is a long his
     (do-code (this lang-index)
         ; super keyword accesses superclass methods
         (.work super (string-append "programming " (get lang-index (.languages this))))))
+
+; Like with structs, a class constructor can also take a map as an argument
+(define josh (Person { :name "Joshua" :age 32 }))
 ```
