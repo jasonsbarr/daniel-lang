@@ -86,6 +86,12 @@ const evalList = async (ast, env, module) => {
 
   const fst = ast[0];
 
+  // obviously problematic if someone defines an in-lang object with attribute "syntax"
+  if (typeof fst !== "object" || fst.syntax === undefined) {
+    // ast already evaluated
+    return ast;
+  }
+
   switch (fst.value) {
     case "begin":
       return await evalBlock(ast.slice(1), env, module);
@@ -125,9 +131,6 @@ const evalList = async (ast, env, module) => {
 
     case "lambda":
       return await evalLambda(ast, env, module);
-
-    case undefined: // already evaluated, not a syntax object
-      return ast;
 
     default:
       return await evalCall(ast, env, module);
