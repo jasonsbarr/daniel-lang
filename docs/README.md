@@ -171,10 +171,18 @@ Even though Lisps are known more for functional programming, there is a long his
 (class Person
     (new :name :age)
     (greet (this other-name)
-        (string-append "Hello " other-name)))
+        (string-append "Hello " other-name))
+    (work (this job)
+        (string-append (.name this) " works at " job)))
 
 ; Access properties as function calls with a dot at the beginning
 (.name jason) ; get
 (.name jason "Jason Barr") ; set
 (.greet jason "Robert") ; method call
+
+; Use the :extends keyword for inheritance
+(class Programmer :extends Person
+    (new :languages)
+    (do-code (this lang-index)
+        (.work super (string-append "programming " (get lang-index (.languages this))))))
 ```
