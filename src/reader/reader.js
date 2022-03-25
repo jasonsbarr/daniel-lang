@@ -89,6 +89,7 @@ const readAtom = (reader) => {
         col: token.col,
         file: token.file,
         pos: token.pos,
+        text: token.text,
       },
     };
   }
@@ -102,6 +103,7 @@ const readAtom = (reader) => {
         col: token.col,
         file: token.file,
         pos: token.pos,
+        text: token.text,
       },
     };
   }
@@ -115,6 +117,7 @@ const readAtom = (reader) => {
         col: token.col,
         file: token.file,
         pos: token.pos,
+        text: token.text,
       },
     };
   }
@@ -128,6 +131,7 @@ const readAtom = (reader) => {
         col: token.col,
         file: token.file,
         pos: token.pos,
+        text: token.text,
       },
     };
   }
@@ -141,6 +145,7 @@ const readAtom = (reader) => {
         col: token.col,
         file: token.file,
         pos: token.pos,
+        text: token.text,
       },
     };
   }
@@ -154,6 +159,7 @@ const readAtom = (reader) => {
         col: token.col,
         file: token.file,
         pos: token.pos,
+        text: token.text,
       },
     };
   }
@@ -227,11 +233,11 @@ const readHashLiteral = (reader) => {
  * @param {Reader} reader
  */
 const readAmp = (reader) => {
-  const { line, col, pos, file } = reader.next();
+  const { text, line, col, pos, file } = reader.next();
   return {
     type: "Amp",
     value: "&",
-    syntax: { line, col, pos, file },
+    syntax: { text, line, col, pos, file },
   };
 };
 
@@ -247,6 +253,7 @@ const readModule = (reader) => {
     value: "begin-module",
     exprs: modExprs,
     syntax: {
+      text: "begin-module",
       line: token.line,
       col: token.col,
       pos: token.pos,
@@ -300,9 +307,9 @@ export const read = (input, file) => {
   if (first) {
     begin = {
       type: "Symbol",
-      text: "begin",
       value: "begin",
       syntax: {
+        text: "begin",
         line: first.line,
         col: first.col,
         pos: first.pos,
@@ -313,7 +320,7 @@ export const read = (input, file) => {
     begin = {
       type: "Symbol",
       value: "begin",
-      syntax: { line: 0, col: 0, pos: 0, file: "" },
+      syntax: { text: "begin", line: 0, col: 0, pos: 0, file: "" },
     };
   }
 
