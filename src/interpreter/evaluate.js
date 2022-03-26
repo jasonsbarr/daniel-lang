@@ -139,8 +139,8 @@ const evalList = async (ast, env, module) => {
     case "quote":
       return await quote(ast, env, module);
 
-    case "eval":
-      return await evalEval(ast, env, module);
+    case "quasiquote":
+      return await quasiquote(ast, env, module);
 
     default:
       return await evalCall(ast, env, module);
@@ -789,31 +789,12 @@ const quote = (ast, env, module) => {
 };
 
 const quasiquote = async (ast, env, module) => {
-  const qqLoop = (acc, elem) => {
-    if (
-      Array.isArray(elem) &&
-      elem.length === 2 &&
-      elem[0].value === Symbol.for("splice-unquote")
-    ) {
-      return [Symbol.for("concat"), elem[1], acc];
-    }
-
-    return [Symbol.for("cons"), quasiquote(elem, env, module), acc];
-  };
-
-  if (Array.isArray(ast) && ast.length === 2) {
-    if (ast[0].value === Symbol.for("unquote")) {
-      return evaluate(ast[1], env, module);
+  // ast[0] is quasiquote symbol
+  if (Array.isArray(ast[1]) && ast[1].length === 2) {
+    if (ast[1][0].value === Symbol.for("unquote")) {
+      return evaluate(ast[1][1], env, module);
     } else {
-      return ast.reduceRight(qqLoop, []);
     }
-  } else if (
-    ast.type === "ListPattern" ||
-    ast.type === "HashPattern" ||
-    ast.type === "Symbol"
-  ) {
-    return [Symbol.for("quote"), quote(ast, env, module)];
   }
-
   return quote(ast, env, module);
 };
