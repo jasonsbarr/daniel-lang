@@ -206,9 +206,9 @@ const evalCall = async (ast, env, module) => {
     const obj = await evaluate(ast[1], env, module);
     const name =
       typeof fst.value === "symbol"
-        ? fst.value.description.slice(1)
+        ? fst.value.description.slice(1) // remove dot
         : fst.value.slice(1);
-    const member = obj[name]; // remove dot
+    const member = obj[name];
     const memberName = name;
 
     if (member === undefined) {
