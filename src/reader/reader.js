@@ -139,7 +139,7 @@ const readAtom = (reader) => {
   if (token.match("Symbol")) {
     return {
       type: token.type,
-      value: token.text,
+      value: Symbol.for(token.text),
       syntax: {
         line: token.line,
         col: token.col,
@@ -250,7 +250,7 @@ const readModule = (reader) => {
   const modExprs = [];
   const mod = {
     type: "Module",
-    value: "begin-module",
+    value: Symbol.for("begin-module"),
     exprs: modExprs,
     syntax: {
       text: "begin-module",
@@ -307,7 +307,7 @@ export const read = (input, file) => {
   if (first) {
     begin = {
       type: "Symbol",
-      value: "begin",
+      value: Symbol.for("begin"),
       syntax: {
         text: "begin",
         line: first.line,
@@ -319,7 +319,7 @@ export const read = (input, file) => {
   } else {
     begin = {
       type: "Symbol",
-      value: "begin",
+      value: Symbol.for("begin"),
       syntax: { text: "begin", line: 0, col: 0, pos: 0, file: "" },
     };
   }

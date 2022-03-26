@@ -96,7 +96,7 @@ const evalList = async (ast, env, module) => {
 
   const fst = ast[0];
 
-  switch (fst.value) {
+  switch (fst.value.description) {
     case "begin":
       return await evalBlock(ast.slice(1), env, module);
 
@@ -195,14 +195,18 @@ const evalCall = async (ast, env, module) => {
 
   let fst = ast[0];
 
-  if (fst.type === "Symbol" && fst.value.startsWith(".")) {
+  if (fst.type === "Symbol" && fst.value.description.startsWith(".")) {
     // is object accessor
     const obj = await evaluate(ast[1], env, module);
-    const member = obj[fst.value.slice(1)]; // remove dot
-    const memberName = fst.value.slice(1);
+    const name =
+      typeof fst.value === "symbol"
+        ? fst.value.description.slice(1)
+        : fst.value.slice(1);
+    const member = obj[name]; // remove dot
+    const memberName = name;
 
     if (member === undefined) {
-      throw new RuntimeError(`Undefined member ${fst.value.slice(1)}`);
+      throw new RuntimeError(`Undefined member ${name}`);
     }
 
     if (typeof member === "function") {
@@ -257,7 +261,8 @@ const evalCall = async (ast, env, module) => {
 };
 
 const evalSymbol = async (ast, env, module) => {
-  const name = typeof ast === "symbol" ? ast.description : ast.value;
+  const name =
+    typeof ast === "symbol" ? ast.description : ast.value.description;
   const val = env.get(name);
   return val;
 };
@@ -518,7 +523,7 @@ const assign = async (
     return destructureObject(id, expr, env, module, def);
   }
 
-  const name = id.value;
+  const name = typeof id.value === "symbol" ? id.value.description : id.value;
 
   if (def && env.inCurrent(name)) {
     throw new ValError(`Name ${name} has already been defined in this scope`);

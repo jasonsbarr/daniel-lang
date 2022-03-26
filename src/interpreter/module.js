@@ -58,10 +58,13 @@ export const evalProvide = (ast, env, module) => {
     );
   }
 
-  const exportVal = env.get(name.value);
+  const nameVal =
+    typeof name.value === "symbol" ? name.value.description : name.value;
+
+  const exportVal = env.get(nameVal);
   exportVal.module = module;
   return {
-    name: name.value,
+    name: nameVal,
     provide: true,
     export: exportVal,
   };

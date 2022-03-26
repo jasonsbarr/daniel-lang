@@ -15,6 +15,7 @@ import { objectClass } from "../../lib/js/_object.js";
  */
 export const evalClass = async (ast, env, module, evaluate, assign) => {
   let { value: className, file } = ast[1];
+  className = typeof className === "symbol" ? className.description : className;
   let classEnv = env.extend(className, module, file);
   let i = 2;
   let superClass = objectClass;
@@ -30,13 +31,15 @@ export const evalClass = async (ast, env, module, evaluate, assign) => {
           );
         }
 
-        superClass = classEnv.get(ast[i].value);
+        superClass = classEnv.get(ast[i].value.description);
 
         if (superClass.type !== "Class") {
           throw new RuntimeError(
             "Extends keyword must be followed by a class name"
           );
         }
+      } else {
+        throw new RuntimeError(`Invalid keyword ${ast[i].value.description}`);
       }
     }
     i++;
@@ -51,7 +54,7 @@ export const evalClass = async (ast, env, module, evaluate, assign) => {
   for (let defn of defns) {
     let sym = defn[0];
 
-    switch (sym.value) {
+    switch (typeof sym.value === "symbol" ? sym.value.description : sym.value) {
       case "define":
         let [name, value] = await evalDefine(defn, classEnv, module, assign);
         if (Array.isArray(name)) {
@@ -62,11 +65,13 @@ export const evalClass = async (ast, env, module, evaluate, assign) => {
           }
           let i = 0;
           for (let n of names) {
+            n = typeof n === "symbol" ? n.description : n;
             classVars.set(n, value[i]);
             classEnv.set(n, value[i]);
             i++;
           }
         } else {
+          name = typeof name === "symbol" ? name.description : name;
           classVars.set(name, value);
           classEnv.set(name, value);
         }
@@ -103,7 +108,10 @@ export const evalClass = async (ast, env, module, evaluate, assign) => {
           switch (defn[1].value) {
             case Symbol.for(":private"):
               // define private method - only available in class environment
-              name = defn[0].value;
+              name =
+                typeof defn[0].value === "symbol"
+                  ? defn[0].value.description
+                  : defn[0].value;
               method = await evalMethod(
                 name,
                 defn.slice(2),
@@ -117,7 +125,10 @@ export const evalClass = async (ast, env, module, evaluate, assign) => {
               break;
 
             case Symbol.for(":static"):
-              name = defn[0].value;
+              name =
+                typeof defn[0].value === "symbol"
+                  ? defn[0].value.description
+                  : defn[0].value;
               method = await evalMethod(
                 name,
                 defn.slice(2),
@@ -138,7 +149,10 @@ export const evalClass = async (ast, env, module, evaluate, assign) => {
           }
         } else {
           // define public method;
-          let name = defn[0].value;
+          let name =
+            typeof defn[0].value === "symbol"
+              ? defn[0].value.description
+              : defn[0].value;
           let method = await evalMethod(
             name,
             defn.slice(1),
@@ -171,12 +185,12 @@ export const evalClass = async (ast, env, module, evaluate, assign) => {
   return klass;
 };
 
-export const evalTrait = async (ast, env, module, evaluate) => {};
-
 const evalDefine = async (ast, env, module, assign) => {
   let [id, expr] = ast.slice(1);
   let name =
-    typeof id.value === "string" ? id.value : id.value.map((s) => s.value); // if not a string, it's an array of Symbol syntax objects
+    typeof id.value === "symbol" || typeof id.value === "string"
+      ? id.value
+      : id.value.map((s) => s.value); // if not a symbol/string, it's an array of Symbol syntax objects
   let value = await assign([id, expr], env, module);
 
   return [name, value];
@@ -287,7 +301,9 @@ const evalMethod = async (
   className,
   file
 ) => {
-  let params = ast[0].map((t) => t.value);
+  let params = ast[0].map((t) =>
+    typeof t.value === "symbol" ? t.value.description : t.value
+  );
   let body = ast[1];
   let varargs = params.includes("&");
   let arity = params.length;
