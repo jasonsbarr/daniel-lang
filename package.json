@@ -38,7 +38,6 @@
     "figlet": "^1.5.2",
     "object-hash": "^3.0.0",
     "ramda": "^0.28.0",
-    "readline-sync": "^1.4.10",
     "uuid": "^8.3.2"
   }
 }
