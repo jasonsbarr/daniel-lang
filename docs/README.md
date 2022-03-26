@@ -161,6 +161,7 @@ Even though Lisps are known more for functional programming, there is a long his
 
 ; Use the define form within a class to set a class variable
 ; Also, the init method is called on the instance after it is instantiated with arguments
+; The init method only takes this as an argument and returns this when it is done
 (class Person
     (define people 0)
     (new :name :age)
@@ -174,6 +175,24 @@ Even though Lisps are known more for functional programming, there is a long his
         (string-append "Hello " other-name))
     (work (this job)
         (string-append (.name this) " works at " job)))
+
+; Use the :private keyword to define a private method
+; Private methods are only visible from inside the class; they can't be called by outside code
+(class Account
+    (new :balance)
+    ; public method
+    (withdraw (this amount) (if (can-withdraw? this amount)
+                                (begin
+                                    (.balance this (- (.balance this) 1))
+                                    (.balance this))
+                                ("Sorry, your balance is insufficient")))
+    ; private method
+    (can-withdraw? :private (this amount) (> (.balance this) amount)))
+
+; Use the :static keyword to define a static method
+; Static methods are defined on the class itself, not on an instance of the class
+(class Utils
+    (add :static (this a b) (+ a b)))
 
 ; Access properties as call expressions with a dot at the beginning
 (.name jason) ; get
