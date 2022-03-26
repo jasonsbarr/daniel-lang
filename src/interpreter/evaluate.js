@@ -40,6 +40,15 @@ const primitives = [
  */
 export const evaluate = async (ast, env, module = "<main>") => {
   if (Array.isArray(ast)) {
+    const fst = ast[0];
+
+    // Make sure the list is actually a form, and not an already-evaluated list
+    // On the off chance someone defines an object with a type attr of, e.g. "String",
+    // and a non-empty syntax attr, this will fail. The likelihood of that seems remote.
+    if (fst && !primitives.includes(fst.type) && !fst.syntax) {
+      return ast;
+    }
+
     return await evalList(ast, env, module);
   }
 
@@ -85,13 +94,6 @@ const evalList = async (ast, env, module) => {
   }
 
   const fst = ast[0];
-
-  // obviously problematic if someone defines an in-lang object with attribute "syntax"
-  // that ends up being the first element of an evaluated list
-  if (typeof fst !== "object" || fst.syntax === undefined) {
-    // ast already evaluated
-    return ast;
-  }
 
   switch (fst.value) {
     case "begin":
