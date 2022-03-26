@@ -778,10 +778,42 @@ const quote = (ast, env, module) => {
   const quoteVal = (val) => {
     if (Array.isArray(val)) {
       return val.map((v) => quoteVal(v));
+    } else if (val.type === "ListPattern" || val.type === "HashPattern") {
+      return evaluate(val, env, module);
     }
 
     return val.value;
   };
 
   return quoteVal(ast[1]);
+};
+
+const quasiquote = async (ast, env, module) => {
+  const qqLoop = (acc, elem) => {
+    if (
+      Array.isArray(elem) &&
+      elem.length === 2 &&
+      elem[0].value === Symbol.for("splice-unquote")
+    ) {
+      return [Symbol.for("concat"), elem[1], acc];
+    }
+
+    return [Symbol.for("cons"), quasiquote(elem, env, module), acc];
+  };
+
+  if (Array.isArray(ast) && ast.length === 2) {
+    if (ast[0].value === Symbol.for("unquote")) {
+      return evaluate(ast[1], env, module);
+    } else {
+      return ast.reduceRight(qqLoop, []);
+    }
+  } else if (
+    ast.type === "ListPattern" ||
+    ast.type === "HashPattern" ||
+    ast.type === "Symbol"
+  ) {
+    return [Symbol.for("quote"), quote(ast, env, module)];
+  }
+
+  return quote(ast, env, module);
 };
