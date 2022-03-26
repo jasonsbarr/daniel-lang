@@ -99,11 +99,36 @@ export const evalClass = async (ast, env, module, evaluate, assign) => {
 
       default:
         if (defn[1].type === "Keyword") {
+          let name, method;
           switch (defn[1].value) {
             case Symbol.for(":private"):
+              // define private method - only available in class environment
+              name = defn[0].value;
+              method = await evalMethod(
+                name,
+                defn.slice(2),
+                classEnv,
+                module,
+                evaluate,
+                className,
+                file
+              );
+              classEnv.set(name, method);
               break;
 
             case Symbol.for(":static"):
+              name = defn[0].value;
+              method = await evalMethod(
+                name,
+                defn.slice(2),
+                classEnv,
+                module,
+                evaluate,
+                className,
+                file
+              );
+              classEnv.set(name, method);
+              staticMethods.set(name, method);
               break;
 
             default:
