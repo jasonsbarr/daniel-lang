@@ -136,6 +136,12 @@ const evalList = async (ast, env, module) => {
     case "lambda":
       return await evalLambda(ast, env, module);
 
+    case "quote":
+      return await quote(ast, env, module);
+
+    case "eval":
+      return await evalEval(ast, env, module);
+
     default:
       return await evalCall(ast, env, module);
   }
@@ -760,4 +766,22 @@ const evalHashLiteral = async (ast, env, module) => {
   }
 
   return hash;
+};
+
+/**
+ * Quote the data in a form instead of evaluating it directly
+ * @param {Array} ast
+ * @param {Environment} env
+ * @param {String} module
+ */
+const quote = (ast, env, module) => {
+  const quoteVal = (val) => {
+    if (Array.isArray(val)) {
+      return val.map((v) => quoteVal(v));
+    }
+
+    return val.value;
+  };
+
+  return quoteVal(ast[1]);
 };
