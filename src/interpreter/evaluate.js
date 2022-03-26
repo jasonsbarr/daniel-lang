@@ -45,6 +45,7 @@ export const evaluate = async (ast, env, module = "<main>") => {
     // Make sure the list is actually a form, and not an already-evaluated list
     // On the off chance someone defines an object with a type attr of, e.g. "String",
     // and a non-empty syntax attr, this will fail. The likelihood of that seems remote.
+    // An empty list will still fall through and be returned as null from evalList
     if (fst && !primitives.includes(fst.type) && !fst.syntax) {
       return ast;
     }
