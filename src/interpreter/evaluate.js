@@ -257,7 +257,8 @@ const evalCall = async (ast, env, module) => {
 };
 
 const evalSymbol = async (ast, env, module) => {
-  const val = env.get(ast.value);
+  const name = typeof ast === "symbol" ? ast.description : ast.value;
+  const val = env.get(name);
   return val;
 };
 
