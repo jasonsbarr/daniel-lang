@@ -810,10 +810,14 @@ const quasiquote = async (ast, env, module) => {
     if (expr[0].value === Symbol.for("unquote")) {
       return evaluate(expr[1], env, module);
     } else if (expr[0].value === Symbol.for("splice-unquote")) {
-      return [Symbol.for("concat")].concat(await evaluate(expr[1]));
+      return [
+        Symbol.for("concat"),
+        await evaluate(expr[1]),
+        quasiquote(expr.slice(2)),
+      ];
     } else {
       return [Symbol.for("cons"), quasiquote(expr)];
     }
   }
-  return await quote(ast, env, module);
+  return quote(ast, env, module);
 };
