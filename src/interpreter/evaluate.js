@@ -774,14 +774,29 @@ const evalHashLiteral = async (ast, env, module) => {
  * @param {Environment} env
  * @param {String} module
  */
-const quote = (ast, env, module) => {
+const quote = async (ast, env, module) => {
   const quoteVal = (val) => {
     if (Array.isArray(val)) {
       return val.map((v) => quoteVal(v));
-    } else if (val.type === "ListPattern" || val.type === "HashPattern") {
-      return evaluate(val, env, module);
-    }
+    } else if (val.type === "ListPattern") {
+      return val.value.map(quoteVal);
+    } else if (val.type === "HashPattern") {
+      if (val.value.length % 2 !== 0) {
+        throw new RuntimeError(
+          "Hash literal must contain a series of key/value pairs"
+        );
+      }
+      const value = val.value.map(quoteVal);
+      let entries = [];
 
+      for (let i = 0; i < value.length; i += 2) {
+        let k = value[i];
+        let v = value[i + 1];
+        entries.push([k, v]);
+      }
+
+      return new Map(entries);
+    }
     return val.value;
   };
 
@@ -790,11 +805,15 @@ const quote = (ast, env, module) => {
 
 const quasiquote = async (ast, env, module) => {
   // ast[0] is quasiquote symbol
-  if (Array.isArray(ast[1]) && ast[1].length === 2) {
-    if (ast[1][0].value === Symbol.for("unquote")) {
-      return evaluate(ast[1][1], env, module);
+  const expr = ast[1];
+  if (Array.isArray(expr) && expr.length === 2) {
+    if (expr[0].value === Symbol.for("unquote")) {
+      return evaluate(expr[1], env, module);
+    } else if (expr[0].value === Symbol.for("splice-unquote")) {
+      return [Symbol.for("concat")].concat(await evaluate(expr[1]));
     } else {
+      return [Symbol.for("cons"), quasiquote(expr)];
     }
   }
-  return quote(ast, env, module);
+  return await quote(ast, env, module);
 };
