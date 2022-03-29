@@ -826,13 +826,9 @@ const quasiquote = async (ast, env, module) => {
         }
       } else if (ast.length) {
         for (let el of ast) {
-          result = result.concat(
-            [await quasiquote(el, env, module)],
-            ...result
-          );
+          result = result.concat(await quasiquote(el, env, module));
         }
-        result.unshift({ type: "Symbol", value: Symbol.for("cons") });
-        result = await evaluate(result, env, module);
+        return result;
       }
 
       return result;
