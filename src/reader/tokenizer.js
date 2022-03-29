@@ -186,6 +186,10 @@ class Lexer {
 const NIL = rule("Nil", String.raw`nil`);
 const BOOL = rule("Boolean", String.raw`true|false`);
 const MODULE = rule("Module", String.raw`begin-module`);
+const QUOTE = rule("Quote", String.raw`'`);
+const QQUOTE = rule("QQuote", String.raw`\``);
+const UQUOTE = rule("UQuote", String.raw`~`);
+const SUQUOTE = rule("SUQuote", String.raw`~@`);
 const STRING = rule("String", String.raw`"(?:\\.|[^\\"])*"?`);
 const NUMBER = rule("Number", String.raw`[-\+]?[0-9]*\.?[0-9]+`);
 const COMMENT = rule("Comment", String.raw`;.*`);
@@ -210,6 +214,10 @@ const rules = [
   NIL,
   BOOL,
   MODULE,
+  QUOTE,
+  QQUOTE,
+  UQUOTE,
+  SUQUOTE,
   STRING,
   NUMBER,
   COMMENT,
