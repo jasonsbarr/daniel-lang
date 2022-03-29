@@ -66,11 +66,10 @@ These are the language forms I intend to implement that form the core of the lan
 - [11 - Keywords and maps](https://github.com/jasonsbarr/daniel-lang/tree/11-keywords-maps)
 - [12 - Structs](https://github.com/jasonsbarr/daniel-lang/tree/12-structs)
 - [13 - Classes and objects](https://github.com/jasonsbarr/daniel-lang/tree/13-classes)
-- 14 - Inheritance and traits
-- 15 - Quote, quasiquote, and unquote
-- 16 - Syntactic extensions (macros)
-- 17 - Exceptions and error handling
-- 18 - Async
+- [14 - Quote, quasiquote, and unquote](https://github.com/jasonsbarr/daniel-lang/tree/14-quote)
+- 15 - Syntactic extensions (macros)
+- 16 - Exceptions and error handling
+- 17 - Async
 
 ## Goals
 
