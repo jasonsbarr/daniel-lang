@@ -52,10 +52,6 @@ Language documentation is [here](./docs)
 
 These are the language forms I have yet to implement that will be part of the core of the language:
 
-- quote
-- quasiquote
-- unquote
-- unquote-splicing
 - fail (with try/catch)
 - macro
 - async
@@ -72,6 +68,10 @@ These forms are already implemented in the interpreter:
 - set!
 - struct
 - class
+- quote
+- quasiquote
+- unquote
+- unquote-splicing
 
 ## Branches that show the stages of development
 
