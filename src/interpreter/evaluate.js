@@ -774,7 +774,7 @@ const evalHashLiteral = async (ast, env, module) => {
  * @param {Environment} env
  * @param {String} module
  */
-const quote = async (ast, env, module) => {
+const quote = (ast, env, module) => {
   const quoteVal = (val) => {
     if (Array.isArray(val)) {
       return val.map((v) => quoteVal(v));
