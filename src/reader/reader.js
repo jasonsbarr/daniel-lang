@@ -279,9 +279,73 @@ const readModule = (reader) => {
  * @param {Reader} reader
  */
 const readForm = (reader) => {
-  const token = reader.peek();
+  let token = reader.peek();
 
   switch (token.type) {
+    case "Quote":
+      token = reader.next();
+      return [
+        {
+          type: "Quote",
+          value: Symbol.for("quote"),
+          syntax: {
+            text: "'",
+            line: token.line,
+            col: token.col,
+            pos: token.pos,
+            file: token.file,
+          },
+        },
+        readForm(reader),
+      ];
+    case "QQuote":
+      token = reader.next();
+      return [
+        {
+          type: "Quasiquote",
+          value: Symbol.for("quasiquote"),
+          syntax: {
+            text: "`",
+            line: token.line,
+            col: token.col,
+            pos: token.pos,
+            file: token.file,
+          },
+        },
+        readForm(reader),
+      ];
+    case "UQuote":
+      token = reader.next();
+      return [
+        {
+          type: "Unquote",
+          value: Symbol.for("unquote"),
+          syntax: {
+            text: "~",
+            line: token.line,
+            col: token.col,
+            pos: token.pos,
+            file: token.file,
+          },
+        },
+        readForm(reader),
+      ];
+    case "SUQuote":
+      let token = reader.next();
+      return [
+        {
+          type: "SpliceUnquote",
+          value: Symbol.for("splice-unquote"),
+          syntax: {
+            text: "~@",
+            line: token.line,
+            col: token.col,
+            pos: token.pos,
+            file: token.file,
+          },
+        },
+        readForm(reader),
+      ];
     case "RParen":
     case "RBrack":
     case "RBrace":
