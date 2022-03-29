@@ -809,7 +809,8 @@ const quasiquote = async (ast, env, module) => {
     if (ast.length === 2 && ast[0].value === Symbol.for("unquote")) {
       return await evaluate(ast[1], env, module);
     } else {
-      let elt = ast[0];
+      let spliceTrue = ast[0] && ast[0].value === Symbol.for("splice-unquote");
+      let elt = spliceTrue ? ast : ast[0];
       let result = [];
 
       if (
@@ -817,11 +818,12 @@ const quasiquote = async (ast, env, module) => {
         elt.length === 2 &&
         elt[0].value === Symbol.for("splice-unquote")
       ) {
-        result.push(await evaluate(elt[1], env, module));
-        for (let el of ast.slice(1)) {
-          result.push([await quasiquote(el, env, module)]);
+        result = result.concat(await evaluate(elt[1], env, module));
+        if (!spliceTrue) {
+          for (let el of ast.slice(1)) {
+            result = result.concat(await quasiquote(el, env, module));
+          }
         }
-        result.unshift({ type: "Symbol", value: Symbol.for("concat") });
       } else if (ast.length) {
         for (let el of ast) {
           result = result.concat(
@@ -830,9 +832,10 @@ const quasiquote = async (ast, env, module) => {
           );
         }
         result.unshift({ type: "Symbol", value: Symbol.for("cons") });
+        result = await evaluate(result, env, module);
       }
 
-      return await evaluate(result, env, module);
+      return result;
     }
   }
 
