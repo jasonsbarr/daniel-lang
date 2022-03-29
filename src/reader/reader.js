@@ -181,6 +181,12 @@ const readList = (reader, start = "LParen", end = "RParen") => {
     throw new ReadError(token.text, token.line, token.col, token.file);
   }
 
+  if (reader.peek().match(end)) {
+    // skip over end paren
+    reader.next();
+    return ast;
+  }
+
   while (!token.match(end)) {
     const expr = readForm(reader);
 
