@@ -802,22 +802,3 @@ const quote = async (ast, env, module) => {
 
   return quoteVal(ast[1]);
 };
-
-const quasiquote = async (ast, env, module) => {
-  // ast[0] is quasiquote symbol
-  const expr = ast[1];
-  if (Array.isArray(expr) && expr.length === 2) {
-    if (expr[0].value === Symbol.for("unquote")) {
-      return evaluate(expr[1], env, module);
-    } else if (expr[0].value === Symbol.for("splice-unquote")) {
-      return [
-        Symbol.for("concat"),
-        await evaluate(expr[1]),
-        quasiquote(expr.slice(2)),
-      ];
-    } else {
-      return [Symbol.for("cons"), quasiquote(expr)];
-    }
-  }
-  return quote(ast, env, module);
-};
