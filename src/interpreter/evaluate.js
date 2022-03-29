@@ -815,10 +815,11 @@ const quasiquote = async (ast, env, module) => {
       if (
         Array.isArray(elt) &&
         elt.length === 2 &&
-        elt[0] === Symbol.for("splice-unquote")
+        elt[0].value === Symbol.for("splice-unquote")
       ) {
-        for (let el of elt) {
-          result = result.concat([await evaluate(el, env, module)], ...result);
+        result.push(await evaluate(elt[1], env, module));
+        for (let el of ast.slice(1)) {
+          result.push([await quasiquote(el, env, module)]);
         }
         result.unshift({ type: "Symbol", value: Symbol.for("concat") });
       } else if (ast.length) {
