@@ -331,7 +331,7 @@ const readForm = (reader) => {
         readForm(reader),
       ];
     case "SUQuote":
-      let token = reader.next();
+      token = reader.next();
       return [
         {
           type: "SpliceUnquote",
