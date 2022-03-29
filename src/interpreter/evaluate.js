@@ -770,7 +770,8 @@ const evalHashLiteral = async (ast, env, module) => {
 
 const quoteVal = (val) => {
   if (Array.isArray(val)) {
-    return val.map((v) => quoteVal(v));
+    const result = val.map((v) => quoteVal(v));
+    return result.length ? result : null;
   } else if (val.type === "ListPattern") {
     return val.value.map(quoteVal);
   } else if (val.type === "HashPattern") {
@@ -820,7 +821,7 @@ const quasiquote = async (ast, env, module) => {
           result = result.concat([await evaluate(el, env, module)], ...result);
         }
         result.unshift({ type: "Symbol", value: Symbol.for("concat") });
-      } else {
+      } else if (ast.length) {
         for (let el of ast) {
           result = result.concat(
             [await quasiquote(el, env, module)],
