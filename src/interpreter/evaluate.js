@@ -137,10 +137,10 @@ const evalList = async (ast, env, module) => {
       return await evalLambda(ast, env, module);
 
     case "quote":
-      return await quote(ast, env, module);
+      return await quote(ast[1], env, module);
 
     case "quasiquote":
-      return await quasiquote(ast, env, module);
+      return await quasiquote(ast[1], env, module);
 
     default:
       return await evalCall(ast, env, module);
@@ -768,6 +768,31 @@ const evalHashLiteral = async (ast, env, module) => {
   return hash;
 };
 
+const quoteVal = (val) => {
+  if (Array.isArray(val)) {
+    return val.map((v) => quoteVal(v));
+  } else if (val.type === "ListPattern") {
+    return val.value.map(quoteVal);
+  } else if (val.type === "HashPattern") {
+    if (val.value.length % 2 !== 0) {
+      throw new RuntimeError(
+        "Hash literal must contain a series of key/value pairs"
+      );
+    }
+    const value = val.value.map(quoteVal);
+    let entries = [];
+
+    for (let i = 0; i < value.length; i += 2) {
+      let k = value[i];
+      let v = value[i + 1];
+      entries.push([k, v]);
+    }
+
+    return new Map(entries);
+  }
+  return val.value;
+};
+
 /**
  * Quote the data in a form instead of evaluating it directly
  * @param {Array} ast
@@ -775,46 +800,39 @@ const evalHashLiteral = async (ast, env, module) => {
  * @param {String} module
  */
 const quote = (ast, env, module) => {
-  const quoteVal = (val) => {
-    if (Array.isArray(val)) {
-      return val.map((v) => quoteVal(v));
-    } else if (val.type === "ListPattern") {
-      return val.value.map(quoteVal);
-    } else if (val.type === "HashPattern") {
-      if (val.value.length % 2 !== 0) {
-        throw new RuntimeError(
-          "Hash literal must contain a series of key/value pairs"
-        );
-      }
-      const value = val.value.map(quoteVal);
-      let entries = [];
-
-      for (let i = 0; i < value.length; i += 2) {
-        let k = value[i];
-        let v = value[i + 1];
-        entries.push([k, v]);
-      }
-
-      return new Map(entries);
-    }
-    return val.value;
-  };
-
-  return quoteVal(ast[1]);
+  return quoteVal(ast);
 };
 
 const quasiquote = async (ast, env, module) => {
-  // ast[0] is quasiquote symbol
-  const ele = ast[1];
-
-  if (Array.isArray(ele)) {
-    if (ele.length === 2 && ele[0] === Symbol.for("unquote")) {
-      return await evaluate(ele[1], env, module);
+  if (Array.isArray(ast)) {
+    if (ast.length === 2 && ast[0].value === Symbol.for("unquote")) {
+      return await evaluate(ast[1], env, module);
     } else {
+      let elt = ast[0];
+      let result = [];
+
+      if (
+        Array.isArray(elt) &&
+        elt.length === 2 &&
+        elt[0] === Symbol.for("splice-unquote")
+      ) {
+        for (let el of elt) {
+          result = result.concat([await evaluate(el, env, module)], ...result);
+        }
+        result.unshift({ type: "Symbol", value: Symbol.for("concat") });
+      } else {
+        for (let el of ast) {
+          result = result.concat(
+            [await quasiquote(el, env, module)],
+            ...result
+          );
+        }
+        result.unshift({ type: "Symbol", value: Symbol.for("cons") });
+      }
+
+      return await evaluate(result, env, module);
     }
   }
 
   return quote(ast);
 };
-
-const maybeSpliceUnquote = () => {};
