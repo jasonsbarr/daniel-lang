@@ -677,13 +677,18 @@ const makeLambda = async (name, ast, env, module) => {
   const body = ast[1];
   let varargs = params.includes("&");
   let arity = params.length;
+  name = typeof name === "symbol" ? name.description : name;
 
   if (varargs) {
     arity -= 2;
   }
 
   const lambda = async (...args) => {
-    const scope = env.extend(name, module, body[0].file);
+    const scope = env.extend(
+      name,
+      module,
+      Array.isArray(body) ? body[0].file : body.file
+    );
     let varargs = false;
 
     if (params && params.length) {
@@ -695,9 +700,9 @@ const makeLambda = async (name, ast, env, module) => {
         }
 
         if (!varargs) {
-          scope.set(param, args[i]);
+          scope.set(param.description, args[i]);
         } else if (varargs) {
-          scope.set(param, args.slice(i));
+          scope.set(param.description, args.slice(i));
         }
         i++;
       }
@@ -914,7 +919,12 @@ const evalDefMacro = async (ast, env, module) => {
   const expr = ast[2];
   const name = id[0];
   const args = id.slice(1);
-  const func = await makeLambda(name.value, [args, expr], env, module);
+  const func = await makeLambda(
+    typeof name.value === "symbol" ? name.value.description : name.value,
+    [args, expr],
+    env,
+    module
+  );
   func.isMacro = true;
   return await assign([name, func], env, module);
 };
