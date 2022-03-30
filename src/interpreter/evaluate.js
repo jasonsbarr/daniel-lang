@@ -869,6 +869,9 @@ const expandAst = (ast) => {
 };
 
 const evalEval = async (ast, env, module) => {
+  // First, get all the symbol values
   ast = await evaluate(ast, env, module);
+
+  // Then evaluate the expanded symbols
   return await evaluate(expandAst(ast), env, module);
 };
