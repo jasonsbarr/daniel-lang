@@ -31,6 +31,25 @@ const primitives = [
   "Keyword",
 ];
 
+const forms = [
+  "begin",
+  "begin-module",
+  "provide",
+  "open",
+  "class",
+  "if",
+  "for",
+  "for/list",
+  "define",
+  "set!",
+  "let",
+  "lambda",
+  "quote",
+  "quasiquote",
+  "eval",
+  "defmacro",
+];
+
 /**
  *
  * @param {Object|Object[]} ast
@@ -39,6 +58,8 @@ const primitives = [
  * @returns
  */
 export const evaluate = async (ast, env, module = "<main>") => {
+  ast = await macroexpand(ast, env, module);
+
   if (Array.isArray(ast)) {
     const fst = ast[0];
 
@@ -93,7 +114,6 @@ const evalList = async (ast, env, module) => {
   if (ast.length === 0) {
     return null;
   }
-
   const fst = ast[0];
 
   switch (fst.value.description) {
@@ -901,8 +921,26 @@ const evalDefMacro = async (ast, env, module) => {
 
 /**
  * Expand any macros called in ast
- * @param {Array} ast
+ * @param {Object|Array} ast
  * @param {Environment} env
  * @param {String} module
  */
-const macroexpand = (ast, env, module) => {};
+const macroexpand = async (ast, env, module) => {
+  if (Array.isArray(ast)) {
+    if (ast[0] === undefined) {
+      return ast;
+    }
+
+    if (ast[0].value && forms.includes(ast[0].value.description)) {
+      return ast;
+    }
+
+    let fst = evaluate(ast[0], env, module);
+
+    if (fst.isMacro) {
+      ast = await evalCall(ast, env, module);
+      ast = expandAst(ast);
+    }
+  }
+  return ast;
+};
