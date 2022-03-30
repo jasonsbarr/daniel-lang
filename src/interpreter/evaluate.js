@@ -588,7 +588,7 @@ const evalSet = async (ast, env, module) => {
   }
 
   const id = ast[1];
-  const name = id.value;
+  const name = id.value.description;
   const scope = env.lookup(name);
 
   if (scope) {
