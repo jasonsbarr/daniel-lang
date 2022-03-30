@@ -841,7 +841,7 @@ const quasiquote = async (ast, env, module) => {
   return quote(ast);
 };
 
-const evalEval = async (ast, env, module) => {
+const expandAst = (ast) => {
   const expandSymbol = (sym) => {
     if (typeof sym === "symbol") {
       return { type: "Symbol", value: sym };
@@ -859,13 +859,16 @@ const evalEval = async (ast, env, module) => {
     });
   };
 
-  ast = await evaluate(ast, env, module);
-
   if (Array.isArray(ast)) {
     ast = expandArray(ast);
   } else {
     ast = expandSymbol(ast);
   }
 
-  return await evaluate(ast, env, module);
+  return ast;
+};
+
+const evalEval = async (ast, env, module) => {
+  ast = await evaluate(ast, env, module);
+  return await evaluate(expandAst(ast), env, module);
 };
