@@ -1,0 +1,6 @@
+(begin-module "macros"
+
+(defmacro unless (pred a b)
+    `(if ~pred ~b ~a))
+
+(provide unless))
