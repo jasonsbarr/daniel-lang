@@ -898,3 +898,11 @@ const evalDefMacro = async (ast, env, module) => {
   func.isMacro = true;
   return await assign([name, func], env, module);
 };
+
+/**
+ * Expand any macros called in ast
+ * @param {Array} ast
+ * @param {Environment} env
+ * @param {String} module
+ */
+const macroexpand = (ast, env, module) => {};
