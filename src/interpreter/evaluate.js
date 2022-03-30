@@ -911,15 +911,12 @@ const evalEval = async (ast, env, module) => {
  * @param {String} module
  */
 const evalDefMacro = async (ast, env, module) => {
-  if (ast.length !== 3) {
-    throw new RuntimeError("Defmacro must have exactly 2 subexpressions");
-  }
-
   const name = ast[1];
-  const expr = ast[2];
+  const args = ast[2];
+  const expr = ast[3];
   const func = await makeLambda(
     typeof name.value === "symbol" ? name.value.description : name.value,
-    [[], expr],
+    [args, expr],
     env,
     module
   );
