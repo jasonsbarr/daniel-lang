@@ -142,6 +142,9 @@ const evalList = async (ast, env, module) => {
     case "quasiquote":
       return await quasiquote(ast[1], env, module);
 
+    case "eval":
+      return await evalEval(ast[1], env, module);
+
     default:
       return await evalCall(ast, env, module);
   }
@@ -836,4 +839,33 @@ const quasiquote = async (ast, env, module) => {
   }
 
   return quote(ast);
+};
+
+const evalEval = async (ast, env, module) => {
+  const expandSymbol = (sym) => {
+    if (typeof sym === "symbol") {
+      return { type: "Symbol", value: sym };
+    }
+
+    return sym;
+  };
+
+  const expandArray = (node) => {
+    return node.map((n) => {
+      if (Array.isArray(n)) {
+        return expandArray(n);
+      }
+      return expandSymbol(n);
+    });
+  };
+
+  ast = await evaluate(ast, env, module);
+
+  if (Array.isArray(ast)) {
+    ast = expandArray(ast);
+  } else {
+    ast = expandSymbol(ast);
+  }
+
+  return await evaluate(ast, env, module);
 };
