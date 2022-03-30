@@ -145,6 +145,9 @@ const evalList = async (ast, env, module) => {
     case "eval":
       return await evalEval(ast[1], env, module);
 
+    case "defmacro":
+      return await evalDefMacro(ast, env, module);
+
     default:
       return await evalCall(ast, env, module);
   }
@@ -874,4 +877,24 @@ const evalEval = async (ast, env, module) => {
 
   // Then evaluate the expanded symbols
   return await evaluate(expandAst(ast), env, module);
+};
+
+/**
+ * Define a new binding in the current environment
+ * @param {Array} ast
+ * @param {Environment} env
+ * @param {String} module
+ */
+const evalDefMacro = async (ast, env, module) => {
+  if (ast.length !== 3) {
+    throw new RuntimeError("Defmacro must have exactly 2 subexpressions");
+  }
+
+  const id = ast[1];
+  const expr = ast[2];
+  const name = id[0];
+  const args = id.slice(1);
+  const func = await makeLambda(name.value, [args, expr], env, module);
+  func.isMacro = true;
+  return await assign([name, func], env, module);
 };
