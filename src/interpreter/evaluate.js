@@ -272,6 +272,7 @@ const evalCall = async (ast, env, module) => {
     );
   }
 
+  const isMacroCall = fst.isMacro;
   const args = [];
   let unpack = false;
 
@@ -287,6 +288,10 @@ const evalCall = async (ast, env, module) => {
     } else {
       args.push(await evaluate(arg, env, module));
     }
+  }
+
+  if (isMacroCall) {
+    return evalEval(fst.call(null, ...args), env, module);
   }
 
   return fst.call(null, ...args);
