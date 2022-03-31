@@ -6,4 +6,5 @@
 (defmacro or (left right)
     `(if ~left ~left ~right))
 
-(provide unless))
+(provide unless)
+(provide or))
