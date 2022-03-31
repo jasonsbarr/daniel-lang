@@ -71,7 +71,7 @@ These forms are already implemented in the interpreter:
 - quasiquote
 - unquote
 - unquote-splicing
-- macro
+- defmacro
 
 ## Branches that show the stages of development
 
