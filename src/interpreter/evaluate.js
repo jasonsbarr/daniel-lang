@@ -338,7 +338,7 @@ const destructureList = (left, right, env, module, define) => {
  * @param {String} module
  * @param {Boolean} def
  */
-const assign = (ast, env, module, def = true, rest = false) => {
+const assign = async (ast, env, module, def = true, rest = false) => {
   const [id, expr] = ast;
 
   if (id.type === "ListPattern") {
@@ -474,7 +474,7 @@ const makeLambda = async (name, ast, env, module) => {
   }
 
   const lambda = async (...args) => {
-    const scope = env.extend(name, module, body[0].file);
+    const scope = env.extend(name, module, body[0] ? body[0].file : body.file);
 
     if (params && params.length) {
       let i = 0;
