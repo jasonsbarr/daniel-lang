@@ -1,4 +1,4 @@
-(begin-module "macros"
+(begin-module "core"
 
 (defmacro unless (pred a b)
     `(if ~pred ~b ~a))
@@ -9,6 +9,10 @@
 (defmacro and (left right)
     `(if ~left ~right false))
 
+(define (not val)
+    (if val false true))
+
 (provide unless)
 (provide or)
-(provide and))
+(provide and)
+(provide not))
