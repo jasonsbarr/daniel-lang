@@ -645,8 +645,7 @@ const makeLambda = async (name, ast, env, module) => {
   }
 
   const lambda = async (...args) => {
-    const scope = env.extend(name, module, body[0].file);
-    let varargs = false;
+    const scope = env.extend(name, module, body[0] ? body[0].file : body.file);
 
     if (params && params.length) {
       let i = 0;
