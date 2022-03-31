@@ -209,3 +209,36 @@ Even though Lisps are known more for functional programming, there is a long his
 ; Like with structs, a class constructor can also take a map as an argument
 (define josh (Person { :name "Joshua" :age 32 }))
 ```
+
+## Macros
+
+Daniel has a robust macro facility that allows you to add new syntactic forms to the language.
+
+```lisp
+; Quoting:
+; You can quote data with either the quote function or '
+; Quoting a literal evaluates to the literal itself.
+; Quoting an identifier evaluates to the symbol of the identifier, as data
+'hi ;-> Symbol(hi)
+'"hi" ;-> "hi"
+
+; 'hi is the same as
+(quote hi)
+
+; Quasiquoting allows you to unquote symbols for evaluation
+(define x 5)
+`(+ y ~x) ;-> ('+ 'y 5)
+
+; is the same as
+(quasiquote (+ y (unquote x)))
+
+; The splice-unquote form splices an evaluated list into a quoted list
+`(a b ~@[c d e] f g) ;-> `(a b ~c ~d ~e f g)
+
+; Use the eval form to resolve quoted symbols to their values in the current scope
+(define x 5)
+(eval '(+ x 1)) ;-> (+ 5 1) -> 6
+
+; This ability to delay or prevent evaluation helps you to define new syntactic forms with defmacro
+(defmacro unless (a b) `(if ~a ~b ~a))
+```
