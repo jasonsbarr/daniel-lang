@@ -1,16 +1,17 @@
-; currently errors if not found due to trying to (get -1 lst)
 (define (binary-search lst val)
   (let
     ((start 0) (end (- (length lst) 1)) (mid (floor (/ (+ start end) 2))))
-    (let ((res (get mid lst)))
-      (if (= val res)
-        true
-        (if (< res val)
-          (let ((start (+ mid 1)))
-            (binary-search (slice start end lst) val))
-          (if (> res val)
-            (let ((end mid))
-              (binary-search (slice start end lst) val))
-            false))))))
+      (if (= mid -1)
+        false
+        (let ((res (get mid lst)))
+          (if (= val res)
+            true
+            (if (< res val)
+              (let ((start (+ mid 1)))
+                (binary-search (slice start end lst) val))
+              (if (> res val)
+                (let ((end mid))
+                  (binary-search (slice start end lst) val))
+                false)))))))
 
-(println (binary-search [1 2 3 4 5 6 7 8 9 10] 7))
+(println (binary-search [1 2 3 4 5 6 7 8 9 10] 11))
