@@ -240,5 +240,6 @@ Daniel has a robust macro facility that allows you to add new syntactic forms to
 (eval '(+ x 1)) ;-> (+ 5 1) -> 6
 
 ; This ability to delay or prevent evaluation helps you to define new syntactic forms with defmacro
+; This macro definition is actually in the core module
 (defmacro unless (a b) `(if ~a ~b ~a))
 ```
