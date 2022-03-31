@@ -50,6 +50,9 @@ const forms = [
   "defmacro",
 ];
 
+const isJSPrim = (ast) =>
+  ast === null || (typeof ast !== "object" && typeof ast !== "function");
+
 /**
  *
  * @param {Object|Object[]} ast
@@ -68,10 +71,11 @@ export const evaluate = async (ast, env, module = "<main>") => {
     // and a non-empty syntax attr, this will fail. The likelihood of that seems remote.
     // An empty list will still fall through and be returned as null from evalList
     if (
-      fst &&
-      !primitives.includes(fst.type) &&
-      !fst.syntax &&
-      !Array.isArray(fst)
+      isJSPrim(fst) ||
+      (fst &&
+        !primitives.includes(fst.type) &&
+        !fst.syntax &&
+        !Array.isArray(fst))
     ) {
       return ast;
     }
@@ -79,7 +83,11 @@ export const evaluate = async (ast, env, module = "<main>") => {
     return await evalList(ast, env, module);
   }
 
-  if (!primitives.includes(ast.type)) {
+  if (isJSPrim(ast)) {
+    return ast;
+  }
+
+  if (ast && !primitives.includes(ast.type)) {
     // is already evaluated
     return ast;
   }
@@ -103,7 +111,9 @@ export const evaluate = async (ast, env, module = "<main>") => {
 
     default:
       throw new RuntimeError(
-        `Unknown expression type ${ast.type} at ${ast.file} ${ast.syntax.line}:${ast.syntax.col}`
+        `Unknown expression type ${ast.type} at ${ast.file} ${
+          ast.syntax && `${ast.syntax.line}:${ast.syntax.col}`
+        }`
       );
   }
 };
@@ -937,19 +947,21 @@ const evalDefMacro = async (ast, env, module) => {
  */
 const macroexpand = async (ast, env, module) => {
   if (Array.isArray(ast)) {
-    if (ast[0] === undefined) {
+    if (ast && ast[0] === undefined) {
       return ast;
     }
 
-    if (ast[0].value && forms.includes(ast[0].value.description)) {
+    if (ast && ast[0].value && forms.includes(ast[0].value.description)) {
       return ast;
     }
 
-    let fst = evaluate(ast[0], env, module);
+    if (ast) {
+      let fst = evaluate(ast[0], env, module);
 
-    if (fst.isMacro) {
-      ast = await evalCall(ast, env, module);
-      ast = expandAst(ast);
+      if (fst.isMacro) {
+        ast = await evalCall(ast, env, module);
+        ast = expandAst(ast);
+      }
     }
   }
   return ast;
