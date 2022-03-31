@@ -67,7 +67,12 @@ export const evaluate = async (ast, env, module = "<main>") => {
     // On the off chance someone defines an object with a type attr of, e.g. "String",
     // and a non-empty syntax attr, this will fail. The likelihood of that seems remote.
     // An empty list will still fall through and be returned as null from evalList
-    if (fst && !primitives.includes(fst.type) && !fst.syntax) {
+    if (
+      fst &&
+      !primitives.includes(fst.type) &&
+      !fst.syntax &&
+      !Array.isArray(fst)
+    ) {
       return ast;
     }
 
@@ -689,12 +694,7 @@ const makeLambda = async (name, ast, env, module) => {
   }
 
   const lambda = async (...args) => {
-    const scope = env.extend(
-      name,
-      module,
-      Array.isArray(body) ? body[0].file : body.file
-    );
-    let varargs = false;
+    const scope = env.extend(name, module, body[0] ? body[0].file : body.file);
 
     if (params && params.length) {
       let i = 0;
