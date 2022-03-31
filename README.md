@@ -53,7 +53,6 @@ Language documentation is [here](./docs)
 These are the language forms I have yet to implement that will be part of the core of the language:
 
 - fail (with try/catch)
-- macro
 - async
 
 These forms are already implemented in the interpreter:
@@ -72,6 +71,7 @@ These forms are already implemented in the interpreter:
 - quasiquote
 - unquote
 - unquote-splicing
+- macro
 
 ## Branches that show the stages of development
 
