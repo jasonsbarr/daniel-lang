@@ -124,7 +124,9 @@ export const evaluate = async (ast, env, module = "<main>") => {
           }`
         );
     }
-  } catch (e) {}
+  } catch (e) {
+    throw e;
+  }
 };
 
 /**
