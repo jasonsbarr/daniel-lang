@@ -8,6 +8,7 @@ import { evalModule, evalProvide, evalOpen, evalImport } from "./module.js";
 import { evalClass } from "./class.js";
 
 let ID = 0;
+let EXN_STACK = [];
 
 /**
  *
