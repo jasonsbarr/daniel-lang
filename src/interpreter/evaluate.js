@@ -68,61 +68,63 @@ export const evaluate = async (ast, env, module = "<main>") => {
     modPushed = true;
   }
 
-  ast = await macroexpand(ast, env, module);
+  try {
+    ast = await macroexpand(ast, env, module);
 
-  if (Array.isArray(ast)) {
-    const fst = ast[0];
+    if (Array.isArray(ast)) {
+      const fst = ast[0];
 
-    // Make sure the list is actually a form, and not an already-evaluated list
-    // On the off chance someone defines an object with a type attr of, e.g. "String",
-    // and a non-empty syntax attr, this will fail. The likelihood of that seems remote.
-    // An empty list will still fall through and be returned as null from evalList
-    if (
-      isJSPrim(fst) ||
-      (fst &&
-        !primitives.includes(fst.type) &&
-        !fst.syntax &&
-        !Array.isArray(fst))
-    ) {
+      // Make sure the list is actually a form, and not an already-evaluated list
+      // On the off chance someone defines an object with a type attr of, e.g. "String",
+      // and a non-empty syntax attr, this will fail. The likelihood of that seems remote.
+      // An empty list will still fall through and be returned as null from evalList
+      if (
+        isJSPrim(fst) ||
+        (fst &&
+          !primitives.includes(fst.type) &&
+          !fst.syntax &&
+          !Array.isArray(fst))
+      ) {
+        return ast;
+      }
+
+      return await evalList(ast, env, module);
+    }
+
+    if (isJSPrim(ast)) {
       return ast;
     }
 
-    return await evalList(ast, env, module);
-  }
+    if (ast && !primitives.includes(ast.type)) {
+      // is already evaluated
+      return ast;
+    }
 
-  if (isJSPrim(ast)) {
-    return ast;
-  }
+    switch (ast.type) {
+      case "ListPattern":
+        return await evalListLiteral(ast, env, module);
 
-  if (ast && !primitives.includes(ast.type)) {
-    // is already evaluated
-    return ast;
-  }
+      case "HashPattern":
+        return await evalHashLiteral(ast, env, module);
 
-  switch (ast.type) {
-    case "ListPattern":
-      return await evalListLiteral(ast, env, module);
+      case "Symbol":
+        return await evalSymbol(ast, env, module);
 
-    case "HashPattern":
-      return await evalHashLiteral(ast, env, module);
+      case "Number":
+      case "String":
+      case "Boolean":
+      case "Nil":
+      case "Keyword":
+        return ast.value;
 
-    case "Symbol":
-      return await evalSymbol(ast, env, module);
-
-    case "Number":
-    case "String":
-    case "Boolean":
-    case "Nil":
-    case "Keyword":
-      return ast.value;
-
-    default:
-      throw new RuntimeError(
-        `Unknown expression type ${ast.type} at ${ast.file} ${
-          ast.syntax && `${ast.syntax.line}:${ast.syntax.col}`
-        }`
-      );
-  }
+      default:
+        throw new RuntimeError(
+          `Unknown expression type ${ast.type} at ${ast.file} ${
+            ast.syntax && `${ast.syntax.line}:${ast.syntax.col}`
+          }`
+        );
+    }
+  } catch (e) {}
 };
 
 /**
