@@ -9,6 +9,7 @@ import { evalClass } from "./class.js";
 
 let ID = 0;
 let EXN_STACK = [];
+let modPushed = false;
 
 /**
  *
@@ -62,6 +63,11 @@ const isJSPrim = (ast) =>
  * @returns
  */
 export const evaluate = async (ast, env, module = "<main>") => {
+  if (!modPushed) {
+    EXN_STACK.push(env);
+    modPushed = true;
+  }
+
   ast = await macroexpand(ast, env, module);
 
   if (Array.isArray(ast)) {
