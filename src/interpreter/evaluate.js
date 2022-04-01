@@ -56,6 +56,18 @@ const forms = [
 const isJSPrim = (ast) =>
   ast === null || (typeof ast !== "object" && typeof ast !== "function");
 
+const unwindStack = (e) => {
+  let stack = `${e.name}: ${e.message}\n`;
+  let nativeStack = e.stack ? e.stack.split("\n").slice(1).join("\n") : "";
+
+  for (let i = EXN_STACK.length - 1; i >= 0; i--) {
+    let env = EXN_STACK[i];
+    stack += `    at ${env.module}.${env.name}: (${env.file})\n`;
+  }
+  stack += nativeStack;
+  return stack;
+};
+
 /**
  *
  * @param {Object|Object[]} ast
@@ -127,15 +139,7 @@ export const evaluate = async (ast, env, module = "<main>") => {
     }
   } catch (e) {
     if (!topLevelCatch) {
-      let stack = `${e.name}: ${e.message}\n`;
-      let nativeStack = e.stack ? e.stack.split("\n").slice(1).join("\n") : "";
-
-      for (let i = EXN_STACK.length - 1; i >= 0; i--) {
-        let env = EXN_STACK[i];
-        stack += `    at ${env.module}.${env.name}: (${env.file})\n`;
-      }
-      stack += nativeStack;
-      e.stack = stack;
+      e.stack = unwindStack(e);
       topLevelCatch = true;
     }
 
