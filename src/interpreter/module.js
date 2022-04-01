@@ -12,7 +12,7 @@ import { bindOpensToModuleEnv, bindNamespacedModuleValues } from "./loader.js";
  * @param {Function} evaluate
  */
 
-export const evalModule = async (ast, env, evaluate) => {
+export const evalModule = async (ast, env, evaluate, stack) => {
   if (ast.exprs.length < 2) {
     throw new RuntimeError(
       "A module must contain a name and at least one expression"
@@ -29,6 +29,7 @@ export const evalModule = async (ast, env, evaluate) => {
   }
 
   const moduleEnv = env.extend(`${env.name}.${name}`, name, file);
+  stack.push(moduleEnv);
   let i = 0;
   for (let exp of exprs) {
     let value = await evaluate(exp, moduleEnv, name);
@@ -39,6 +40,7 @@ export const evalModule = async (ast, env, evaluate) => {
   }
 
   const module = () => makeModule(name, provides);
+  stack.pop();
 
   return {
     module,

@@ -165,7 +165,7 @@ const evalList = async (ast, env, module) => {
       return await evalBlock(ast.slice(1), env, module);
 
     case "begin-module":
-      return await evalModule(ast[0], env, evaluate);
+      return await evalModule(ast[0], env, evaluate, EXN_STACK);
 
     case "provide":
       return await evalProvide(ast, env, module, evaluate);
