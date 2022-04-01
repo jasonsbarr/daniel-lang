@@ -306,7 +306,7 @@ const evalCall = async (ast, env, module) => {
   }
 
   if (isMacroCall) {
-    return evalEval(fst.call(null, ...args), env, module);
+    return await evalEval(fst.call(null, ...args), env, module);
   }
 
   return fst.call(null, ...args);
