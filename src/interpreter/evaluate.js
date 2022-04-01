@@ -712,6 +712,7 @@ const makeLambda = async (name, ast, env, module) => {
 
   const lambda = async (...args) => {
     const scope = env.extend(name, module, body[0] ? body[0].file : body.file);
+    EXN_STACK.push(scope); // add activation record to stack
 
     if (params && params.length) {
       let i = 0;
@@ -730,7 +731,9 @@ const makeLambda = async (name, ast, env, module) => {
       }
     }
 
-    return await evaluate(body, scope, module);
+    const value = await evaluate(body, scope, module);
+    EXN_STACK.pop(); // remove activation record from stack
+    return value;
   };
   return makeFunction(lambda, module, { name, arity, varargs });
 };
