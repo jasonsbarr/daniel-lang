@@ -13,7 +13,7 @@ import { objectClass } from "../../lib/js/_object.js";
  * @param {Function} evaluate
  * @param {Function} assign
  */
-export const evalClass = async (ast, env, module, evaluate, assign) => {
+export const evalClass = async (ast, env, module, evaluate, assign, stack) => {
   let { value: className, file } = ast[1];
   className = typeof className === "symbol" ? className.description : className;
   let classEnv = env.extend(className, module, file);
@@ -119,7 +119,8 @@ export const evalClass = async (ast, env, module, evaluate, assign) => {
                 module,
                 evaluate,
                 className,
-                file
+                file,
+                stack
               );
               classEnv.set(name, method);
               break;
@@ -136,7 +137,8 @@ export const evalClass = async (ast, env, module, evaluate, assign) => {
                 module,
                 evaluate,
                 className,
-                file
+                file,
+                stack
               );
               classEnv.set(name, method);
               staticMethods.set(name, method);
@@ -160,7 +162,8 @@ export const evalClass = async (ast, env, module, evaluate, assign) => {
             module,
             evaluate,
             className,
-            file
+            file,
+            stack
           );
           classEnv.set(name, method);
           publicMethods.set(name, method);
@@ -299,7 +302,8 @@ const evalMethod = async (
   module,
   evaluate,
   className,
-  file
+  file,
+  stack
 ) => {
   let params = ast[0].map((t) =>
     typeof t.value === "symbol" ? t.value.description : t.value
@@ -314,6 +318,7 @@ const evalMethod = async (
 
   const method = async (...args) => {
     let scope = env.extend(`${className}.${name}`, module, file);
+    stack.push(scope); // push activation record onto stack
     let varargs = false;
 
     if (params && params.length) {
@@ -333,7 +338,9 @@ const evalMethod = async (
       }
     }
 
-    return await evaluate(body, scope, module);
+    let value = await evaluate(body, scope, module);
+    stack.pop(); // remove activation record from stack
+    return value;
   };
 
   return makeMethod(method, className, module, { name, arity, varargs });

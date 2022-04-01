@@ -155,7 +155,7 @@ const evalList = async (ast, env, module) => {
       return await evalImport(ast, env, module, evaluate);
 
     case "class":
-      return await evalClass(ast, env, module, evaluate, assign);
+      return await evalClass(ast, env, module, evaluate, assign, EXN_STACK);
 
     case "if":
       return await evalIf(ast, env, module);
