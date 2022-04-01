@@ -10,6 +10,7 @@ import { evalClass } from "./class.js";
 let ID = 0;
 let EXN_STACK = [];
 let modPushed = false;
+let topLevelCatch = false;
 
 /**
  *
@@ -125,6 +126,19 @@ export const evaluate = async (ast, env, module = "<main>") => {
         );
     }
   } catch (e) {
+    if (!topLevelCatch) {
+      let stack = `${e.name}: ${e.message}\n`;
+      let nativeStack = e.stack ? e.stack.split("\n").slice(1).join("\n") : "";
+
+      for (let i = EXN_STACK.length - 1; i >= 0; i--) {
+        let env = EXN_STACK[i];
+        stack += `    at ${env.module}.${env.name}: (${env.file})\n`;
+      }
+      stack += nativeStack;
+      e.stack = stack;
+      topLevelCatch = true;
+    }
+
     throw e;
   }
 };
