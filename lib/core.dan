@@ -16,15 +16,9 @@
 
 (define (dec x) (- x 1))
 
-(define (++ x) (set! x (inc x)))
-
-(define (-- x) (set! x (dec x)))
-
 (provide unless)
 (provide or)
 (provide and)
 (provide not)
 (provide inc)
-(provide dec)
-(provide ++)
-(provide --))
+(provide dec))
