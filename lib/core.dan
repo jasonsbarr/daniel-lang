@@ -16,9 +16,17 @@
 
 (define (dec x) (- x 1))
 
+(define (neg x) (- 0 x))
+
+(define (abs x)
+    (if (< 0 x) (neg x)
+        x))
+
 (provide unless)
 (provide or)
 (provide and)
 (provide not)
 (provide inc)
-(provide dec))
+(provide dec)
+(provide neg)
+(provide abs))
