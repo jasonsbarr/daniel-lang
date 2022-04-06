@@ -51,6 +51,7 @@ const forms = [
   "quasiquote",
   "eval",
   "defmacro",
+  "try",
 ];
 
 const isJSPrim = (ast) =>
@@ -211,6 +212,9 @@ const evalList = async (ast, env, module) => {
 
     case "defmacro":
       return await evalDefMacro(ast, env, module);
+
+    case "try":
+      return await evalTryCatch(ast, env, module);
 
     default:
       return await evalCall(ast, env, module);
@@ -997,4 +1001,25 @@ const macroexpand = async (ast, env, module) => {
     }
   }
   return ast;
+};
+
+/**
+ * Form: (try expr (catch exn catchExpr))
+ * @param {Array} ast
+ * @param {Environment} env
+ * @param {String} module
+ */
+const evalTryCatch = async (ast, env, module) => {
+  try {
+    let v = await evaluate(ast[1], env, module);
+    return v;
+  } catch (exn) {
+    const exnExpr = ast[2];
+    // skip catch symbol
+    const [, name, body] = exnExpr;
+    const blockEnv = env.extend(`CATCH${ID++}`);
+    exn.stack = unwindStack(exn);
+    await assign([name, exn], blockEnv, module);
+    return await evaluate(body, blockEnv, module);
+  }
 };
