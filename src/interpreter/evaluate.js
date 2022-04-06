@@ -99,9 +99,9 @@ const evalList = async (ast, env, module) => {
     return null;
   }
 
-  const fst = ast[0];
+  let fst = ast[0];
 
-  switch (fst.value.description) {
+  switch (fst.value?.description) {
     case "begin":
       return await evalBlock(ast.slice(1), env, module);
 
