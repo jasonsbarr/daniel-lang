@@ -1018,7 +1018,7 @@ const evalTryCatch = async (ast, env, module) => {
     const exnExpr = ast[2];
     // skip catch symbol
     const [, name, body] = exnExpr;
-    const blockEnv = env.extend(`CATCH${ID++}`);
+    const blockEnv = env.extend(`catch${ID++}`);
 
     if (typeof exn === "object") {
       exn.stack = unwindStack(exn);
