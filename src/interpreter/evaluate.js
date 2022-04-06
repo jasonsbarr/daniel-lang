@@ -148,6 +148,7 @@ const evalList = async (ast, env, module) => {
       return await quasiquote(ast[1], env, module);
 
     default:
+      console.log("call");
       return await evalCall(ast, env, module);
   }
 };
