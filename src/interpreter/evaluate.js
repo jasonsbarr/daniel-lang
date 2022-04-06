@@ -148,7 +148,6 @@ const evalList = async (ast, env, module) => {
       return await quasiquote(ast[1], env, module);
 
     default:
-      console.log("call");
       return await evalCall(ast, env, module);
   }
 };
@@ -653,7 +652,7 @@ const evalLambda = async (ast, env, module) => {
  * @returns {Function}
  */
 const makeLambda = async (name, ast, env, module) => {
-  const params = ast[0].map((t) => t.value);
+  const params = ast[0].map((t) => t?.value?.description);
   const body = ast[1];
   let varargs = params.includes("&");
   let arity = params.length;
