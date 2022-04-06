@@ -252,10 +252,6 @@ const evalCall = async (ast, env, module) => {
     const member = obj[name];
     const memberName = name;
 
-    if (member === undefined) {
-      throw new RuntimeError(`Undefined member ${name}`);
-    }
-
     if (typeof member === "function") {
       const args = ast.slice(1); // have to get this as an arg
       const params = [];
@@ -275,6 +271,10 @@ const evalCall = async (ast, env, module) => {
       return value;
     }
     // otherwise it's a getter
+    if (member === undefined) {
+      throw new RuntimeError(`Undefined object member ${fst.value.slice(1)}`);
+    }
+
     return member;
   }
 

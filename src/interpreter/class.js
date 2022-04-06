@@ -1,5 +1,3 @@
-import hash from "object-hash";
-import { v4 } from "uuid";
 import { makeMethod, makeClass } from "../runtime.js";
 import { Environment } from "./environment.js";
 import { RuntimeError, ArgumentsError } from "../../lib/js/error.js";
@@ -242,16 +240,9 @@ const evalNewDecl = async (
     env.set("super", superObj);
 
     obj.type = className;
-    obj.id = hash(v4());
     obj.proto = proto;
 
     Object.defineProperty(obj, "type", {
-      writable: false,
-      configurable: false,
-      enumerable: false,
-    });
-
-    Object.defineProperty(obj, "id", {
       writable: false,
       configurable: false,
       enumerable: false,
