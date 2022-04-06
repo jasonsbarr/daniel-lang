@@ -24,6 +24,14 @@
 
 (define (square x) (* x x))
 
+(class exn
+    (new :message)
+    (init (this)
+        (.name this "exn")))
+
+(define (fail msg)
+    (throw (exn msg)))
+
 (provide unless)
 (provide or)
 (provide and)
@@ -32,4 +40,6 @@
 (provide dec)
 (provide neg)
 (provide abs)
-(provide square))
+(provide square)
+(provide exn)
+(provide fail))
