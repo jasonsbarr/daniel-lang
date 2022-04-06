@@ -129,9 +129,10 @@ const evalList = async (ast, env, module) => {
   if (ast.length === 0) {
     return null;
   }
-  const fst = ast[0];
 
-  switch (fst.value.description) {
+  let fst = ast[0];
+
+  switch (fst.value?.description) {
     case "begin":
       return await evalBlock(ast.slice(1), env, module);
 
@@ -693,7 +694,7 @@ const evalLambda = async (ast, env, module) => {
  * @returns {Function}
  */
 const makeLambda = async (name, ast, env, module) => {
-  const params = ast[0].map((t) => t.value);
+  const params = ast[0].map((t) => t?.value?.description);
   const body = ast[1];
   let varargs = params.includes("&");
   let arity = params.length;
