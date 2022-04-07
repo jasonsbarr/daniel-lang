@@ -254,6 +254,13 @@ export const makeClass = async (
       configurable: false,
     });
 
+    Object.defineProperty(obj, "daniel", {
+      writable: false,
+      configurable: false,
+      enumerable: true,
+      value: true,
+    });
+
     // call init method, if any
     obj = await initMethod(obj);
 
