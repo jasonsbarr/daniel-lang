@@ -214,7 +214,17 @@ const evalCall = async (ast, env, module) => {
         params.push(await evaluate(arg, env, module));
       }
 
-      return obj[memberName](...params);
+      if (obj.daniel) {
+        // is in-lang object, needs this value as 1st parameter
+        return obj[memberName](...params);
+      }
+
+      // is native (JS) object, this value is implicitly bound
+      // note that if an in-lang function is passed to a higher-order method
+      // the result of the in-lang function call will be a Promise. This
+      // probably isn't what you actually want but
+      // there really doesn't seem to be a good way to fix it.
+      return await obj[memberName](...params.slice(1));
     }
 
     // otherwise it's an object property
