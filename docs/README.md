@@ -110,6 +110,15 @@ Call expressions and special forms are surrounded by parentheses.
 ; For/list can also take a :when or :unless clause
 (define (reject fn lst)
     (for/list ((n lst) :unless (fn n)) n))
+
+; Handle exceptions with a try/catch block
+(try fn-that-may-throw (catch ex (handle ex)))
+
+; If you need to throw an exception you can use fail
+(fail "whoops, my bad")
+
+; Or if you need a different error type use one of the exn functions
+(throw (exn:runtime "Mistakes were made"))
 ```
 
 ## Modules, exports, and imports
@@ -208,6 +217,12 @@ Even though Lisps are known more for functional programming, there is a long his
 
 ; Like with structs, a class constructor can also take a map as an argument
 (define josh (Person { :name "Joshua" :age 32 }))
+
+; If you need to define a custom error type, extend the exn class
+; and provide the message parameter when constructing an instance
+(class RidiculousMistake :extends exn
+    (new :reason)
+    (init (this) (.message this (string-append (.message super) (.reason this)))))
 ```
 
 ## Macros
