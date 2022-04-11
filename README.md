@@ -41,7 +41,6 @@ Starting out, I will create different branches for different stages of the imple
 - [14 - Quote, quasiquote, and unquote](https://github.com/jasonsbarr/daniel-lang/tree/14-quote)
 - [15 - Syntactic extensions (macros)](https://github.com/jasonsbarr/daniel-lang/tree/15-macros)
 - [16 - Exceptions and error handling](https://github.com/jasonsbarr/daniel-lang/tree/16-exceptions)
-- 17 - Async
 
 ## Goals
 
