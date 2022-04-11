@@ -48,30 +48,7 @@ Run `npm link` in the project directory to be able to use `daniel` as a standalo
 
 Language documentation is [here](./docs)
 
-## Core language forms
-
-These are the language forms I have yet to implement that will be part of the core of the language:
-
-- async
-
-These forms are already implemented in the interpreter:
-
-- begin
-- provide
-- import, open
-- lambda
-- if
-- for, for/list
-- define
-- set!
-- struct
-- class
-- quote
-- quasiquote
-- unquote
-- unquote-splicing
-- defmacro
-- try/catch
+The core language is completely implemented in the interpreter, though there are probably bugs that need fixing.
 
 ## Branches that show the stages of development
 
@@ -91,7 +68,6 @@ These forms are already implemented in the interpreter:
 - [14 - Quote, quasiquote, and unquote](https://github.com/jasonsbarr/daniel-lang/tree/14-quote)
 - [15 - Syntactic extensions (macros)](https://github.com/jasonsbarr/daniel-lang/tree/15-macros)
 - [16 - Exceptions and error handling](https://github.com/jasonsbarr/daniel-lang/tree/16-exceptions)
-- 17 - Async
 
 ## Goals
 
