@@ -9,8 +9,8 @@ class GenericVisitor extends Visitor {}
 let visitor = new GenericVisitor();
 
 let linkedGlobal = `
-const runtime = await import("${rtUrl}");\n\n
-const rt = runtime.createRuntime();
+import * as runtime from "${rtUrl}";
+const rt = runtime.createRuntime();\n
 `;
 
 export const compile = (code) =>
