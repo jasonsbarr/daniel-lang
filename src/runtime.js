@@ -341,6 +341,9 @@ export const makeMethod = (
   return method;
 };
 
+export const isTruthy = (obj) =>
+  !(obj === false || obj === null || obj === undefined);
+
 /**
  * Returns a Daniel runtime object based on the current platform
  * @param {Object} stdin
@@ -365,6 +368,7 @@ export const createRuntime = ({
     resolveNativeRequire,
     makeClass,
     makeMethod,
+    isTruthy,
   };
 };
 
