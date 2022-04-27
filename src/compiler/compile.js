@@ -14,4 +14,5 @@ const rt = runtime.createRuntime();\n
 `;
 
 export const compile = (code) =>
-  linkedGlobal + emit(makeSexprs(visitor.visit(read(code))));
+  linkedGlobal +
+  `console.log(${emit(makeSexprs(visitor.visit(read(code)))).slice(0, -1)})`;

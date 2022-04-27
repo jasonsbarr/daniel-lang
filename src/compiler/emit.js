@@ -33,6 +33,9 @@ const compileList = (ast, names) => {
       case "begin":
         return compileBegin(rest, names);
 
+      case "if":
+        return compileIf(rest, names);
+
       case "define":
         console.log(ast);
         return compileDefine(ast, names);
@@ -106,4 +109,13 @@ const compileLambda = (ast, names) => {
     .map((param) => Symbol.keyFor(param));
 
   return `(${params.join(", ")}) => ${emit(body, funcEnv)}`;
+};
+
+const compileIf = (ast, names) => {
+  const [cond, then, orElse] = ast;
+
+  return `rt.isTruthy(${emit(cond, names)}) ? ${emit(then, names)} : ${emit(
+    orElse,
+    names
+  )}`;
 };
