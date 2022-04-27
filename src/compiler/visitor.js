@@ -50,12 +50,12 @@ export class Visitor {
       return ast;
     }
 
-    const [first, ...rest] = ast;
+    const [first] = ast;
 
     if (typeof first.value === "symbol") {
       switch (Symbol.keyFor(first)) {
         case "begin":
-          return this.visitBegin(rest, ...args);
+          return this.visitBegin(ast, ...args);
 
         case "begin-module":
           return this.visitModule(ast, ...args);
