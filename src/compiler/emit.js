@@ -109,7 +109,7 @@ const assign = (ast, names, define = false) => {
   }
 
   const sym = mapVariable(ident, names);
-  return `let ${Symbol.keyFor(sym)} = ${emit(value, names)}`;
+  return `${define ? "let " : ""}${Symbol.keyFor(sym)} = ${emit(value, names)}`;
 };
 
 const destructureListAssign = (ast, names) => {};
