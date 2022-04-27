@@ -46,7 +46,7 @@ export class Visitor {
   }
 
   visitList(ast, ...args) {
-    if (ast.length === 0) {
+    if (Array.isArray(ast) && ast.length === 0) {
       return ast;
     }
 
@@ -58,7 +58,52 @@ export class Visitor {
           return this.visitBegin(rest, ...args);
 
         case "begin-module":
-          return this.visitModule();
+          return this.visitModule(ast, ...args);
+
+        case "provide":
+          return this.visitProvide(ast, ...args);
+
+        case "open":
+          return this.visitOpen(ast, ...args);
+
+        case "import":
+          return this.visitImport(ast, ...args);
+
+        case "class":
+          return this.visitClass(ast, ...args);
+
+        case "if":
+          return this.visitIf(ast, ...args);
+
+        case "for":
+          return this.visitFor(ast, ...args);
+
+        case "for/list":
+          return this.visitForList(ast, ...args);
+
+        case "define":
+          return this.visitDefine(ast, ...args);
+
+        case "set!":
+          return this.visitSet(ast, ...args);
+
+        case "let":
+          return this.visitLet(ast, ...args);
+
+        case "lambda":
+          return this.visitLambda(ast, ...args);
+
+        case "quote":
+          return this.visitQuote(ast, ...args);
+
+        case "quasiquote":
+          return this.visitQuasiquote(ast, ...args);
+
+        case "defmacro":
+          return this.visitDefMacro(ast, ...args);
+
+        case "try":
+          return this.visitTryCatch(ast, ...args);
 
         default:
           return this.visitCall(ast, ...args);
@@ -142,5 +187,5 @@ export class Visitor {
 
   visitDefMacro(ast, ...args) {}
 
-  visitTry(ast, ...args) {}
+  visitTryCatch(ast, ...args) {}
 }
