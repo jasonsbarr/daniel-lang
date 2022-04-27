@@ -35,6 +35,9 @@ const compileList = (ast, names) => {
       case "define":
         return compileDefine(rest, names);
 
+      case "lambda":
+        return compileLambda(rest, names);
+
       default:
         return compileCall(ast, names);
     }
@@ -66,13 +69,34 @@ const compileSymbol = (ast, names) => {
   return Symbol.keyFor(ident);
 };
 
-const compileCall = (ast, names) => {};
+const compileCall = (ast, names) => {
+  let [func, ...args] = ast;
+  func = emit(func, names);
+  args = args.map((node) => emit(node, names));
+
+  return `(${func})(${args.join(", ")})`;
+};
+
+const mapVariable = (ident, names) => {
+  const sym = gensym(`_${++syms}`);
+  names.set(ident, sym);
+  return sym;
+};
 
 const compileDefine = (ast, names) => {
   const [ident, value] = ast;
-  const sym = gensym(`_${++syms}`);
-
-  names.set(ident, sym);
+  const sym = mapVariable(ident, names);
 
   return `let ${Symbol.keyFor(sym)} = ${emit(value, names)}`;
+};
+
+const compileLambda = (ast, names) => {
+  let funcEnv = names.extend();
+  let [params, body] = ast;
+
+  params = params
+    .map((param) => mapVariable(param, funcEnv))
+    .map((param) => Symbol.keyFor(param));
+
+  return `(${params.join(", ")}) => ${emit(body, funcEnv)}`;
 };
