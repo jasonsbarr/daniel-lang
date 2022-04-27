@@ -53,7 +53,7 @@ export class Visitor {
     const [first] = ast;
 
     if (typeof first.value === "symbol") {
-      switch (Symbol.keyFor(first)) {
+      switch (Symbol.keyFor(first.value)) {
         case "begin":
           return this.visitBegin(ast, ...args);
 
