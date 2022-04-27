@@ -155,37 +155,71 @@ export class Visitor {
     return ast.map((node) => this.visit(node, ...args));
   }
 
-  visitModule(ast, ...args) {}
+  visitModule(ast, ...args) {
+    return ast.map((node) => this.visit(node, ...args));
+  }
 
-  visitProvide(ast, ...args) {}
+  visitProvide(ast, ...args) {
+    return ast.map((node) => this.visit(node, ...args));
+  }
 
-  visitOpen(ast, ...args) {}
+  visitOpen(ast, ...args) {
+    return ast.map((node) => this.visit(node, ...args));
+  }
 
-  visitImport(ast, ...args) {}
+  visitImport(ast, ...args) {
+    return ast.map((node) => this.visit(node, ...args));
+  }
 
-  visitClass(ast, ...args) {}
+  visitClass(ast, ...args) {
+    return ast.map((node) => this.visit(node, ...args));
+  }
 
-  visitIf(ast, ...args) {}
+  visitIf(ast, ...args) {
+    return ast.map((node) => this.visit(node, ...args));
+  }
 
-  visitFor(ast, ...args) {}
+  visitFor(ast, ...args) {
+    return ast.map((node) => this.visit(node, ...args));
+  }
 
-  visitForList(ast, ...args) {}
+  visitForList(ast, ...args) {
+    return ast.map((node) => this.visit(node, ...args));
+  }
 
-  visitDefine(ast, ...args) {}
+  visitDefine(ast, ...args) {
+    return ast.map((node) => this.visit(node, ...args));
+  }
 
-  visitSet(ast, ...args) {}
+  visitSet(ast, ...args) {
+    return ast.map((node) => this.visit(node, ...args));
+  }
 
-  visitLet(ast, ...args) {}
+  visitLet(ast, ...args) {
+    return ast.map((node) => this.visit(node, ...args));
+  }
 
-  visitLambda(ast, ...args) {}
+  visitLambda(ast, ...args) {
+    return ast.map((node) => this.visit(node, ...args));
+  }
 
-  visitQuote(ast, ...args) {}
+  visitQuote(ast, ...args) {
+    return ast.map((node) => this.visit(node, ...args));
+  }
 
-  visitQuasiquote(ast, ...args) {}
+  visitQuasiquote(ast, ...args) {
+    return ast.map((node) => this.visit(node, ...args));
+  }
 
-  visitEval(ast, ...args) {}
+  visitEval(ast, ...args) {
+    return ast.map((node) => this.visit(node, ...args));
+  }
 
-  visitDefMacro(ast, ...args) {}
+  visitDefMacro(ast, ...args) {
+    return ast.map((node) => this.visit(node, ...args));
+  }
 
-  visitTryCatch(ast, ...args) {}
+  visitTryCatch(ast, ...args) {
+    return ast.map((node) => this.visit(node, ...args));
+  }
 }
