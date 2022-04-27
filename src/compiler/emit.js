@@ -90,6 +90,28 @@ const mapVariable = (ident, names) => {
   return sym;
 };
 
+const assign = (ast, names, define = false) => {
+  const [ident, value] = ast;
+
+  if (Array.isArray(ident)) {
+    const [first] = ident;
+
+    switch (Symbol.keyFor(first)) {
+      case "list":
+        return destructureListAssign(ast, names);
+      case "make-hash":
+        return destructureObjectAssign(ast, names);
+      default:
+        if (define) {
+          return emit(transform([Symbol.for("define"), ...ast]), names);
+        }
+    }
+  }
+
+  const sym = mapVariable(ident, names);
+  return `let ${Symbol.keyFor(sym)} = ${emit(value, names)}`;
+};
+
 const destructureListAssign = (ast, names) => {};
 
 const destructureObjectAssign = (ast, names) => {};
@@ -97,21 +119,7 @@ const destructureObjectAssign = (ast, names) => {};
 const compileDefine = (ast, names) => {
   const [_, ident, value] = ast;
 
-  if (Array.isArray(ident)) {
-    const [first, ...rest] = ident;
-    switch (Symbol.keyFor(first)) {
-      case "list":
-        return destructureListAssign(rest, names);
-      case "make-hash":
-        return destructureObjectAssign(rest, names);
-      default:
-        return emit(transform(ast), names);
-    }
-  }
-
-  const sym = mapVariable(ident, names);
-
-  return `let ${Symbol.keyFor(sym)} = ${emit(value, names)}`;
+  return assign([ident, value], names, true);
 };
 
 const compileLambda = (ast, names) => {
@@ -134,4 +142,6 @@ const compileIf = (ast, names) => {
   )}`;
 };
 
-const compileLet = (ast, names) => {};
+const compileLet = (ast, names) => {
+  let [bindings, body] = ast;
+};

@@ -1,13 +1,17 @@
 export const transform = (ast) => {
   const [first] = ast;
 
-  switch (Symbol.keyFor(first)) {
-    case "define":
-      return defineToLambda(ast);
+  if (typeof first === "symbol") {
+    switch (Symbol.keyFor(first)) {
+      case "define":
+        return defineToLambda(ast);
 
-    default:
-      return ast;
+      default:
+        return ast;
+    }
   }
+
+  return ast;
 };
 
 const defineToLambda = (ast) => {
