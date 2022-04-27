@@ -23,11 +23,12 @@ export class Visitor {
     }
 
     switch (typeof ast) {
-      case "symbol":
+      case "symbol": {
         if (isKeyword(ast)) {
           return this.visitKeyword(ast, ...args);
         }
         return this.visitSymbol(ast, ...args);
+      }
 
       case "number":
         return this.visitNumber(ast, ...args);
@@ -68,34 +69,34 @@ export class Visitor {
   visitCall(ast, ...args) {}
 
   visitSymbol(ast, ...args) {
-    return;
+    return ast;
   }
 
   visitNumber(ast, ...args) {
-    return;
+    return ast;
   }
 
   visitString(ast, ...args) {
-    return;
+    return ast;
   }
 
   visitBoolean(ast, ...args) {
-    return;
+    return ast;
   }
 
   visitNil(ast, ...args) {
-    return;
+    return ast;
   }
 
   visitKeyword(ast, ...args) {
-    return;
+    return ast;
   }
 
   visitListPattern(ast, ...args) {
-    return;
+    return ast.value.map((node) => this.visit(node, ...args));
   }
 
   visitHashPattern(ast, ...args) {
-    return;
+    return ast.value.map((node) => this.visit(node, ...args));
   }
 }
