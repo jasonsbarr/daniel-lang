@@ -73,9 +73,6 @@ The core language is completely implemented in the interpreter, though there are
 
 Here are some features I have planned on the roadmap:
 
-- A basic interpreter capable of executing the core language
-- Collections and user-defined types
-- Syntactic extensions (macros)
 - A compiler with intermediate representation and at least some optimizations
 - Tail call elimination
 - A runtime based on an abstract machine
