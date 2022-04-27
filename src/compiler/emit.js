@@ -37,7 +37,6 @@ const compileList = (ast, names) => {
         return compileIf(rest, names);
 
       case "define":
-        console.log(ast);
         return compileDefine(ast, names);
 
       case "lambda":
