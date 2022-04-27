@@ -90,16 +90,20 @@ export class Visitor {
   }
 
   visitListPattern(ast, ...args) {
-    return ast.value.map((node) => this.visit(node, ...args));
+    ast.value = ast.value.map((node) => this.visit(node, ...args));
+    return ast;
   }
 
   visitHashPattern(ast, ...args) {
-    return ast.value.map((node) => this.visit(node, ...args));
+    ast.value = ast.value.map((node) => this.visit(node, ...args));
+    return ast;
   }
 
   visitBegin(ast, ...args) {
     return ast.map((node) => this.visit(node, ...args));
   }
 
-  visitCall(ast, ...args) {}
+  visitCall(ast, ...args) {
+    return ast.map((node) => this.visit(node, ...args));
+  }
 }
