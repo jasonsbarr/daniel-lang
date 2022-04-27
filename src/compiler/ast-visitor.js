@@ -57,16 +57,12 @@ export class Visitor {
           return this.visitBegin(rest, ...args);
 
         default:
-          return;
+          return this.visitCall(ast, ...args);
       }
     }
 
     throw new Error(`Unknown syntax ${String(first)}`);
   }
-
-  visitBegin(ast, ...args) {}
-
-  visitCall(ast, ...args) {}
 
   visitSymbol(ast, ...args) {
     return ast;
@@ -99,4 +95,10 @@ export class Visitor {
   visitHashPattern(ast, ...args) {
     return ast.value.map((node) => this.visit(node, ...args));
   }
+
+  visitBegin(ast, ...args) {
+    return ast.map((node) => this.visit(node, ...args));
+  }
+
+  visitCall(ast, ...args) {}
 }
