@@ -42,6 +42,9 @@ const compileList = (ast, names) => {
       case "lambda":
         return compileLambda(rest, names);
 
+      case "let":
+        return compileLet(rest, names);
+
       default:
         return compileCall(ast, names);
     }
@@ -87,11 +90,23 @@ const mapVariable = (ident, names) => {
   return sym;
 };
 
+const destructureListAssign = (ast, names) => {};
+
+const destructureObjectAssign = (ast, names) => {};
+
 const compileDefine = (ast, names) => {
   const [_, ident, value] = ast;
 
   if (Array.isArray(ident)) {
-    return emit(transform(ast), names);
+    const [first, ...rest] = ident;
+    switch (Symbol.keyFor(first)) {
+      case "list":
+        return destructureListAssign(rest, names);
+      case "make-hash":
+        return destructureObjectAssign(rest, names);
+      default:
+        return emit(transform(ast), names);
+    }
   }
 
   const sym = mapVariable(ident, names);
@@ -118,3 +133,5 @@ const compileIf = (ast, names) => {
     names
   )}`;
 };
+
+const compileLet = (ast, names) => {};
