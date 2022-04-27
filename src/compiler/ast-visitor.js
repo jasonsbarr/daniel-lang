@@ -46,16 +46,19 @@ export class Visitor {
   }
 
   visitList(ast, ...args) {
-    const [first, ...rest] = ast;
-
-    if (Array.isArray(first)) {
-      return first.map((node) => this.visit(node, ...args));
+    if (ast.length === 0) {
+      return ast;
     }
+
+    const [first, ...rest] = ast;
 
     if (typeof first.value === "symbol") {
       switch (Symbol.keyFor(first)) {
         case "begin":
           return this.visitBegin(rest, ...args);
+
+        case "begin-module":
+          return this.visitModule();
 
         default:
           return this.visitCall(ast, ...args);
@@ -106,4 +109,38 @@ export class Visitor {
   visitCall(ast, ...args) {
     return ast.map((node) => this.visit(node, ...args));
   }
+
+  visitModule(ast, ...args) {}
+
+  visitProvide(ast, ...args) {}
+
+  visitOpen(ast, ...args) {}
+
+  visitImport(ast, ...args) {}
+
+  visitClass(ast, ...args) {}
+
+  visitIf(ast, ...args) {}
+
+  visitFor(ast, ...args) {}
+
+  visitForList(ast, ...args) {}
+
+  visitDefine(ast, ...args) {}
+
+  visitSet(ast, ...args) {}
+
+  visitLet(ast, ...args) {}
+
+  visitLambda(ast, ...args) {}
+
+  visitQuote(ast, ...args) {}
+
+  visitQuasiquote(ast, ...args) {}
+
+  visitEval(ast, ...args) {}
+
+  visitDefMacro(ast, ...args) {}
+
+  visitTry(ast, ...args) {}
 }
