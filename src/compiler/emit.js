@@ -1,5 +1,6 @@
 import { makeTable } from "./symbol-table.js";
 import { gensym } from "../../lib/js/base.js";
+import { transform } from "./transform.js";
 
 const nameMap = makeTable();
 let syms = 0;
@@ -33,7 +34,8 @@ const compileList = (ast, names) => {
         return compileBegin(rest, names);
 
       case "define":
-        return compileDefine(rest, names);
+        console.log(ast);
+        return compileDefine(ast, names);
 
       case "lambda":
         return compileLambda(rest, names);
@@ -84,7 +86,12 @@ const mapVariable = (ident, names) => {
 };
 
 const compileDefine = (ast, names) => {
-  const [ident, value] = ast;
+  const [_, ident, value] = ast;
+
+  if (Array.isArray(ident)) {
+    return emit(transform(ast), names);
+  }
+
   const sym = mapVariable(ident, names);
 
   return `let ${Symbol.keyFor(sym)} = ${emit(value, names)}`;
