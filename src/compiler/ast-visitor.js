@@ -10,7 +10,7 @@ export class Visitor {
   }
 
   visit(ast, ...args) {
-    if (Array.isArray) {
+    if (Array.isArray(ast)) {
       return this.visitList(ast, ...args);
     }
 
