@@ -35,3 +35,5 @@ class SymbolTable {
     this.namespace[sym] = val;
   }
 }
+
+export const makeTable = () => new SymbolTable();
