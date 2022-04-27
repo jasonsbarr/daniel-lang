@@ -1,6 +1,14 @@
 import { isKeyword } from "./utils.js";
 
 export class Visitor {
+  constructor() {
+    if (this.constructor.name === "Visitor") {
+      throw new Error(
+        "Cannot instantiate abstract base class Visitor directly"
+      );
+    }
+  }
+
   visit(ast, ...args) {
     if (Array.isArray) {
       return this.visitList(ast, ...args);
