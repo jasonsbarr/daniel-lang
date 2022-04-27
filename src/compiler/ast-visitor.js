@@ -22,24 +22,25 @@ export class Visitor {
       return this.visitHashPattern(ast, ...args);
     }
 
-    switch (typeof ast) {
-      case "symbol": {
-        if (isKeyword(ast)) {
+    switch (ast.type) {
+      case "Symbol":
+      case "Keyword": {
+        if (isKeyword(ast.value)) {
           return this.visitKeyword(ast, ...args);
         }
         return this.visitSymbol(ast, ...args);
       }
 
-      case "number":
+      case "Number":
         return this.visitNumber(ast, ...args);
 
-      case "string":
+      case "String":
         return this.visitString(ast, ...args);
 
-      case "boolean":
+      case "Boolean":
         return this.visitBoolean(ast, ...args);
 
-      case "nil":
+      case "Nil":
         return this.visitNil(ast, ...args);
     }
   }
@@ -51,7 +52,7 @@ export class Visitor {
       return first.map((node) => this.visit(node, ...args));
     }
 
-    if (typeof first === "symbol") {
+    if (typeof first.value === "symbol") {
       switch (Symbol.keyFor(first)) {
         case "begin":
           return this.visitBegin(rest, ...args);
