@@ -7,6 +7,7 @@ import { printStr } from "../lib/js/io.js";
 import { ArgumentsError, RuntimeError } from "../lib/js/error.js";
 import { getType } from "../lib/js/base.js";
 
+export const rtUrl = import.meta.url;
 const __dirname = dirname(import.meta.url);
 let STDOUT, STDIN, STDERR;
 
@@ -357,6 +358,7 @@ export const createRuntime = ({
   stderr = STDERR,
 } = {}) => {
   return {
+    rtUrl,
     stdin,
     stdout,
     stderr,
