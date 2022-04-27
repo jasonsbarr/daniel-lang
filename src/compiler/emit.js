@@ -1,6 +1,8 @@
-export const emit = (ast) => {
+const nameMap = {};
+
+export const emit = (ast, names = nameMap) => {
   if (Array.isArray(ast)) {
-    return compileList(ast);
+    return compileList(ast, names);
   }
 
   if (typeof ast === "symbol") {
@@ -13,39 +15,38 @@ export const emit = (ast) => {
   return String(ast);
 };
 
-const compileList = (ast) => {
-  const compileArray = (ast) =>
-    ast.reduce((code, node) => code + emit(node), "");
-
+const compileList = (ast, names) => {
   const [first, ...rest] = ast;
 
   if (Array.isArray(first)) {
-    return emit(first) + compileArray(rest);
+    return (
+      emit(first) + rest.reduce((code, node) => code + emit(node, names), "")
+    );
   }
 
   if (typeof first === "symbol") {
     switch (Symbol.keyFor(first)) {
       case "begin":
-        return compileBegin(rest);
+        return compileBegin(rest, names);
 
       default:
-        throw new Error(`Unknown symbol ${Symbol.keyFor(first)}`);
+        return compileCall(ast, names);
     }
   }
 
   throw new Error(`Unknown syntax ${String(first)}`);
 };
 
-const compileBegin = (ast) => {
+const compileBegin = (ast, names) => {
   let code = "(() => {\n";
 
   let i = 0;
   for (let node of ast) {
     code += "    ";
     if (i === ast.length - 1) {
-      code += `return ${emit(node)};\n`;
+      code += `return ${emit(node, names)};\n`;
     } else {
-      code += emit(node) + ";\n";
+      code += emit(node, names) + ";\n";
     }
     i++;
   }
@@ -53,3 +54,5 @@ const compileBegin = (ast) => {
   code += "})();";
   return code;
 };
+
+const compileCall = (ast, names) => {};
