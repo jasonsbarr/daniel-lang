@@ -4,6 +4,10 @@ class SymbolTable {
     this.namespace = Object.create(null);
   }
 
+  extend() {
+    return new SymbolTable(this);
+  }
+
   get(sym) {
     const scope = this.lookup(sym);
     return scope.namespace[sym];
