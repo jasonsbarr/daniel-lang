@@ -1,4 +1,8 @@
-const nameMap = {};
+import { makeTable } from "./symbol-table.js";
+import { gensym } from "../../lib/js/base.js";
+
+const nameMap = makeTable();
+let syms = 0;
 
 export const emit = (ast, names = nameMap) => {
   if (Array.isArray(ast)) {
@@ -6,8 +10,7 @@ export const emit = (ast, names = nameMap) => {
   }
 
   if (typeof ast === "symbol") {
-    console.log("symbol");
-    return Symbol.keyFor(ast);
+    return compileSymbol(ast, names);
   } else if (typeof ast === "string") {
     return `"${ast}"`;
   }
@@ -28,6 +31,9 @@ const compileList = (ast, names) => {
     switch (Symbol.keyFor(first)) {
       case "begin":
         return compileBegin(rest, names);
+
+      case "define":
+        return compileDefine(rest, names);
 
       default:
         return compileCall(ast, names);
@@ -55,4 +61,18 @@ const compileBegin = (ast, names) => {
   return code;
 };
 
+const compileSymbol = (ast, names) => {
+  const ident = names.get(ast);
+  return Symbol.keyFor(ident);
+};
+
 const compileCall = (ast, names) => {};
+
+const compileDefine = (ast, names) => {
+  const [ident, value] = ast;
+  const sym = gensym(`_${++syms}`);
+
+  names.set(ident, sym);
+
+  return `let ${Symbol.keyFor(sym)} = ${emit(value, names)}`;
+};
