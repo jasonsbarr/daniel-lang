@@ -3,9 +3,21 @@
  */
 const makeSexprs = (ast) => {
   if (Array.isArray(ast)) {
+    return ast.map(makeSexprs);
   }
 
   switch (ast.type) {
+    case "ListPattern":
+      let listValue = ast.value.map(makeSexprs);
+      listValue.unshift(Symbol.for("list"));
+      return listValue;
+
+    case "HashPattern":
+      let hashValue = ast.value.map(makeSexprs);
+      listValue.unshift(Symbol.for("make-hash"));
+      return hashValue;
+
+    // Atoms
     case "Nil":
     case "Boolean":
     case "Number":
